@@ -1402,8 +1402,12 @@ function isUnavailable(upgrade, upgradeBlacklist) {
     }) != null);
     result = result || (upgrade.season && (!haveAll(Game.season) || (upgrade.season != seasons[FrozenCookies.defaultSeason] && haveAll(upgrade.season))));
 
-    if (upgrade.id == 331) {
+    if  ((upgrade.id == 331) || (upgrade.id ==332)) {
         result = true; // blacklist golden switch from being used, until proper logic can be implemented
+    }
+    
+    if ((upgrade.id == 563) || (upgrade.id == 564)) {
+        result = true; // blacklist shimmering veil switch from being used, until proper logic can be implemented
     }
     
     if (upgrade.id == 333) {
