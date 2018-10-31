@@ -416,8 +416,9 @@ function updateTimers() {
             display: (Math.round(decimal_HC_complete*10000)/100)+"%"
         });
     }
-    height = $('#backgroundLeftCanvas').height() - 140;
-    drawCircles(t_draw, 20, height);
+    //kisslab: Removed for more performance
+    //height = $('#backgroundLeftCanvas').height() - 140;
+    //drawCircles(t_draw, 20, height);
 }
 
 function FCMenu() {
@@ -597,7 +598,8 @@ function FCMenu() {
 
         banks = [{name: 'Lucky Bank', cost: luckyBank(), efficiency: cookieEfficiency(Game.cookies, luckyBank())},
             {name: 'Lucky Frenzy Bank', cost: luckyFrenzyBank(), efficiency: cookieEfficiency(Game.cookies, luckyFrenzyBank())},
-            {name: 'Chain Bank', cost: chainBank(), efficiency: cookieEfficiency(Game.cookies, chainBank())}];
+            {name: 'Chain Bank', cost: chainBank(), efficiency: cookieEfficiency(Game.cookies, chainBank())},
+	    {name: 'Harvest Bank', cost: harvestBank(), efficiency: cookieEfficiency(Game.cookies, harvestBank())}];
 
         banks.forEach(function(bank) {
             var deltaCps = effectiveCps(bank.cost) - effectiveCps(Game.cookies);
