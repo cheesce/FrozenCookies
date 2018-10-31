@@ -151,7 +151,7 @@ function drawCircles(t_d, x, y) {
         return;
     }
     //kisslab: Removed for more performance
-    //maxRadius = 10 + 10*t_d.reduce(function(sum,item){return (item.overlay) ? sum : sum + 1;},0);
+    maxRadius = 10 + 10*t_d.reduce(function(sum,item){return (item.overlay) ? sum : sum + 1;},0);
     heightOffset = maxRadius + 5 - (15 * (t_d.length - 1) / 2);
     i_c = 0;
     i_tc = 0;
@@ -175,7 +175,7 @@ function drawCircles(t_d, x, y) {
         width: maxWidth + 20, height: maxHeight + 20
     });
 
-//    t_d.forEach( function(o_draw) {
+    t_d.forEach( function(o_draw) {
 //        if (o_draw.overlay)
 //        {
 //            i_c--;
