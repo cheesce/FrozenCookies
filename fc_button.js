@@ -176,33 +176,33 @@ function drawCircles(t_d, x, y) {
     });
 
     t_d.forEach( function(o_draw) {
-//        if (o_draw.overlay)
-//        {
-//            i_c--;
-//        }
-//        else
-//        {
-//            c.drawArc({
-//                strokeStyle: t_b[i_c%t_b.length],
-//                strokeWidth: 10,
-//                x: x + (maxRadius + 5), y:y + maxRadius + 5,
-//                radius: maxRadius - i_c*10
-//            });
-//            c.drawArc({
-//                strokeStyle: t_b[(i_c+2)%t_b.length],
-//                strokeWidth: 1,
-//                x: x + (maxRadius + 5), y:y + maxRadius + 5,
-//                radius: maxRadius - 5 - (i_c)*10
-//            });
-//        }
-//        c.drawArc({
-//            strokeStyle: o_draw.c1,
-//            x: x + (maxRadius + 5), y:y + maxRadius + 5,
-//            radius: maxRadius - i_c*10,
-//            strokeWidth: 7,
-//            start: 0,
-//            end: (360 * o_draw.f_percent)
-//        });
+        if (o_draw.overlay)
+        {
+            i_c--;
+        }
+        else
+        {/*
+            c.drawArc({
+                strokeStyle: t_b[i_c%t_b.length],
+                strokeWidth: 10,
+                x: x + (maxRadius + 5), y:y + maxRadius + 5,
+                radius: maxRadius - i_c*10
+            });
+            c.drawArc({
+                strokeStyle: t_b[(i_c+2)%t_b.length],
+                strokeWidth: 1,
+                x: x + (maxRadius + 5), y:y + maxRadius + 5,
+                radius: maxRadius - 5 - (i_c)*10
+           }); */
+        }
+        /*c.drawArc({
+            strokeStyle: o_draw.c1,
+            x: x + (maxRadius + 5), y:y + maxRadius + 5,
+            radius: maxRadius - i_c*10,
+            strokeWidth: 7,
+            start: 0,
+            end: (360 * o_draw.f_percent)
+        }); */
         if (o_draw.name)
         {
             s_t = o_draw.name + (o_draw.display ? ": "+o_draw.display : "");
