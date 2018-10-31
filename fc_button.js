@@ -150,7 +150,8 @@ function drawCircles(t_d, x, y) {
     if (typeof(c.measureText) != "function") {
         return;
     }
-    maxRadius = 10 + 10*t_d.reduce(function(sum,item){return (item.overlay) ? sum : sum + 1;},0);
+    //kisslab: Removed for more performance
+    //maxRadius = 10 + 10*t_d.reduce(function(sum,item){return (item.overlay) ? sum : sum + 1;},0);
     heightOffset = maxRadius + 5 - (15 * (t_d.length - 1) / 2);
     i_c = 0;
     i_tc = 0;
@@ -174,34 +175,34 @@ function drawCircles(t_d, x, y) {
         width: maxWidth + 20, height: maxHeight + 20
     });
 
-    t_d.forEach( function(o_draw) {
-        if (o_draw.overlay)
-        {
-            i_c--;
-        }
-        else
-        {
-            c.drawArc({
-                strokeStyle: t_b[i_c%t_b.length],
-                strokeWidth: 10,
-                x: x + (maxRadius + 5), y:y + maxRadius + 5,
-                radius: maxRadius - i_c*10
-            });
-            c.drawArc({
-                strokeStyle: t_b[(i_c+2)%t_b.length],
-                strokeWidth: 1,
-                x: x + (maxRadius + 5), y:y + maxRadius + 5,
-                radius: maxRadius - 5 - (i_c)*10
-            });
-        }
-        c.drawArc({
-            strokeStyle: o_draw.c1,
-            x: x + (maxRadius + 5), y:y + maxRadius + 5,
-            radius: maxRadius - i_c*10,
-            strokeWidth: 7,
-            start: 0,
-            end: (360 * o_draw.f_percent)
-        });
+//    t_d.forEach( function(o_draw) {
+//        if (o_draw.overlay)
+//        {
+//            i_c--;
+//        }
+//        else
+//        {
+//            c.drawArc({
+//                strokeStyle: t_b[i_c%t_b.length],
+//                strokeWidth: 10,
+//                x: x + (maxRadius + 5), y:y + maxRadius + 5,
+//                radius: maxRadius - i_c*10
+//            });
+//            c.drawArc({
+//                strokeStyle: t_b[(i_c+2)%t_b.length],
+//                strokeWidth: 1,
+//                x: x + (maxRadius + 5), y:y + maxRadius + 5,
+//                radius: maxRadius - 5 - (i_c)*10
+//            });
+//        }
+//        c.drawArc({
+//            strokeStyle: o_draw.c1,
+//            x: x + (maxRadius + 5), y:y + maxRadius + 5,
+//            radius: maxRadius - i_c*10,
+//            strokeWidth: 7,
+//            start: 0,
+//            end: (360 * o_draw.f_percent)
+//        });
         if (o_draw.name)
         {
             s_t = o_draw.name + (o_draw.display ? ": "+o_draw.display : "");
@@ -416,9 +417,9 @@ function updateTimers() {
             display: (Math.round(decimal_HC_complete*10000)/100)+"%"
         });
     }
-    //kisslab: Removed for more performance
-    //height = $('#backgroundLeftCanvas').height() - 140;
-    //drawCircles(t_draw, 20, height);
+
+    height = $('#backgroundLeftCanvas').height() - 140;
+    drawCircles(t_draw, 20, height);
 }
 
 function FCMenu() {
