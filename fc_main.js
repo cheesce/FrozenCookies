@@ -106,7 +106,7 @@ function setOverrides() {
     //  if (FrozenCookies.saveWrinklers && localStorage.wrinklers) {
     //    Game.wrinklers = JSON.parse(localStorage.wrinklers);
     //  }
-// no longer usefull?    Game.Win = fcWin;
+    Game.Win = fcWin; //Block showing fast-click achievments every few seconds
     Game.oldBackground = Game.DrawBackground;
     
     Game.DrawBackground = function() {
@@ -1978,34 +1978,23 @@ function doTimeTravel() {
 }
 //Why the hell is fcWin being called so often? It seems to be getting called repeatedly on the CPS achievements, 
 //which should only happen when you actually win them?
+//updated code to 2.016 version
 function fcWin(what) {
     if (typeof what === 'string') {
         if (Game.Achievements[what]) {
             if (Game.Achievements[what].won == 0) {
-                var achname=Game.Achievements[what].shortName?Game.Achievements[what].shortName:Game.Achievements[what].name;
-                Game.Achievements[what].won = 1;
-                //This happens a ton of times on CPS achievements; it seems like they would be CHECKED for, but a degbug message placed
-                //here gets repeatedly called seeming to indicate that the achievements.won value is 1, even though the achievement isn't
-                //being unlocked. This also means that placing a function to log the achievement spams out messages. Are the Achievement.won
-                //values being turned off before the game checks again? There must be some reason Game.Win is replaced with fcWin
-                if (!FrozenCookies.disabledPopups) {
-                    logEvent('Achievement', 'Achievement unlocked :<br>' + Game.Achievements[what].name + '<br> ', true);
-                }
-                //if (FrozenCookies.showAchievements) {
-                //    Game.Notify('Achievement unlocked','<div class="title" style="font-size:18px;margin-top:-2px;">'+achname+'</div>',Game.Achievements[what].icon);
-                //}
-                if (Game.Achievements[what].pool != 'shadow') {
-                    Game.AchievementsOwned++;
-                }
-                Game.recalculateGains = 1;
+                
+		var name=Game.Achievements[what].shortName?Game.Achievements[what].shortName:Game.Achievements[what].name;
+		Game.Achievements[what].won=1;
+		if (Game.prefs.popups) Game.Popup('Achievement unlocked :<br>'+name);
+	        //suppress notify because of fast clicking
+		// else Game.Notify('Achievement unlocked','<div class="title" style="font-size:18px;margin-top:-2px;">'+name+'</div>',Game.Achievements[what].icon);
+		if (Game.CountsAsAchievementOwned(Game.Achievements[what].pool)) Game.AchievementsOwned++;
+		Game.recalculateGains=1;    		    
             }
         }
-    } else {
-        logEvent('fcWin Else condition');
-        for (var i in what) {
-            Game.Win(what[i]);
-        }
-    }
+    } 
+    else { for (var i in what) { Game.Win(what[i]); }}
 }
 
 function logEvent(event, text, popup) {
