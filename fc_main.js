@@ -108,9 +108,15 @@ function setOverrides() {
     //  }
     Game.Win = fcWin;
     Game.oldBackground = Game.DrawBackground;
+    FrozenCookies.updateTimersCounter = 0;
     Game.DrawBackground = function() {
         Game.oldBackground();
-        updateTimers();
+        //kisslab: Update only every second
+	FrozenCookies.updateTimersCounter +=1;
+	if (FrozenCookies.updateTimersCounter==Game.fps)
+	{ FrozenCookies.updatetimersCounter=0;
+	  updateTimers();
+	}
     }
     // Remove the following when turning on tooltop code
     nextPurchase(true);
