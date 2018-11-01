@@ -245,18 +245,18 @@ function buffDuration(buffName) {
 function updateTimers() {
     var chainPurchase, bankPercent, purchasePercent, bankMax, actualCps, t_draw,
         maxColor, height,
-        gc_delay = (probabilitySpan('golden', Game.shimmerTypes.golden.time, 0.5) - Game.shimmerTypes.golden.time) / maxCookieTime(),
-        gc_max_delay = (probabilitySpan('golden', Game.shimmerTypes.golden.time, 0.99) - Game.shimmerTypes.golden.time) / maxCookieTime(),
-        gc_min_delay = (probabilitySpan('golden', Game.shimmerTypes.golden.time, 0.01) - Game.shimmerTypes.golden.time) / maxCookieTime(),
-        clot_delay = buffDuration('Clot') / maxCookieTime(),
-        elder_frenzy_delay = buffDuration('Elder frenzy') / maxCookieTime(),
-        frenzy_delay = buffDuration('Frenzy') / maxCookieTime(),
-        dragon_harvest_delay = buffDuration('Dragon Harvest') / maxCookieTime(),
-        click_frenzy_delay = buffDuration('Click frenzy') / maxCookieTime(),
-        dragonflight_delay = buffDuration('Dragonflight') / maxCookieTime(),
-        cursed_finger_delay = buffDuration('Cursed finger') / maxCookieTime(),
-        building_special_delay = hasBuildingSpecialBuff() / maxCookieTime(),
-        cookie_storm_delay = buffDuration('Cookie storm') / maxCookieTime(),
+        gc_delay = (probabilitySpan('golden', Game.shimmerTypes.golden.time, 0.5) / Game.shimmerTypes.golden.time) -1,
+        gc_max_delay = (probabilitySpan('golden', Game.shimmerTypes.golden.time, 0.99) / Game.shimmerTypes.golden.time) -1,
+        gc_min_delay = (probabilitySpan('golden', Game.shimmerTypes.golden.time, 0.01) / Game.shimmerTypes.golden.time) -1,
+        clot_delay = buffDuration('Clot') / Game.shimmerTypes.golden.maxTime,
+        elder_frenzy_delay = buffDuration('Elder frenzy') / Game.shimmerTypes.golden.maxTime,
+        frenzy_delay = buffDuration('Frenzy') / Game.shimmerTypes.golden.maxTime,
+        dragon_harvest_delay = buffDuration('Dragon Harvest') / Game.shimmerTypes.golden.maxTime,
+        click_frenzy_delay = buffDuration('Click frenzy') / Game.shimmerTypes.golden.maxTime,
+        dragonflight_delay = buffDuration('Dragonflight') / Game.shimmerTypes.golden.maxTime,
+        cursed_finger_delay = buffDuration('Cursed finger') / Game.shimmerTypes.golden.maxTime,
+        building_special_delay = hasBuildingSpecialBuff() / Game.shimmerTypes.golden.maxTime,
+        cookie_storm_delay = buffDuration('Cookie storm') / Game.shimmerTypes.golden.maxTime,
         decimal_HC_complete = (Game.HowMuchPrestige(Game.cookiesEarned + Game.cookiesReset)%1),
         bankTotal = delayAmount(),
         purchaseTotal = nextPurchase().cost,
@@ -319,20 +319,20 @@ function updateTimers() {
             f_percent: gc_max_delay,
             c1: "rgba(255, 155, 0, 1)",
             name: "Golden Cookie Maximum (99%)",
-            display: timeDisplay((gc_max_delay * maxCookieTime()) / Game.fps)
+            display: timeDisplay((gc_max_delay * Game.shimmerTypes.golden.time) / Game.fps)
         });
         t_draw.push({
             f_percent: gc_delay,
             c1: "rgba(255, 195, 0, 1)",
             name: "Golden Cookie Estimate (50%)",
-            display: timeDisplay((gc_delay * maxCookieTime()) / Game.fps),
+            display: timeDisplay((gc_delay * Game.shimmerTypes.golden.time) / Game.fps),
             overlay: true
         });
         t_draw.push({
             f_percent: gc_min_delay,
             c1: "rgba(255, 235, 0, 1)",
             name: "Golden Cookie Minimum (1%)",
-            display: timeDisplay((gc_min_delay * maxCookieTime()) / Game.fps),
+            display: timeDisplay((gc_min_delay * Game.shimmerTypes.golden.time) / Game.fps),
             overlay: true
 
         });
