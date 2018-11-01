@@ -2289,10 +2289,10 @@ function autoCookie() {
             }
         }
 
-        var fps_amounts = ['24', '25', '30', '48', '50', '60', '72', '90', '100', '120', '144', '200', '240', '300'];
-        if (parseInt(fps_amounts[FrozenCookies["fpsModifier"]]) != Game.fps) {
-            Game.fps = parseInt(fps_amounts[FrozenCookies["fpsModifier"]]);
-        }
+//        var fps_amounts = ['24', '25', '30', '48', '50', '60', '72', '90', '100', '120', '144', '200', '240', '300'];
+//        if (parseInt(fps_amounts[FrozenCookies["fpsModifier"]]) != Game.fps) {
+//            Game.fps = parseInt(fps_amounts[FrozenCookies["fpsModifier"]]);
+//        }
 
         // This apparently *has* to stay here, or else fast purchases will multi-click it.
         if (goldenCookieLife() && FrozenCookies.autoGC) {
