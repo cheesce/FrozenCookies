@@ -114,7 +114,7 @@ function setOverrides() {
         //kisslab: Update only every second
 	FrozenCookies.updateTimersCounter +=1;
 	if (FrozenCookies.updateTimersCounter==Game.fps)
-	{ FrozenCookies.updatetimersCounter=0;
+	{ FrozenCookies.updateTimersCounter=0;
 	  updateTimers();
 	}
     }
