@@ -99,9 +99,11 @@ function setOverrides() {
 	Game.oldUpdateMenu = Game.UpdateMenu;
 	Game.UpdateMenu = function() {
         if (Game.onMenu=='fc_menu') 
-		   { return FCMenu();}
+		   { console.log('UpdateMenu_FC');
+			  return FCMenu();}
 	    else
-		   { return Game.oldUpdateMenu();}	
+		   { console.log('UpdateMenu');
+			   return Game.oldUpdateMenu();}	
 	}
 	
     // Remove the following when turning on tooltop code
