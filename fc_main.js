@@ -1,15 +1,11 @@
 
-function setOverrides() {
+function FCStart() {
+    logEvent("Load", "Initial Load of Frozen Cookies v " + FrozenCookies.branch + "." + FrozenCookies.version + ". (You should only ever see this once.)");
 
     // Set all cycleable preferencesau
     _.keys(FrozenCookies.preferenceValues).forEach(function(preference) {
         FrozenCookies[preference] = preferenceParse(preference, FrozenCookies.preferenceValues[preference].default);
     });
-
-    logEvent("Load", "Initial Load of Frozen Cookies v " + FrozenCookies.branch + "." + FrozenCookies.version + ". (You should only ever see this once.)");
-
-    FrozenCookies.frequency = 100; // Base timer interval 100ms
-    FrozenCookies.efficiencyWeight = 1.0;
 
     // Separate because these are user-input values
     FrozenCookies.cookieClickSpeed = preferenceParse('cookieClickSpeed', 0);
@@ -20,13 +16,16 @@ function setOverrides() {
     FrozenCookies.manaMax = preferenceParse('manaMax', 100);
     FrozenCookies.maxSpecials = preferenceParse('maxSpecials', 1);
 
-
     // Get historical data
     FrozenCookies.frenzyTimes = JSON.parse(localStorage.getItem('frenzyTimes')) || {};
     FrozenCookies.lastHCAmount = Number(localStorage.getItem('lastHCAmount'));
     FrozenCookies.lastHCTime = Number(localStorage.getItem('lastHCTime'));
     FrozenCookies.prevLastHCTime = Number(localStorage.getItem('prevLastHCTime'));
     FrozenCookies.maxHCPercent = Number(localStorage.getItem('maxHCPercent'));
+    
+	// Basic Settings
+	FrozenCookies.frequency = 100; // Base timer interval 100ms
+    FrozenCookies.efficiencyWeight = 1.0; //not really used
 
     // Set default values for calculations
     FrozenCookies.hc_gain = 0;
@@ -46,23 +45,10 @@ function setOverrides() {
         'efficiency': 0
     };
     FrozenCookies.disabledPopups = true;
-    FrozenCookies.trackedStats = [];
-    FrozenCookies.lastGraphDraw = 0;
     FrozenCookies.calculatedCpsByType = {};
 
     // Allow autoCookie to run
     FrozenCookies.processing = false;
-    FrozenCookies.priceReductionTest = false;
-
-    FrozenCookies.cookieBot = 0;
-    FrozenCookies.autoclickBot = 0;
-    FrozenCookies.autoFrenzyBot = 0;
-    FrozenCookies.frenzyClickBot = 0;
-
-    // Smart tracking details
-    FrozenCookies.smartTrackingBot = 0;
-    FrozenCookies.minDelay = 1000 * 10; // 10s minimum reporting between purchases with "smart tracking" on
-    FrozenCookies.delayPurchaseCount = 0;
 
     // Caching
     FrozenCookies.recalculateCaches = true;
@@ -79,6 +65,7 @@ function setOverrides() {
 	//as Beautify is already included in CC, just add the choose from FC
     eval("Beautify="+Beautify.toString().replace(/Game\.prefs\.format\?2:1/g, 'FrozenCookies\.numberDisplay'));
 	
+	//Copy some code for internal use and modify
 	eval('FrozenCookies.safeGainsCalc = ' + Game.CalculateGains.toString().replace(/Game\.cookiesPs/g, 'FrozenCookies.calculatedCps').replace(/Game\.globalCpsMult/g, 'mult'));
 	
 	Game.sayTime = function(time, detail) {
@@ -99,21 +86,104 @@ function setOverrides() {
 	Game.oldUpdateMenu = Game.UpdateMenu;
 	Game.UpdateMenu = function() {
         if (Game.onMenu=='fc_menu') 
-		   { console.log('UpdateMenu_FC');
-			  return FCMenu();}
+		   { return FCMenu();}
 	    else
-		   { console.log('UpdateMenu');
-			   return Game.oldUpdateMenu();}	
+		   { return Game.oldUpdateMenu();}	
 	}
 	
-    // Remove the following when turning on tooltop code
+    // Initalise nextPurchase
     nextPurchase(true);
-    Game.RefreshStore();
-    Game.RebuildUpgrades();
-    beautifyUpgradesAndAchievements();
 
+	//next 2 not needed?
+	//Game.RefreshStore();
+    //Game.RebuildUpgrades();
+
+	// Smart tracking details
+    FrozenCookies.trackedStats = [];
+    FrozenCookies.lastGraphDraw = 0;
+    FrozenCookies.smartTrackingBot = 0;
+    FrozenCookies.minDelay = 1000 * 10; // 10s minimum reporting between purchases with "smart tracking" on
+    FrozenCookies.delayPurchaseCount = 0;
+   
+	// Setup Timers
+	FrozenCookies.cookieBot = 0;
+    FrozenCookies.autoClickBot = 0;
+    FrozenCookies.frenzyClickBot = 0;
+    FrozenCookies.autoGSBot = 0;
+    FrozenCookies.autoGodzamokBot = 0;
+	FrozenCookies.autoSpellBot = 0;
+    FrozenCookies.statBot = 0;
+    FrozenCookies.smartTrackingBot = 0;
+    StartTimer();
+	
     // Give free achievements!
     if (!Game.HasAchiev('Third-party')) { Game.Win('Third-party'); }
+}
+
+function StartTimer()
+{   //  To allow polling frequency to change, clear intervals before setting new ones.
+    if (FrozenCookies.cookieBot) {
+        clearInterval(FrozenCookies.cookieBot);
+        FrozenCookies.cookieBot = 0;
+    }
+    if (FrozenCookies.autoClickBot) {
+        clearInterval(FrozenCookies.autoClickBot);
+        FrozenCookies.autoClickBot = 0;
+    }
+	if (FrozenCookies.frenzyClickBot) {
+        clearInterval(FrozenCookies.frenzyClickBot);
+        FrozenCookies.frenzyClickBot = 0;
+    }
+    if (FrozenCookies.autoGSBot) {
+        clearInterval(FrozenCookies.autoGSBot);
+        FrozenCookies.autoGSBot = 0;
+    }
+    if (FrozenCookies.autoGodzamokBot) {
+        clearInterval(FrozenCookies.autoGodzamokBot);
+        FrozenCookies.autoGodzamokBot = 0;
+    }
+    if (FrozenCookies.autoSpellBot) {
+        clearInterval(FrozenCookies.autoSpellBot);
+        FrozenCookies.autoSpellBot = 0;
+    }
+	if (FrozenCookies.statBot) {
+        clearInterval(FrozenCookies.statBot);
+        FrozenCookies.statBot = 0;
+    }
+	if (FrozenCookies.smartTrackingBot) {
+        clearInterval(FrozenCookies.smartTrackingBot);
+        FrozenCookies.smartTrackingBot = 0;
+    }
+	
+    // Now create new intervals with their specified frequencies.
+    if (FrozenCookies.frequency) {
+        FrozenCookies.cookieBot = setTimeout(autoCookie, FrozenCookies.frequency);
+    }
+    if (FrozenCookies.autoClick && FrozenCookies.cookieClickSpeed) {
+        FrozenCookies.autoclickBot = setInterval(fcClickCookie, 1000 / FrozenCookies.cookieClickSpeed);
+    }
+    if (FrozenCookies.autoFrenzy && FrozenCookies.frenzyClickSpeed) {
+        FrozenCookies.frenzyClickBot = setInterval(autoFrenzyClick, 1000 / FrozenCookies.frenzyClickSpeed);
+    }
+    if (FrozenCookies.autoGS) {
+        FrozenCookies.autoGSBot = setInterval(autoGSBuy, FrozenCookies.frequency)
+    }
+    if (FrozenCookies.autoGodzamok) {
+        FrozenCookies.autoGodzamokBot = setInterval(autoGodzamokAction, FrozenCookies.frequency)
+    }
+    if(FrozenCookies.autoSpell) {
+        FrozenCookies.autoSpellBot = setInterval(autoCast, FrozenCookies.frequency*10)
+    }
+
+    if (statSpeed(FrozenCookies.trackStats) > 0) {
+        FrozenCookies.statBot = setInterval(saveStats, statSpeed(FrozenCookies.trackStats));
+    } else if (FrozenCookies.trackStats == 6 && !FrozenCookies.smartTrackingBot) {
+        FrozenCookies.smartTrackingBot = setTimeout(function() {
+            smartTrackingStats(FrozenCookies.minDelay * 8)
+        }, FrozenCookies.minDelay);
+    }
+
+    FCMenu();
 }
 
 function fcReset() {
@@ -139,6 +209,25 @@ function fcReset() {
     recommendationList(true);
 }
 
+//updated code to 2.016 version
+function fcWin(what) {
+    if (typeof what === 'string') {
+        if (Game.Achievements[what]) {
+            if (Game.Achievements[what].won == 0) {
+                
+		var name=Game.Achievements[what].shortName?Game.Achievements[what].shortName:Game.Achievements[what].name;
+		Game.Achievements[what].won=1;
+		if (Game.prefs.popups) Game.Popup('Achievement unlocked :<br>'+name);
+	    // suppress notify because of fast clicking
+		// else Game.Notify('Achievement unlocked','<div class="title" style="font-size:18px;margin-top:-2px;">'+name+'</div>',Game.Achievements[what].icon);
+		if (Game.CountsAsAchievementOwned(Game.Achievements[what].pool)) Game.AchievementsOwned++;
+		Game.recalculateGains=1;    		    
+            }
+        }
+    } 
+    else { for (var i in what) { Game.Win(what[i]); }}
+}
+
 function preferenceParse(setting, defaultVal) {
     var value = localStorage.getItem(setting);
     if (typeof(value) == 'undefined' || value == null || isNaN(Number(value))) {
@@ -147,46 +236,6 @@ function preferenceParse(setting, defaultVal) {
     }
     return Number(value);
 }
-
-// Runs numbers in upgrades and achievements through our beautify function
-function beautifyUpgradesAndAchievements() {
-    function beautifyFn(str) {
-        return Beautify(parseInt(str.replace(/,/, ''), 10));
-    }
-
-    var numre = /\d\d?\d?(?:,\d\d\d)*/;
-    Game.AchievementsById.forEach(function(ach) {
-        ach.desc = ach.desc.replace(numre, beautifyFn);
-    });
-
-    // These might not have any numbers in them, but just in case...
-    Game.UpgradesById.forEach(function(upg) {
-        upg.desc = upg.desc.replace(numre, beautifyFn);
-    });
-}
-
-function timeDisplay(seconds) {
-    if (seconds === '---' || seconds === 0) {
-        return 'Done!';
-    } else if (seconds == Number.POSITIVE_INFINITY) {
-        return 'Never!'
-    }
-    seconds = Math.floor(seconds);
-    var days, hours, minutes;
-    days = Math.floor(seconds / (24 * 60 * 60));
-    days = (days > 0) ? Beautify(days) + 'd ' : '';
-    seconds %= (24 * 60 * 60);
-    hours = Math.floor(seconds / (60 * 60));
-    hours = (hours > 0) ? hours + 'h ' : '';
-    seconds %= (60 * 60);
-    minutes = Math.floor(seconds / 60);
-    minutes = (minutes > 0) ? minutes + 'm ' : '';
-    seconds %= 60;
-    seconds = (seconds > 0) ? seconds + 's' : '';
-    return (days + hours + minutes + seconds).trim();
-}
-
-
 
 function updateLocalStorage() {
     _.keys(FrozenCookies.preferenceValues).forEach(function(preference) {
@@ -199,8 +248,6 @@ function updateLocalStorage() {
     localStorage.cursorMax = FrozenCookies.cursorMax;
     localStorage.minCpSMult = FrozenCookies.minCpSMult;
     localStorage.frenzyTimes = JSON.stringify(FrozenCookies.frenzyTimes);
-    //  localStorage.nonFrenzyTime = FrozenCookies.non_gc_time;
-    //  localStorage.frenzyTime = FrozenCookies.gc_time;
     localStorage.lastHCAmount = FrozenCookies.lastHCAmount;
     localStorage.maxHCPercent = FrozenCookies.maxHCPercent;
     localStorage.lastHCTime = FrozenCookies.lastHCTime;
@@ -219,199 +266,6 @@ function divCps(value, cps) {
         }
     }
     return result;
-}
-
-function nextHC(tg) {
-    var futureHC = Math.ceil(Game.HowMuchPrestige(Game.cookiesEarned + Game.cookiesReset));
-    var nextHC = Game.HowManyCookiesReset(futureHC)
-    var toGo = nextHC - (Game.cookiesEarned + Game.cookiesReset);
-    return tg ? toGo : timeDisplay(divCps(toGo, Game.cookiesPs));
-}
-
-function copyToClipboard(text) {
-    Game.promptOn = 1;
-    window.prompt("Copy to clipboard: Ctrl+C, Enter", text);
-    Game.promptOn = 0;
-}
-
-function getBuildingSpread() {
-    return Game.ObjectsById.map(function(a) {
-        return a.amount;
-    }).join('/')
-}
-
-// todo: add bind for autoascend
-// Press 'a' to toggle autobuy.
-// Press 'b' to pop up a copyable window with building spread.
-// Press 'c' to toggle auto-GC
-// Press 'e' to pop up a copyable window with your export string
-// Press 'r' to pop up the reset window
-// Press 's' to do a manual save
-// Press 'w' to display a wrinkler-info window
-document.addEventListener('keydown', function(event) {
-    if (!Game.promptOn) {
-        if (event.keyCode == 65) {
-            Game.Toggle('autoBuy', 'autobuyButton', 'Autobuy OFF', 'Autobuy ON');
-            toggleFrozen('autoBuy');
-        }
-        if (event.keyCode == 66) {
-            copyToClipboard(getBuildingSpread());
-        }
-        if (event.keyCode == 67) {
-            Game.Toggle('autoGC', 'autogcButton', 'Autoclick GC OFF', 'Autoclick GC ON');
-            toggleFrozen('autoGC');
-        }
-        if (event.keyCode == 69) {
-            copyToClipboard(Game.WriteSave(true));
-        }
-        if (event.keyCode == 82) {
-            Game.Reset();
-        }
-        if (event.keyCode == 83) {
-            Game.WriteSave();
-        }
-        if (event.keyCode == 87) {
-            Game.Notify('Wrinkler Info', 'Popping all wrinklers will give you ' + Beautify(wrinklerValue())
-            + ' cookies. <input type="button" value="Click here to pop all wrinklers" onclick="Game.CollectWrinklers()"></input>', [19, 8], 7);
-        }
-    }
-});
-
-function writeFCButton(setting) {
-    var current = FrozenCookies[setting];
-}
-
-function getSpeed(current) {
-    var newSpeed = prompt('How many times per second do you want to click? (Current maximum is 250 clicks per second)', current);
-    if (typeof(newSpeed) == 'undefined' || newSpeed == null || isNaN(Number(newSpeed)) || Number(newSpeed) < 0 || Number(newSpeed) > 250) {
-        newSpeed = current;
-    }
-    return Number(newSpeed);
-}
-
-function updateSpeed(base) {
-    var newSpeed = getSpeed(FrozenCookies[base]);
-    if (newSpeed != FrozenCookies[base]) {
-        FrozenCookies[base] = newSpeed;
-        updateLocalStorage();
-        FCStart();
-    }
-}
-
-function getCpSMultMin(current) {
-    var newMin = prompt('What CpS multiplier should trigger Auto Casting (e.g. "7" will trigger when you have full mana and a Frenzy, "1" prevents triggering during a clot, etc.)?', current);
-    if (typeof(newMin) == 'undefined' || newMin == null || isNaN(Number(newMin)) || Number(newMin) < 0) {
-        newMin = current;
-    }
-    return Number(newMin);
-}
-
-function updateCpSMultMin(base) {
-    var newMin = getCpSMultMin(FrozenCookies[base]);
-    if (newMin != FrozenCookies[base]) {
-        FrozenCookies[base] = newMin;
-        updateLocalStorage();
-        FCStart();
-    }
-}
-
-function getAscendAmount(current) {
-    current = 0;
-    var newAmount = prompt('How many heavenly chips do you want to auto-ascend at?', current);
-    if (typeof(newAmount) == 'undefined' || newAmount == null || isNaN(Number(newAmount)) || Number(newAmount) < 0) {
-        newAmount = current;
-    }
-    return Number(newAmount);
-}
-
-function updateAscendAmount(base) {
-    var newAmount = getAscendAmount(FrozenCookies[base]);
-    if (newAmount != FrozenCookies[base]) {
-        FrozenCookies[base] = newAmount;
-        updateLocalStorage();
-        FCStart();
-    }
-}
-
-function getManaMax(current) {
-    var newMax = prompt('Set maximum mana: ', current);
-    if (typeof(newMax) == 'undefined' || newMax == null || isNaN(Number(newMax)) || Number(newMax < 0)) {
-        newMax = current;
-    }
-    return Number(newMax);
-}
-
-function updateManaMax(base) {
-    var newMax = getManaMax(FrozenCookies[base]);
-    if (newMax != FrozenCookies[base]) {
-        FrozenCookies[base] = newMax;
-        updateLocalStorage();
-        FCStart();
-    }
-}
-
-function getMaxSpecials(current) {
-    var newSpecials = prompt('Set amount of stacked Building specials for Harvest Bank: ', current);
-    if (typeof(newSpecials) == 'undefined' || newSpecials == null || isNaN(Number(newSpecials)) || Number(newSpecials < 0)) {
-        newSpecials = current;
-    }
-    return Number(newSpecials);
-}
-
-function updateMaxSpecials(base) {
-    var newSpecials = getMaxSpecials(FrozenCookies[base]);
-    if (newSpecials != FrozenCookies[base]) {
-        FrozenCookies[base] = newSpecials;
-        updateLocalStorage();
-        FCStart();
-    }
-}
-
-function getCursorMax(current) {
-    var newMax = prompt('How many Cursors should Autobuy stop at?', current);
-    if (typeof(newMax) == 'undefined' || newMax == null || isNaN(Number(newMax)) || Number(newMax < 0)) {
-        newMax = current;
-    }
-    return Number(newMax);
-}
-
-function updateCursorMax(base) {
-    var newMax = getCursorMax(FrozenCookies[base]);
-    if (newMax != FrozenCookies[base]) {
-        FrozenCookies[base] = newMax;
-        updateLocalStorage();
-        FCStart();
-    }
-}
-
-function cyclePreference(preferenceName) {
-    var preference = FrozenCookies.preferenceValues[preferenceName];
-    if (preference) {
-        var display = preference.display;
-        var current = FrozenCookies[preferenceName];
-        var preferenceButton = $('#' + preferenceName + 'Button');
-        if (display && display.length > 0 && preferenceButton && preferenceButton.length > 0) {
-            var newValue = (current + 1) % display.length;
-            preferenceButton[0].innerText = display[newValue];
-            FrozenCookies[preferenceName] = newValue;
-            updateLocalStorage();
-            FrozenCookies.recalculateCaches = true;
-            Game.RefreshStore();
-            Game.RebuildUpgrades();
-            FCStart();
-        }
-    }
-}
-
-function toggleFrozen(setting) {
-    if (!Number(localStorage.getItem(setting))) {
-        localStorage.setItem(setting, 1);
-        FrozenCookies[setting] = 1;
-    } else {
-        localStorage.setItem(setting, 0);
-        FrozenCookies[setting] = 0;
-    }
-    FCStart();
 }
 
 var T = Game.Objects['Temple'].minigame;
@@ -452,8 +306,6 @@ function swapIn(godId, targetSlot) { //mostly code copied from minigamePantheon.
     Game.SparkleAt((rect.left+rect.right)/2,(rect.top+rect.bottom)/2-24);
 }
 
-
-
 function autoRigidel() {
     if (!T) return; //Exit if pantheon doesnt even exist
     var timeToRipe = (Game.lumpRipeAge - (Date.now() - Game.lumpT))/60000; //Minutes until sugar lump ripens
@@ -489,11 +341,7 @@ function autoRigidel() {
             }
     }
 }
-                
-            
-            
-        
-        
+                        
 function autoCast() {
     if (!M) return; //Just leave if you don't have grimoire
     if (M.magic == M.magicM) {
@@ -812,6 +660,7 @@ function edificeBank() {
     var cmCost = Game.Objects['Chancemaker'].price;
     return Game.hasBuff('everything must go') ? (cmCost * (100/95))/2 : cmCost/2;
 }
+
 function luckyBank() {
     return baseCps() * 60 * 100;
 }
@@ -1053,6 +902,7 @@ function checkPrices(currentUpgrade) {
     }
     return value;
 }
+
 // Use this for changes to future efficiency calcs
 function purchaseEfficiency(price, deltaCps, baseDeltaCps, currentCps) {
     var efficiency = Number.POSITIVE_INFINITY;
@@ -1368,24 +1218,6 @@ function cumulativeSantaCost(amount) {
     return total;
 }
 
-function cumulativeSantaCost(amount) {
-    var total = 0;
-    if (!amount) {
-
-    } else if (Game.santaLevel + amount < Game.santaLevels.length) {
-        for (var i = Game.santaLevel + 1; i <= Game.santaLevel + amount; i++) {
-            total += Math.pow(i, i);
-        }
-    } else if (amount < Game.santaLevels.length) {
-        for (var i = Game.santaLevel + 1; i <= amount; i++) {
-            total += Math.pow(i, i);
-        }
-    } else {
-        total = Infinity;
-    }
-    return total;
-}
-
 function upgradePrereqCost(upgrade, full) {
     var cost = upgrade.getPrice();
     if (upgrade.unlocked) {
@@ -1646,6 +1478,7 @@ function buySanta() {
     }
 }
 
+//Helper functions for Stats
 function statSpeed() {
     var speed = 0;
     switch (FrozenCookies.trackStats) {
@@ -1665,16 +1498,12 @@ function statSpeed() {
     return speed;
 }
 
-function saveStats(fromGraph) {
-    FrozenCookies.trackedStats.push({
-        time: Date.now() - Game.startDate,
-        baseCps: baseCps(),
-        effectiveCps: effectiveCps(),
-        hc: Game.HowMuchPrestige(Game.cookiesEarned + Game.cookiesReset + wrinklerValue())
+function transpose(a) {
+    return Object.keys(a[0]).map(function(c) {
+        return a.map(function(r) {
+            return r[c];
+        });
     });
-    if ($('#statGraphContainer').length > 0 && !$('#statGraphContainer').is(':hidden') && !fromGraph) {
-        viewStatGraphs();
-    }
 }
 
 function viewStatGraphs() {
@@ -1797,25 +1626,6 @@ function updateCaches() {
     } while (FrozenCookies.recalculateCaches && recalcCount < 10);
 }
 
-//updated code to 2.016 version
-function fcWin(what) {
-    if (typeof what === 'string') {
-        if (Game.Achievements[what]) {
-            if (Game.Achievements[what].won == 0) {
-                
-		var name=Game.Achievements[what].shortName?Game.Achievements[what].shortName:Game.Achievements[what].name;
-		Game.Achievements[what].won=1;
-		if (Game.prefs.popups) Game.Popup('Achievement unlocked :<br>'+name);
-	    // suppress notify because of fast clicking
-		// else Game.Notify('Achievement unlocked','<div class="title" style="font-size:18px;margin-top:-2px;">'+name+'</div>',Game.Achievements[what].icon);
-		if (Game.CountsAsAchievementOwned(Game.Achievements[what].pool)) Game.AchievementsOwned++;
-		Game.recalculateGains=1;    		    
-            }
-        }
-    } 
-    else { for (var i in what) { Game.Win(what[i]); }}
-}
-
 function logEvent(event, text, popup) {
     var time = '[' + timeDisplay((Date.now() - Game.startDate) / 1000) + ']';
     var output = time + ' ' + event + ': ' + text;
@@ -1840,32 +1650,22 @@ function inRect(x, y, rect) {
     return (x2 > -0.5 * rect.w && x2 < 0.5 * rect.w && y2 > -0.5 * rect.h && y2 < 0.5 * rect.h);
 }
 */
-function transpose(a) {
-    return Object.keys(a[0]).map(function(c) {
-        return a.map(function(r) {
-            return r[c];
-        });
-    });
-}
-
-function smartTrackingStats(delay) {
-    saveStats();
-    if (FrozenCookies.trackStats == 6) {
-        delay /= (FrozenCookies.delayPurchaseCount == 0) ? (1 / 1.5) : (delay > FrozenCookies.minDelay ? 2 : 1);
-        FrozenCookies.smartTrackingBot = setTimeout(function() {
-            smartTrackingStats(delay);
-        }, delay);
-        FrozenCookies.delayPurchaseCount = 0;
-    }
-}
-
-// Unused
-function shouldClickGC() {
+function goldenCookieLife() {
     for (var i in Game.shimmers) {
         if (Game.shimmers[i].type == 'golden') {
-            return Game.shimmers[i].life > 0 && FrozenCookies.autoGC;
+            return Game.shimmers[i].life
         }
     }
+    return null;
+}
+
+function reindeerLife() {
+    for (var i in Game.shimmers) {
+        if (Game.shimmers[i].type == 'reindeer') {
+            return Game.shimmers[i].life
+        }
+    }
+    return null;
 }
 
 function liveWrinklers() {
@@ -1921,6 +1721,32 @@ function shouldPopWrinklers() {
     return toPop;
 }
 
+//statBot
+function saveStats(fromGraph) {
+    FrozenCookies.trackedStats.push({
+        time: Date.now() - Game.startDate,
+        baseCps: baseCps(),
+        effectiveCps: effectiveCps(),
+        hc: Game.HowMuchPrestige(Game.cookiesEarned + Game.cookiesReset + wrinklerValue())
+    });
+    if ($('#statGraphContainer').length > 0 && !$('#statGraphContainer').is(':hidden') && !fromGraph) {
+        viewStatGraphs();
+    }
+}
+
+//smartTrackingBot
+function smartTrackingStats(delay) {
+    saveStats();
+    if (FrozenCookies.trackStats == 6) {
+        delay /= (FrozenCookies.delayPurchaseCount == 0) ? (1 / 1.5) : (delay > FrozenCookies.minDelay ? 2 : 1);
+        FrozenCookies.smartTrackingBot = setTimeout(function() {
+            smartTrackingStats(delay);
+        }, delay);
+        FrozenCookies.delayPurchaseCount = 0;
+    }
+}
+
+//frenzyClickBot
 function autoFrenzyClick() {
     if (hasClickBuff() && !FrozenCookies.autoFrenzyBot) {
         if (FrozenCookies.autoclickBot) {
@@ -1937,6 +1763,7 @@ function autoFrenzyClick() {
     }
 }
 
+//autoGSBot
 function autoGSBuy() {
     if (hasClickBuff()) {
         if (Game.Upgrades['Golden switch [off]'].unlocked &&
@@ -1952,6 +1779,7 @@ function autoGSBuy() {
     }
 }
 
+//autoGodzamokBot
 function autoGodzamokAction() {
     if (!T) return; //Just leave if Pantheon isn't here yet
     //Now has option to not trigger until current Devastation buff expires (i.e. won't rapidly buy & sell cursors throughout Godzamok duration)
@@ -1962,30 +1790,14 @@ function autoGodzamokAction() {
     }
 }
 
-function goldenCookieLife() {
-    for (var i in Game.shimmers) {
-        if (Game.shimmers[i].type == 'golden') {
-            return Game.shimmers[i].life
-        }
-    }
-    return null;
-}
-
-function reindeerLife() {
-    for (var i in Game.shimmers) {
-        if (Game.shimmers[i].type == 'reindeer') {
-            return Game.shimmers[i].life
-        }
-    }
-    return null;
-}
-
+//autoClickBot
 function fcClickCookie() {
     if (!Game.OnAscend && !Game.AscendTimer && !Game.specialTabHovered) {
         Game.ClickCookie();
     }
 }
 
+//AutoBuy function
 function autoCookie() {
     //console.log('autocookie called');
     if (!FrozenCookies.processing && !Game.OnAscend && !Game.AscendTimer) {
@@ -2065,11 +1877,13 @@ function autoCookie() {
             //      console.log(purchase.name + ': ' + Beautify(recommendation.efficiency) + ',' + Beautify(recommendation.delta_cps));
             recommendation.purchase.buy();
             
+			//Smart Stats
             if (FrozenCookies.trackStats == 5 && recommendation.type == 'upgrade') {
                 saveStats();
             } else if (FrozenCookies.trackStats == 6) {
                 FrozenCookies.delayPurchaseCount += 1;
             }
+			
             logEvent('Store', 'Autobought ' + recommendation.purchase.name + ' for ' + Beautify(recommendation.cost) + ', resulting in ' + Beautify(recommendation.delta_cps) + ' CPS.');
             disabledPopups = true;
             
@@ -2152,81 +1966,3 @@ function autoCookie() {
     }
 }
 
-function FCStart() {
-    //  To allow polling frequency to change, clear intervals before setting new ones.
-
-    if (FrozenCookies.cookieBot) {
-        clearInterval(FrozenCookies.cookieBot);
-        FrozenCookies.cookieBot = 0;
-    }
-    if (FrozenCookies.autoclickBot) {
-        clearInterval(FrozenCookies.autoclickBot);
-        FrozenCookies.autoclickBot = 0;
-    }
-    if (FrozenCookies.statBot) {
-        clearInterval(FrozenCookies.statBot);
-        FrozenCookies.statBot = 0;
-    }
-
-    if (FrozenCookies.autoGSBot) {
-        clearInterval(FrozenCookies.autoGSBot);
-        FrozenCookies.autoGSBot = 0;
-    }
-
-    if (FrozenCookies.autoGodzamokBot) {
-        clearInterval(FrozenCookies.autoGodzamokBot);
-        FrozenCookies.autoGodzamokBot = 0;
-    }
-
-    //  if (!FrozenCookies.saveWrinklers && localStorage.wrinklers) {
-    //    delete localStorage.wrinklers;
-    //  }
-
-    // Remove until timing issues are fixed
-    //  if (FrozenCookies.goldenCookieBot) {
-    //    clearInterval(FrozenCookies.goldenCookieBot);
-    //    FrozenCookies.goldenCookieBot = 0;
-    //  }
-
-    // Now create new intervals with their specified frequencies.
-
-    if (FrozenCookies.frequency) {
-        FrozenCookies.cookieBot = setTimeout(autoCookie, FrozenCookies.frequency);
-    }
-
-    //  if (FrozenCookies.autoGC) {
-    //    FrozenCookies.goldenCookieBot = setInterval(autoGoldenCookie, FrozenCookies.frequency);
-    //  }
-
-    if (FrozenCookies.autoClick && FrozenCookies.cookieClickSpeed) {
-        FrozenCookies.autoclickBot = setInterval(fcClickCookie, 1000 / FrozenCookies.cookieClickSpeed);
-    }
-
-    if (FrozenCookies.autoFrenzy && FrozenCookies.frenzyClickSpeed) {
-        FrozenCookies.frenzyClickBot = setInterval(autoFrenzyClick, FrozenCookies.frequency);
-    }
-
-    if (FrozenCookies.autoGS) {
-        FrozenCookies.autoGSBot = setInterval(autoGSBuy, FrozenCookies.frequency)
-    }
-
-    if (FrozenCookies.autoGodzamok) {
-        FrozenCookies.autoGodzamokBot = setInterval(autoGodzamokAction, FrozenCookies.frequency)
-    }
-    
-    if(FrozenCookies.autoSpell) {
-        setInterval(autoCast, FrozenCookies.frequency*10)
-    }
-
-    if (statSpeed(FrozenCookies.trackStats) > 0) {
-        FrozenCookies.statBot = setInterval(saveStats, statSpeed(FrozenCookies.trackStats));
-    } else if (FrozenCookies.trackStats == 6 && !FrozenCookies.smartTrackingBot) {
-        FrozenCookies.smartTrackingBot = setTimeout(function() {
-            smartTrackingStats(FrozenCookies.minDelay * 8)
-        }, FrozenCookies.minDelay);
-    }
-
-
-
-    FCMenu();
-}

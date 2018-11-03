@@ -16,7 +16,333 @@ $('<style type="text/css">')
     )
     .appendTo('head');
 
+// todo: add bind for autoascend
+// Press 'a' to toggle autobuy.
+// Press 'b' to pop up a copyable window with building spread.
+// Press 'c' to toggle auto-GC
+// Press 'e' to pop up a copyable window with your export string
+// Press 'r' to pop up the reset window
+// Press 's' to do a manual save
+// Press 'w' to display a wrinkler-info window
+document.addEventListener('keydown', function(event) {
+    if (!Game.promptOn) {
+        if (event.keyCode == 65) {
+            Game.Toggle('autoBuy', 'autobuyButton', 'Autobuy OFF', 'Autobuy ON');
+            toggleFrozen('autoBuy');
+        }
+        if (event.keyCode == 66) {
+            copyToClipboard(getBuildingSpread());
+        }
+        if (event.keyCode == 67) {
+            Game.Toggle('autoGC', 'autogcButton', 'Autoclick GC OFF', 'Autoclick GC ON');
+            toggleFrozen('autoGC');
+        }
+        if (event.keyCode == 69) {
+            copyToClipboard(Game.WriteSave(true));
+        }
+        if (event.keyCode == 82) {
+            Game.Reset();
+        }
+        if (event.keyCode == 83) {
+            Game.WriteSave();
+        }
+        if (event.keyCode == 87) {
+            Game.Notify('Wrinkler Info', 'Popping all wrinklers will give you ' + Beautify(wrinklerValue())
+            + ' cookies. <input type="button" value="Click here to pop all wrinklers" onclick="Game.CollectWrinklers()"></input>', [19, 8], 7);
+        }
+    }
+});	
 
+FrozenCookies.preferenceValues = {
+    'autoBuy':{
+        'hint':'Automatically buy the most efficient building when you\'ve met its cost',
+        'display':["Autobuy OFF","Autobuy ON"],
+        'default':0
+    },
+    'autoAscend':{
+        'hint':'Automatically ascend when your heavenly chip count hits a certain number. (note: this will skip the upgrade screen)',
+        'display':["Autoascend OFF", "Autoascend ON"],
+        'default':0,
+        'extras':'<a class="option" id="chipsToAscend" onclick="updateAscendAmount(\'HCAscendAmount\');">${HCAscendAmount} heavenly chips</a>'
+    },
+    'autoBulk':{
+        'hint':'Automatically set buildings to be bought in bulk after reincarnation',
+        'display':['Auto Bulkbuy OFF', 'Auto Bulkbuy x10', 'Auto Bulkbuy x100'],
+        'default':0
+    },
+    'autoGC':{
+        'hint':'Automatically click Golden Cookies when they appear',
+        'display':["Autoclick GC OFF", "Autoclick GC ON"],
+        'default':0
+    },
+    'autoWrinkler':{
+        'hint':'Automatically pop wrinklers efficiently or instantly',
+        'display':['Autopop Wrinklers OFF', 'Autopop Wrinklers Efficiently', 'Autopop Wrinklers Instantly'],
+        'default':0
+    },
+/*Not working yet
+    'shinyPop':{
+        'hint':'Protect the endangered Shiny Wrinkler from being auomatically popped',
+        'display':['Save Shiny Wrinklers ON', 'Save Shiny Wrinklers OFF'],
+        'default':0
+    },*/
+    'autoSL':{
+        'hint':'Automatically harvest sugar lumps when ripe, with option to automatically swap in Rigidel',
+        'display':["Autoharvest SL OFF", "Autoharvest SL ON", "Autoharvest SL ON + Auto Rigidel"],
+        'default':0
+    },
+    'autoReindeer':{
+        'hint':'Automatically click reindeer',
+        'display':['Autoclick Reindeer OFF', 'Autoclick Reindeer ON'],
+        'default':0
+    },
+    'autoClick':{
+        'hint':'Click the large cookie',
+        'display':['Autoclick OFF', 'Autoclick ON'],
+        'default':0,
+        'extras':'<a class="option" id="cookieClickSpeed" onclick="updateSpeed(\'cookieClickSpeed\');">${cookieClickSpeed} clicks/sec</a>'
+    },
+    'autoFrenzy':{
+        'hint':'Click the large cookie during Clicking Frenzies',
+        'display':['Autofrenzy OFF', 'Autofrenzy ON'],
+        'default':0,
+        'extras':'<a class="option" id="frenzyClickSpeed" onclick="updateSpeed(\'frenzyClickSpeed\');">${frenzyClickSpeed} clicks/sec</a>'
+    },
+    'autoBlacklistOff':{
+        'hint':'Automatically turns off a blacklist once the goal for that blacklist is achieved',
+        'display':['Auto Blacklist OFF', 'Auto Blacklist ON'],
+        'default':0
+    },
+    'blacklist':{
+        'hint':'Blacklist purchases from the efficiency calculations',
+        'display':['No Blacklist', 'Speedrun Blacklist', 'Hardcore Blacklist', 'Grandmapocalypse Mode', 'No Buildings'],
+        'default':0
+    },
+/*  'timeTravelMethod':{
+        'hint':'Time travel is unstable. This determines how time travel works. If you\'re unsure, don\'t touch this.',
+        'display':['Time Travel DISABLED'],//,'Purchases by Estimated Effective CPS','Purchases by Simulated Real Time','Heavenly Chips by Estimated Effective CPS','Heavenly Chips by Simulated Real Time'],
+        'default':0,
+        'extras':'<a class="option" id="timeTravelPurchases" onclick="updateTimeTravelAmount();">Set Time Travel Amount</a>'
+    },*/
+    'pastemode':{
+        'hint':'Always autobuy the least efficient purchase. This is a stupid idea, you should never turn this on.',
+        'display':['Pastemode OFF','Pastemode ON'],
+        'default':0
+    },
+    'simulatedGCPercent':{
+        'hint':'What percentage of Golden Cookies should be assumed as "clicked" for GC efficiency calculations (100% recommended)',
+        'display':["0%","100%"],
+        'default':1
+    },
+  /*  'fpsModifier':{
+        'hint':'The frame rate at which the game runs. 60 is twice as fast, 15 is half as fast, etc. If you\'re not sure, keep this at 30',
+        'display':['24','25','30','48','50','60','72','90','100','120','144','200','240','300'],
+        'default':2
+  }, */
+    'logging':{
+        'hint':'Display detailed logs in the javascript console',
+        'display':['Logging OFF', 'Logging ON'],
+        'default':1
+    },
+    'trackStats':{
+        'hint':'Track your CPS/HC earned over time during a single session to enable graphing. This may end up being *extremely* memory-intensive',
+        'display':['Tracking OFF', 'Every 60s', 'Every 30m', 'Every 1h', 'Every 24h', 'On upgrades', 'Smart Timing'],
+        'default':0,
+        'extras':'<a class="option" id="viewStats" onclick="viewStatGraphs();">View Stat Graphs</a>'
+    },
+    
+    /*Doesnt work
+    'showAchievements':{
+        'hint':'Show achievement popups (Kind of broken early game)',
+        'display':['Achievement Popups OFF','Achievement Popups ON'],
+        'default':0
+    },
+    */
+    
+    'numberDisplay':{
+        'hint':'Change how numbers are shortened',
+        'display':["Raw Numbers","Full Word (million, billion)","Initials (M, B)","SI Units (M, G, T)", "Scientific Notation (6.3e12)"],
+        'default':1
+    },
+    'autoGS':{
+        'hint':'Automatically turn on the Golden Switch during Dragonflight and Click Frenzy',
+        'display':['Auto-Switch OFF','Auto-Switch ON'],
+        'default':0
+    },
+    'autoGodzamok':{
+        'hint':'Automatically sell all cursors during Dragonflight and Click Frenzy if you worship Godzamok ("Sane" prevents rapid buy/sell spam)',
+        'display':['Auto-Godzamok OFF','Auto-Godzamok ON','Auto-Godzamok ON (Sane)','Auto-Godzamok (REALLY INSANE)'],
+        'default':0
+    },
+    'cursorLimit':{
+        'hint':'Limit max number of cursors to keep Godzamok useful',
+        'display':['Cursor Limit OFF','Cursor Limit ON'],
+        'default':0,
+        'extras':'<a class="option" id="cursorMax" onclick="updateCursorMax(\'cursorMax\');">${cursorMax} cursors</a>'
+    },
+    'autoSpell':{
+        'hint':'Automatically cast selected spell when your mana is full',
+        'display':["Auto Cast OFF","Cojure Baked Goods","Force the Hand of Fate","Spontaneous Edifice","Haggler's Charm (cheapest)"],
+        'default':0,
+        'extras':'<a class="option" id="minCpSMult" onclick="updateCpSMultMin(\'minCpSMult\');">x${minCpSMult} minimum Frenzy</a>'
+    },
+    'holdSEBank':{
+        'hint':'Maintain a bank for Spontaneous Edifice (already enabled if Auto Casting SE)',
+        'display':["SE Bank OFF","SE Bank ON"],
+        'default':0,
+    },
+    'towerLimit':{
+        'hint':'Stop Autobuying Wizard Towers at selected Max Mana, for spellcasting efficiency',
+        'display':['Wizard Tower Cap OFF','Wizard Tower Cap ON'],
+        'default':0,
+        'extras':'<a class="option" id="manaMax" onclick="updateManaMax(\'manaMax\');">${manaMax} max Mana</a>'
+    },
+    'setHarvestBankPlant':{
+        'hint':'Choose the plant you are going to harvest/let explode.',
+        'display':['No harvesting Bank','Bakeberry Bank','Chocoroot Bank','White Chocoroot Bank','Queenbeet Bank','Duketater Bank','Crumbspore Bank','Doughshroom Bank'],
+        'default':0
+    },
+    'setHarvestBankType':{
+        'hint':'Choose a scenario that you want for harvesting to calculate the needed Bank (no effect if no plant was selected above).',
+        'display':['No CpS multiplier','Frenzy','Building special','Frenzy + Building special'],
+        'default':0,
+        'extras':'<a class="option" id="maxSpecials" onclick="updateMaxSpecials(\'maxSpecials\');">${maxSpecials} Building specials</a>'
+    },
+    'defaultSeason':{
+        'hint':'Season to maintain when no others have needed upgrades',
+        'display':['Default Season: None','Default Season: Business Day','Default Season: Christmas','Default Season: Easter','Default Season: Halloween',"Default Season: Valentine's Day"],
+        'default':0
+    }
+};
+
+// UI Helper functions
+function toggleFrozen(setting) {
+    if (!Number(localStorage.getItem(setting))) {
+        localStorage.setItem(setting, 1);
+        FrozenCookies[setting] = 1;
+    } else {
+        localStorage.setItem(setting, 0);
+        FrozenCookies[setting] = 0;
+    }
+    StartTimer();
+}
+
+function copyToClipboard(text) {
+    Game.promptOn = 1;
+    window.prompt("Copy to clipboard: Ctrl+C, Enter", text);
+    Game.promptOn = 0;
+}
+
+function getBuildingSpread() {
+    return Game.ObjectsById.map(function(a) {
+        return a.amount;
+    }).join('/')
+}
+
+function getSpeed(current) {
+    var newSpeed = prompt('How many times per second do you want to click? (Current maximum is 250 clicks per second)', current);
+    if (typeof(newSpeed) == 'undefined' || newSpeed == null || isNaN(Number(newSpeed)) || Number(newSpeed) < 0 || Number(newSpeed) > 250) {
+        newSpeed = current;
+    }
+    return Number(newSpeed);
+}
+
+function updateSpeed(base) {
+    var newSpeed = getSpeed(FrozenCookies[base]);
+    if (newSpeed != FrozenCookies[base]) {
+        FrozenCookies[base] = newSpeed;
+        updateLocalStorage();
+        StartTimer();
+    }
+}
+
+function getCpSMultMin(current) {
+    var newMin = prompt('What CpS multiplier should trigger Auto Casting (e.g. "7" will trigger when you have full mana and a Frenzy, "1" prevents triggering during a clot, etc.)?', current);
+    if (typeof(newMin) == 'undefined' || newMin == null || isNaN(Number(newMin)) || Number(newMin) < 0) {
+        newMin = current;
+    }
+    return Number(newMin);
+}
+
+function updateCpSMultMin(base) {
+    var newMin = getCpSMultMin(FrozenCookies[base]);
+    if (newMin != FrozenCookies[base]) {
+        FrozenCookies[base] = newMin;
+        updateLocalStorage();
+        StartTimer();
+    }
+}
+
+function getAscendAmount(current) {
+    current = 0;
+    var newAmount = prompt('How many heavenly chips do you want to auto-ascend at?', current);
+    if (typeof(newAmount) == 'undefined' || newAmount == null || isNaN(Number(newAmount)) || Number(newAmount) < 0) {
+        newAmount = current;
+    }
+    return Number(newAmount);
+}
+
+function updateAscendAmount(base) {
+    var newAmount = getAscendAmount(FrozenCookies[base]);
+    if (newAmount != FrozenCookies[base]) {
+        FrozenCookies[base] = newAmount;
+        updateLocalStorage();
+        StartTimer();
+    }
+}
+
+function getManaMax(current) {
+    var newMax = prompt('Set maximum mana: ', current);
+    if (typeof(newMax) == 'undefined' || newMax == null || isNaN(Number(newMax)) || Number(newMax < 0)) {
+        newMax = current;
+    }
+    return Number(newMax);
+}
+
+function updateManaMax(base) {
+    var newMax = getManaMax(FrozenCookies[base]);
+    if (newMax != FrozenCookies[base]) {
+        FrozenCookies[base] = newMax;
+        updateLocalStorage();
+        StartTimer();
+    }
+}
+
+function getMaxSpecials(current) {
+    var newSpecials = prompt('Set amount of stacked Building specials for Harvest Bank: ', current);
+    if (typeof(newSpecials) == 'undefined' || newSpecials == null || isNaN(Number(newSpecials)) || Number(newSpecials < 0)) {
+        newSpecials = current;
+    }
+    return Number(newSpecials);
+}
+
+function updateMaxSpecials(base) {
+    var newSpecials = getMaxSpecials(FrozenCookies[base]);
+    if (newSpecials != FrozenCookies[base]) {
+        FrozenCookies[base] = newSpecials;
+        updateLocalStorage();
+        StartTimer();
+    }
+}
+
+function getCursorMax(current) {
+    var newMax = prompt('How many Cursors should Autobuy stop at?', current);
+    if (typeof(newMax) == 'undefined' || newMax == null || isNaN(Number(newMax)) || Number(newMax < 0)) {
+        newMax = current;
+    }
+    return Number(newMax);
+}
+
+function updateCursorMax(base) {
+    var newMax = getCursorMax(FrozenCookies[base]);
+    if (newMax != FrozenCookies[base]) {
+        FrozenCookies[base] = newMax;
+        updateLocalStorage();
+        StartTimer();
+    }
+}
+
+//draws infobox
 function drawCircles(t_d, x, y) {
     var maxRadius, heightOffset, i_c, i_tc, t_b, maxWidth, maxHeight, s_t,
         c = $('#backgroundLeftCanvas');
@@ -114,6 +440,54 @@ function buffDuration(buffName) {
     return buff ? buff.time : 0;
 }
 
+function nextHC(tg) {
+var futureHC = Math.ceil(Game.HowMuchPrestige(Game.cookiesEarned + Game.cookiesReset));
+    var nextHC = Game.HowManyCookiesReset(futureHC)
+    var toGo = nextHC - (Game.cookiesEarned + Game.cookiesReset);
+    return tg ? toGo : timeDisplay(divCps(toGo, Game.cookiesPs));
+}
+
+function timeDisplay(seconds) {
+    if (seconds === '---' || seconds === 0) {
+        return 'Done!';
+    } else if (seconds == Number.POSITIVE_INFINITY) {
+        return 'Never!'
+    }
+    seconds = Math.floor(seconds);
+    var days, hours, minutes;
+    days = Math.floor(seconds / (24 * 60 * 60));
+    days = (days > 0) ? Beautify(days) + 'd ' : '';
+    seconds %= (24 * 60 * 60);
+    hours = Math.floor(seconds / (60 * 60));
+    hours = (hours > 0) ? hours + 'h ' : '';
+    seconds %= (60 * 60);
+    minutes = Math.floor(seconds / 60);
+    minutes = (minutes > 0) ? minutes + 'm ' : '';
+    seconds %= 60;
+    seconds = (seconds > 0) ? seconds + 's' : '';
+    return (days + hours + minutes + seconds).trim();
+}
+
+function cyclePreference(preferenceName) {
+    var preference = FrozenCookies.preferenceValues[preferenceName];
+    if (preference) {
+        var display = preference.display;
+        var current = FrozenCookies[preferenceName];
+        var preferenceButton = $('#' + preferenceName + 'Button');
+        if (display && display.length > 0 && preferenceButton && preferenceButton.length > 0) {
+            var newValue = (current + 1) % display.length;
+            preferenceButton[0].innerText = display[newValue];
+            FrozenCookies[preferenceName] = newValue;
+            updateLocalStorage();
+            FrozenCookies.recalculateCaches = true;
+            Game.RefreshStore();
+            Game.RebuildUpgrades();
+            StartTimer();
+        }
+    }
+}
+
+//calculates data for infobox, called via Game.DrawBackground;
 function updateTimers() {
     var chainPurchase, bankPercent, purchasePercent, bankMax, actualCps, t_draw,
         maxColor, height,
