@@ -79,6 +79,8 @@ function setOverrides() {
 	//as Beautify is already included in CC, just add the choose from FC
     eval("Beautify="+Beautify.toString().replace(/Game\.prefs\.format\?2:1/g, 'FrozenCookies\.numberDisplay'));
 	
+	eval('FrozenCookies.safeGainsCalc = ' + Game.CalculateGains.toString().replace(/Game\.cookiesPs/g, 'FrozenCookies.calculatedCps').replace(/Game\.globalCpsMult/g, 'mult'));
+	
 	Game.sayTime = function(time, detail) {
         return timeDisplay(time / Game.fps);
     }
@@ -1822,7 +1824,7 @@ function logEvent(event, text, popup) {
         Game.Popup(text);
     }
 }
-
+/*
 function inRect(x, y, rect) {
     // Duplicate of internally defined method,
     // only needed because I'm modifying the scope of Game.UpdateWrinklers and it can't see this anymore.
@@ -1835,7 +1837,7 @@ function inRect(x, y, rect) {
     var y2 = Math.sin(newA) * h1;
     return (x2 > -0.5 * rect.w && x2 < 0.5 * rect.w && y2 > -0.5 * rect.h && y2 < 0.5 * rect.h);
 }
-
+*/
 function transpose(a) {
     return Object.keys(a[0]).map(function(c) {
         return a.map(function(r) {
