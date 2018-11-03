@@ -3,7 +3,7 @@ function FCStart() {
     logEvent("Load", "Initial Load of Frozen Cookies v " + FrozenCookies.branch + "." + FrozenCookies.version + ". (You should only ever see this once.)");
 
     // Set all cycleable preferencesau
-    Object.keys(FrozenCookies.preferenceValues).forEach(function(preference) {
+    _.keys(FrozenCookies.preferenceValues).forEach(function(preference) {
         FrozenCookies[preference] = preferenceParse(preference, FrozenCookies.preferenceValues[preference].default);
     });
 
@@ -238,7 +238,7 @@ function preferenceParse(setting, defaultVal) {
 }
 
 function updateLocalStorage() {
-    Object.keys(FrozenCookies.preferenceValues).forEach(function(preference) {
+    _.keys(FrozenCookies.preferenceValues).forEach(function(preference) {
         localStorage[preference] = FrozenCookies[preference];
     });
 
@@ -423,7 +423,7 @@ function cumulativeProbability(listType, start, stop) {
 
 function probabilitySpan(listType, start, endProbability) {
     var startProbability = getProbabilityList(listType)[start];
-    return Object.sortedIndex(getProbabilityList(listType), (startProbability + endProbability - startProbability * endProbability));
+    return _.sortedIndex(getProbabilityList(listType), (startProbability + endProbability - startProbability * endProbability));
 }
 
 function clickBuffBonus() {
