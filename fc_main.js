@@ -20,7 +20,7 @@ function setOverrides() {
 
     logEvent("Load", "Initial Load of Frozen Cookies v " + FrozenCookies.branch + "." + FrozenCookies.version + ". (You should only ever see this once.)");
 
-    FrozenCookies.frequency = 100;
+    FrozenCookies.frequency = 100; // Base timer interval 100ms
     FrozenCookies.efficiencyWeight = 1.0;
 
     // Separate because these are user-input values
@@ -32,8 +32,6 @@ function setOverrides() {
     FrozenCookies.manaMax = preferenceParse('manaMax', 100);
     FrozenCookies.maxSpecials = preferenceParse('maxSpecials', 1);
 
-    // Becomes 0 almost immediately after user input, so default to 0
-    FrozenCookies.timeTravelAmount = 0;
 
     // Force redraw every 10 purchases
     FrozenCookies.autobuyCount = 0;
@@ -94,39 +92,57 @@ function setOverrides() {
     if (!blacklist[FrozenCookies.blacklist]) {
         FrozenCookies.blacklist = 0;
     }
-    Beautify = fcBeautify;
-    Game.sayTime = function(time, detail) {
+    
+	//Beautify = fcBeautify;
+    eval("Beautify="+Beautify.toString().replace(/Game\.prefs\.format\?2:1/g, 'FrozenCookies\.numberDisplay'));
+	
+	Game.sayTime = function(time, detail) {
         return timeDisplay(time / Game.fps);
     }
-    Game.oldReset = Game.Reset;
-    Game.oldWriteSave = Game.WriteSave;
-    Game.oldLoadSave = Game.LoadSave;
-    Game.Reset = fcReset;
-    Game.WriteSave = fcWriteSave;
-    //  if (FrozenCookies.saveWrinklers && localStorage.wrinklers) {
-    //    Game.wrinklers = JSON.parse(localStorage.wrinklers);
-    //  }
-    Game.Win = fcWin; //Block showing fast-click achievments every few seconds
-    Game.oldBackground = Game.DrawBackground;
     
+	Game.oldReset = Game.Reset;
+    Game.Reset = fcReset;
+    
+    Game.Win = fcWin; //Block showing fast-click achievments every few seconds
+    
+	Game.oldBackground = Game.DrawBackground;   
     Game.DrawBackground = function() {
         Game.oldBackground();
-	updateTimers();
+	    updateTimers();
     }
     // Remove the following when turning on tooltop code
     nextPurchase(true);
     Game.RefreshStore();
     Game.RebuildUpgrades();
     beautifyUpgradesAndAchievements();
-    // Replace Game.Popup references with event logging
-    eval('Game.shimmerTypes.golden.popFunc = ' + Game.shimmerTypes.golden.popFunc.toString().replace(/Game\.Popup\((.+)\)\;/g, 'logEvent("GC", $1, true);'));
-    eval('Game.UpdateWrinklers = ' + Game.UpdateWrinklers.toString().replace(/Game\.Popup\((.+)\)\;/g, 'logEvent("Wrinkler", $1, true);'));
-    eval('FrozenCookies.safeGainsCalc = ' + Game.CalculateGains.toString().replace(/eggMult\+=\(1.+/, 'eggMult++; // CENTURY EGGS SUCK').replace(/Game\.cookiesPs/g, 'FrozenCookies.calculatedCps').replace(/Game\.globalCpsMult/g, 'mult'));
 
     // Give free achievements!
     if (!Game.HasAchiev('Third-party')) {
         Game.Win('Third-party');
     }
+}
+
+function fcReset() {
+    Game.CollectWrinklers();
+    if (Game.HasUnlocked('Chocolate egg') && !Game.Has('Chocolate egg')) {
+        Game.ObjectsById.forEach(function(b) {
+            b.sell(-1);
+        });
+        Game.Upgrades['Chocolate egg'].buy();
+    }
+    Game.oldReset();
+    FrozenCookies.frenzyTimes = {};
+    FrozenCookies.last_gc_state = (Game.hasBuff('Frenzy') ? Game.buffs['Frenzy'].multCpS : 1) * clickBuffBonus();
+    FrozenCookies.last_gc_time = Date.now();
+    FrozenCookies.lastHCAmount = Game.HowMuchPrestige(Game.cookiesEarned + Game.cookiesReset + wrinklerValue());
+    FrozenCookies.lastHCTime = Date.now();
+    FrozenCookies.maxHCPercent = 0;
+    FrozenCookies.prevLastHCTime = Date.now();
+    FrozenCookies.lastCps = 0;
+    FrozenCookies.lastBaseCps = 0;
+    FrozenCookies.trackedStats = [];
+    updateLocalStorage();
+    recommendationList(true);
 }
 
 function preferenceParse(setting, defaultVal) {
@@ -296,35 +312,7 @@ function timeDisplay(seconds) {
     return (days + hours + minutes + seconds).trim();
 }
 
-function fcReset() {
-    Game.CollectWrinklers();
-    if (Game.HasUnlocked('Chocolate egg') && !Game.Has('Chocolate egg')) {
-        Game.ObjectsById.forEach(function(b) {
-            b.sell(-1);
-        });
-        Game.Upgrades['Chocolate egg'].buy();
-    }
-    Game.oldReset();
-    FrozenCookies.frenzyTimes = {};
-    FrozenCookies.last_gc_state = (Game.hasBuff('Frenzy') ? Game.buffs['Frenzy'].multCpS : 1) * clickBuffBonus();
-    FrozenCookies.last_gc_time = Date.now();
-    FrozenCookies.lastHCAmount = Game.HowMuchPrestige(Game.cookiesEarned + Game.cookiesReset + wrinklerValue());
-    FrozenCookies.lastHCTime = Date.now();
-    FrozenCookies.maxHCPercent = 0;
-    FrozenCookies.prevLastHCTime = Date.now();
-    FrozenCookies.lastCps = 0;
-    FrozenCookies.lastBaseCps = 0;
-    FrozenCookies.trackedStats = [];
-    updateLocalStorage();
-    recommendationList(true);
-}
 
-function fcWriteSave(exporting) {
-    //  if (FrozenCookies.saveWrinklers && Game.wrinklers) {
-    //    localStorage.wrinklers = JSON.stringify(Game.wrinklers);
-    //  }
-    return Game.oldWriteSave(exporting);
-}
 
 function updateLocalStorage() {
     _.keys(FrozenCookies.preferenceValues).forEach(function(preference) {
@@ -520,14 +508,6 @@ function updateCursorMax(base) {
         updateLocalStorage();
         FCStart();
     }
-}
-
-function updateTimeTravelAmount() {
-    var newAmount = prompt("Warning: Time travel is highly unstable, and large values are highly likely to either cause long delays or crash the game. Be careful!\nHow much do you want to time travel by? This will happen instantly.");
-    if (typeof(newAmount) === 'undefined' || newAmount === null || isNaN(Number(newAmount)) || Number(newAmount) < 0) {
-        newAmount = 0;
-    }
-    FrozenCookies.timeTravelAmount = newAmount;
 }
 
 function cyclePreference(preferenceName) {
@@ -1943,41 +1923,6 @@ function updateCaches() {
     } while (FrozenCookies.recalculateCaches && recalcCount < 10);
 }
 
-function doTimeTravel() {
-    //  'Time Travel DISABLED','Purchases by Estimated Effective CPS','Purchases by Simulated Real Time','Heavenly Chips by Estimated Effective CPS','Heavenly Chips by Simulated Real Time'
-    if (FrozenCookies.timeTravelMethod) {
-        // Estimated Effective CPS
-        if (timeTravelMethod % 2 === 1) {
-            var fullCps = effectiveCps();
-            if (fullCps) {
-                var neededCookies = 0;
-                if (timeTravelMethod === 1) {
-
-                } else if (timeTravelMethod === 3) {
-
-                }
-            }
-        } else {
-
-        }
-    } else {
-        FrozenCookies.timeTravelAmount = 0;
-    }
-    /*
-      var fullCps = effectiveCps();
-      if (fullCps > 0) {
-        var neededCookies = Math.max(0, recommendation.cost + delayAmount() - Game.cookies);
-        var time = neededCookies / fullCps;
-        Game.Earn(neededCookies);
-        Game.startDate -= time * 1000;
-        Game.fullDate -= time * 1000;
-        FrozenCookies.timeTravelPurchases -= 1;
-        logEvent('Time travel', 'Travelled ' + timeDisplay(time) + ' into the future.');
-      }
-    */
-}
-//Why the hell is fcWin being called so often? It seems to be getting called repeatedly on the CPS achievements, 
-//which should only happen when you actually win them?
 //updated code to 2.016 version
 function fcWin(what) {
     if (typeof what === 'string') {
@@ -1987,7 +1932,7 @@ function fcWin(what) {
 		var name=Game.Achievements[what].shortName?Game.Achievements[what].shortName:Game.Achievements[what].name;
 		Game.Achievements[what].won=1;
 		if (Game.prefs.popups) Game.Popup('Achievement unlocked :<br>'+name);
-	        //suppress notify because of fast clicking
+	    // suppress notify because of fast clicking
 		// else Game.Notify('Achievement unlocked','<div class="title" style="font-size:18px;margin-top:-2px;">'+name+'</div>',Game.Achievements[what].icon);
 		if (Game.CountsAsAchievementOwned(Game.Achievements[what].pool)) Game.AchievementsOwned++;
 		Game.recalculateGains=1;    		    
@@ -2188,9 +2133,7 @@ function autoCookie() {
         updateCaches();
         var recommendation = nextPurchase();
         var delay = delayAmount();
-        if (FrozenCookies.timeTravelAmount) {
-            doTimeTravel();
-        }
+        
         if (FrozenCookies.autoSL) {
              var started = Game.lumpT;
              var ripeAge = Game.lumpRipeAge;

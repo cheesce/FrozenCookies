@@ -12,135 +12,10 @@ $('<style type="text/css">')
     .html(
     '#fcEfficiencyTable {width: 100%;}' +
     '#fcButton {top: 0px; right: 0px; padding-top: 12px; font-size: 90%; background-position: -96px 0px;}' +
-    '.worst {border-width:1px; border-style:solid; border-color:#330000;}' +
-    '.bad {border-width:1px; border-style:solid; border-color:#660033;}' +
-    '.average {border-width:1px; border-style:solid; border-color:#663399;}' +
-    '.good {border-width:1px; border-style:solid; border-color:#3399FF;}' +
-    '.best {border-width:1px; border-style:solid; border-color:#00FFFF;}' +
     '.ui-dialog {z-index:1000000;}'
     )
     .appendTo('head');
 
-function getBuildingTooltip(purchaseRec) {
-    var parent = $('<div>').attr('style','min-width:300px;');
-    parent.append($('<div>').addClass('price').attr('style', 'float:right;').text(Beautify(purchaseRec.purchase.price)));
-    parent.append($('<div>').addClass('name').text(purchaseRec.purchase.name));
-    parent.append($('<div>').attr('style', 'font-size:80%;').text('[owned: ' + purchaseRec.purchase.amount + ']'));
-    parent.append($('<div>').addClass('description').html(purchaseRec.purchase.desc));
-    if (purchaseRec.delta_cps) {
-        parent.append($('<div>').addClass('fc_cps').html('&#916; CPS: ' + Beautify(purchaseRec.delta_cps)));
-        parent.append($('<div>').addClass('fc_efficiency').text('Efficiency: ' + (Math.floor(purchaseRec.efficiencyScore * 10000) / 100).toString() + '%'));
-        parent.append($('<div>').addClass('fc_build_time').text('Build time: ' + timeDisplay(divCps((purchaseRec.cost + delayAmount()), Game.cookiesPs))));
-        parent.append($('<div>').addClass('fc_effective_build_time').text('Estimated Effective Build time: ' + timeDisplay(divCps((purchaseRec.cost + delayAmount()), (effectiveCps())))));
-    }
-    return parent[0].outerHTML;
-}
-
-function getUpgradeTooltip(purchaseRec) {
-    var parent = $('<div>').attr('style','min-width:300px;');
-    parent.append($('<div>').addClass('price').attr('style', 'float:right;').text(Beautify(purchaseRec.purchase.getPrice())));
-    parent.append($('<div>').addClass('name').text(purchaseRec.purchase.name));
-    parent.append($('<div>').attr('style', 'font-size:80%;').text('[Upgrade]'));
-    parent.append($('<div>').addClass('description').html(purchaseRec.purchase.desc));
-    if (purchaseRec.delta_cps) {
-        parent.append($('<div>').addClass('fc_cps').html('&#916; CPS: ' + Beautify(purchaseRec.delta_cps)));
-        parent.append($('<div>').addClass('fc_efficiency').text('Efficiency: ' + (Math.floor(purchaseRec.efficiencyScore * 10000) / 100).toString() + '%'));
-        parent.append($('<div>').addClass('fc_build_time').text('Build time: ' + timeDisplay(divCps((purchaseRec.cost + delayAmount()), Game.cookiesPs))));
-        parent.append($('<div>').addClass('fc_effective_build_time').text('Estimated GC Build time: ' + timeDisplay(divCps((purchaseRec.cost + delayAmount()), (effectiveCps())))));
-    }
-    return parent[0].outerHTML;
-}
-
-function colorizeScore(score) {
-    var classNames = ['best', 'good', 'average', 'bad', 'worst'];
-    var result;
-    if (score == 1) {
-        result = classNames[0];
-    } else if (score > 0.9) {
-        result = classNames[1];
-    } else if (score > 0.1) {
-        result = classNames[2];
-    } else if (score > 0) {
-        result = classNames[3];
-    } else {
-        result = classNames[4];
-    }
-    return result;
-}
-
-function rebuildStore(recalculate) {
-    var store = $('#products'),
-        recommendations = recommendationList(recalculate);
-
-    store[0].innerHTML = '';
-    Game.ObjectsById.forEach(function(me) {
-        var purchaseRec = recommendations.filter(function(a) {return a.id == me.id && a.type == 'building';})[0],
-            button = $('<div>')
-                .addClass('product')
-                .addClass(colorizeScore(purchaseRec.efficiencyScore))
-                .mouseenter(function() {
-                    Game.tooltip.draw(this, escape(getBuildingTooltip(purchaseRec)), 0, 0, 'left');
-                })
-                .mouseleave(function() {
-                    Game.tooltip.hide();
-                })
-                .click(function() {
-                    Game.ObjectsById[me.id].buy();
-                })
-                .attr('id', 'product' + me.id)
-                .append(
-                    $('<div>').addClass('icon').attr('style', 'background-image:url(img/' + me.icon + '.png);')
-                ),
-            content = $('<div>').addClass('content');
-
-        content.append($('<div>').addClass('title').html(me.displayName));
-        content.append($('<div>').addClass('price').text(Beautify(me.price)));
-        if (me.amount) {
-            content.append($('<div>').addClass('title').addClass('owned').text(Beautify(me.amount)));
-        }
-        button.append(content);
-        store.append(button);
-    });
-//    Game.Draw();
-}
-
-function rebuildUpgrades(recalculate) {
-    var store = $('#upgrades'),
-        recommendations = recommendationList(recalculate);
-    store[0].innerHTML = '';
-    Game.UpgradesInStore = Game.UpgradesById.filter(function(a){return !a.bought && a.unlocked;}).sort(function(a,b){return a.getPrice() - b.getPrice();});
-    Game.UpgradesInStore.forEach(function(me) {
-        var purchaseRec = recommendations.filter(function(a) {return a.id == me.id && a.type == 'upgrade';})[0];
-        if (!purchaseRec) {
-            console.log(me.name + ' not found in recommendationList()');
-        } else {
-            store.append($('<div>')
-                .addClass('crate')
-                .addClass('upgrade')
-                .addClass(colorizeScore(purchaseRec.efficiencyScore))
-                .mouseenter(function() {
-                    Game.tooltip.draw(this, escape(getUpgradeTooltip(purchaseRec)), 0, 16, 'bottom-right');
-                })
-                .mouseleave(function() {
-                    Game.tooltip.hide();
-                })
-                .click(function() {
-                    Game.UpgradesById[me.id].buy();
-                })
-                .attr('id', 'upgrade' + me.id)
-                .attr('style', 'background-position:' + (-me.icon[0] * 48 + 6) + 'px ' + (-me.icon[1] * 48 + 6) + 'px;'));
-        }
-    });
-//    Game.Draw();
-}
-
-/*
-Game.RebuildStore=function(recalculate) {rebuildStore(recalculate);}
-Game.RebuildUpgrades=function(recalculate) {rebuildUpgrades(recalculate);}
-
-Game.RebuildStore(true);
-Game.RebuildUpgrades(true);
-*/
 
 Game.oldUpdateMenu = Game.UpdateMenu;
 
@@ -150,7 +25,6 @@ function drawCircles(t_d, x, y) {
     if (typeof(c.measureText) != "function") {
         return;
     }
-    //kisslab: Removed for more performance
     maxRadius = 10 + 10*t_d.reduce(function(sum,item){return (item.overlay) ? sum : sum + 1;},0);
     heightOffset = maxRadius + 5 - (15 * (t_d.length - 1) / 2);
     i_c = 0;
@@ -181,7 +55,7 @@ function drawCircles(t_d, x, y) {
             i_c--;
         }
         else
-        {/*
+        {/* //removed for speed reasons
             c.drawArc({
                 strokeStyle: t_b[i_c%t_b.length],
                 strokeWidth: 10,
@@ -319,20 +193,20 @@ function updateTimers() {
             f_percent: gc_max_delay,
             c1: "rgba(255, 155, 0, 1)",
             name: "Golden Cookie Maximum (99%)",
-            display: timeDisplay((gc_max_delay * Game.shimmerTypes.golden.time) / Game.fps)
+            display: Game.sayTime((gc_max_delay * Game.shimmerTypes.golden.time))
         });
         t_draw.push({
             f_percent: gc_delay,
             c1: "rgba(255, 195, 0, 1)",
             name: "Golden Cookie Estimate (50%)",
-            display: timeDisplay((gc_delay * Game.shimmerTypes.golden.time) / Game.fps),
+            display: Game.sayTime((gc_delay * Game.shimmerTypes.golden.time)),
             overlay: true
         });
         t_draw.push({
             f_percent: gc_min_delay,
             c1: "rgba(255, 235, 0, 1)",
             name: "Golden Cookie Minimum (1%)",
-            display: timeDisplay((gc_min_delay * Game.shimmerTypes.golden.time) / Game.fps),
+            display: Game.sayTime((gc_min_delay * Game.shimmerTypes.golden.time)),
             overlay: true
 
         });
@@ -342,7 +216,7 @@ function updateTimers() {
             f_percent: clot_delay,
             c1: "rgba(193, 98, 3, 1)",
             name: "Clot (x" + Game.buffs['Clot'].multCpS + ") Time",
-            display: timeDisplay(buffDuration('Clot')/Game.fps)
+            display: Game.sayTime(buffDuration('Clot'))
         });
     }
     if (elder_frenzy_delay > 0) {
@@ -350,7 +224,7 @@ function updateTimers() {
             f_percent: elder_frenzy_delay,
             c1: "rgba(79, 0, 7, 1)",
             name: "Elder Frenzy (x" + Game.buffs['Elder frenzy'].multCpS + ") Time",
-            display: timeDisplay(buffDuration('Elder frenzy')/Game.fps)
+            display: Game.sayTime(buffDuration('Elder frenzy'))
         });
     }
     if (frenzy_delay > 0) {
@@ -358,7 +232,7 @@ function updateTimers() {
             f_percent: frenzy_delay,
             c1: "rgba(255, 0, 0, 1)",
             name: "Frenzy (x" + Game.buffs['Frenzy'].multCpS + ") Time",
-            display: timeDisplay(buffDuration('Frenzy')/Game.fps)
+            display: Game.sayTime(buffDuration('Frenzy'))
         });
     }
     if (dragon_harvest_delay > 0) {
@@ -366,7 +240,7 @@ function updateTimers() {
             f_percent: dragon_harvest_delay,
             c1: "rgba(206, 180, 49, 1)",
             name: "Dragon Harvest (x" + Game.buffs['Dragon Harvest'].multCpS + ") Time",
-            display: timeDisplay(buffDuration('Dragon Harvest')/Game.fps)
+            display: Game.sayTime(buffDuration('Dragon Harvest'))
         });
     }
     if (click_frenzy_delay > 0) {
@@ -374,7 +248,7 @@ function updateTimers() {
             f_percent: click_frenzy_delay,
             c1: "rgba(0, 196, 255, 1)",
             name: "Click Frenzy (x" + Game.buffs['Click frenzy'].multClick + ") Time",
-            display: timeDisplay(buffDuration('Click frenzy')/Game.fps)
+            display: Game.sayTime(buffDuration('Click frenzy'))
         });
     }
     if (dragonflight_delay > 0) {
@@ -382,7 +256,7 @@ function updateTimers() {
             f_percent: dragonflight_delay,
             c1: "rgba(183, 206, 49, 1)",
             name: "Dragonflight (x" + Game.buffs['Dragonflight'].multClick + ") Time",
-            display: timeDisplay(buffDuration('Dragonflight')/Game.fps)
+            display: Game.sayTime(buffDuration('Dragonflight'))
         });
     }
     if (cursed_finger_delay > 0) {
@@ -390,7 +264,7 @@ function updateTimers() {
             f_percent: cursed_finger_delay,
             c1: "rgba(23, 79, 1, 1)",
             name: "Cursed Finger Time",
-            display: timeDisplay(buffDuration('Cursed finger')/Game.fps)
+            display: Game.sayTime(buffDuration('Cursed finger'))
         });
     }
     if (building_special_delay > 0) {
@@ -398,7 +272,7 @@ function updateTimers() {
             f_percent: building_special_delay,
             c1: "rgba(0, 196, 255, 1)",
             name: "Building Special (x" + buildingSpecialBuffValue() + ") Time",
-            display: timeDisplay(hasBuildingSpecialBuff()/Game.fps)
+            display: Game.sayTime(hasBuildingSpecialBuff())
         });
     }
     if (cookie_storm_delay > 0) {
@@ -406,7 +280,7 @@ function updateTimers() {
             f_percent: cookie_storm_delay,
             c1: "rgba(0, 196, 255, 1)",
             name: "Cookie Storm Time",
-            display: timeDisplay(buffDuration('Cookie storm')/Game.fps)
+            display: Game.sayTime(buffDuration('Cookie storm'))
         });
     }
     if (decimal_HC_complete>0) {
@@ -598,9 +472,9 @@ function FCMenu() {
         buildTable.append($('<tr><td colspan="5">&nbsp;</td></tr>').css('border-top', '2px dashed #999'));
 
         banks = [{name: 'Lucky Bank', cost: luckyBank(), efficiency: cookieEfficiency(Game.cookies, luckyBank())},
-            {name: 'Lucky Frenzy Bank', cost: luckyFrenzyBank(), efficiency: cookieEfficiency(Game.cookies, luckyFrenzyBank())},
-            {name: 'Chain Bank', cost: chainBank(), efficiency: cookieEfficiency(Game.cookies, chainBank())},
-	    {name: 'Harvest Bank', cost: harvestBank(), efficiency: cookieEfficiency(Game.cookies, harvestBank())}];
+                 {name: 'Lucky Frenzy Bank', cost: luckyFrenzyBank(), efficiency: cookieEfficiency(Game.cookies, luckyFrenzyBank())},
+                 {name: 'Chain Bank', cost: chainBank(), efficiency: cookieEfficiency(Game.cookies, chainBank())},
+	             {name: 'Harvest Bank', cost: harvestBank(), efficiency: cookieEfficiency(Game.cookies, harvestBank())}];
 
         banks.forEach(function(bank) {
             var deltaCps = effectiveCps(bank.cost) - effectiveCps(Game.cookies);
