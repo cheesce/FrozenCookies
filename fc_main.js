@@ -1,15 +1,3 @@
-// Add polyfills:
-(function(global) {
-    var global_isFinite = global.isFinite;
-    Object.defineProperty(Number, 'isFinite', {
-        value: function isFinite(value) {
-            return typeof value === 'number' && global_isFinite(value);
-        },
-        configurable: true,
-        enumerable: false,
-        writable: true
-    });
-})(this);
 
 function setOverrides() {
 
@@ -33,13 +21,8 @@ function setOverrides() {
     FrozenCookies.maxSpecials = preferenceParse('maxSpecials', 1);
 
 
-    // Force redraw every 10 purchases
-    FrozenCookies.autobuyCount = 0;
-
     // Get historical data
     FrozenCookies.frenzyTimes = JSON.parse(localStorage.getItem('frenzyTimes')) || {};
-    //  FrozenCookies.non_gc_time = Number(localStorage.getItem('nonFrenzyTime'));
-    //  FrozenCookies.gc_time = Number(localStorage.getItem('frenzyTime'));
     FrozenCookies.lastHCAmount = Number(localStorage.getItem('lastHCAmount'));
     FrozenCookies.lastHCTime = Number(localStorage.getItem('lastHCTime'));
     FrozenCookies.prevLastHCTime = Number(localStorage.getItem('prevLastHCTime'));
@@ -93,7 +76,7 @@ function setOverrides() {
         FrozenCookies.blacklist = 0;
     }
     
-	//Beautify = fcBeautify;
+	//as Beautify is already included in CC, just add the choose from FC
     eval("Beautify="+Beautify.toString().replace(/Game\.prefs\.format\?2:1/g, 'FrozenCookies\.numberDisplay'));
 	
 	Game.sayTime = function(time, detail) {
@@ -110,6 +93,15 @@ function setOverrides() {
         Game.oldBackground();
 	    updateTimers();
     }
+	
+	Game.oldUpdateMenu = Game.UpdateMenu;
+	Game.UpdateMenu = function() {
+        if (Game.onMenu !== 'fc_menu') 
+		   { return Game.oldUpdateMenu();}
+	    else
+		   { return FCMenu();}	
+	}
+	
     // Remove the following when turning on tooltop code
     nextPurchase(true);
     Game.RefreshStore();
@@ -117,9 +109,7 @@ function setOverrides() {
     beautifyUpgradesAndAchievements();
 
     // Give free achievements!
-    if (!Game.HasAchiev('Third-party')) {
-        Game.Win('Third-party');
-    }
+    if (!Game.HasAchiev('Third-party')) { Game.Win('Third-party'); }
 }
 
 function fcReset() {
@@ -152,126 +142,6 @@ function preferenceParse(setting, defaultVal) {
         localStorage.setItem(setting, value);
     }
     return Number(value);
-}
-
-function scientificNotation(value) {
-    if (value === 0 || !Number.isFinite(value) || (Math.abs(value) >= 1 && Math.abs(value) <= 1000)) {
-        return rawFormatter(value);
-    }
-    value = parseFloat(value);
-    value = value.toExponential(2);
-    value = value.replace('+', '');
-    return value;
-}
-
-
-var numberFormatters = [
-    rawFormatter,
-    formatEveryThirdPower([
-        '',
-        ' million',
-        ' billion',
-        ' trillion',
-        ' quadrillion',
-        ' quintillion',
-        ' sextillion',
-        ' septillion',
-        ' octillion',
-        ' nonillion',
-        ' decillion',
-        ' undecillion',
-        ' duodecillion',
-        ' tredecillion',
-        ' quattuordecillion',
-        ' quindecillion',
-        ' sexdecillion',
-        ' septendecillion',
-        ' octodecillion',
-        ' novemdecillion',
-        ' vigintillion',
-        ' unvigintillion',
-        ' duovigintillion',
-        ' trevigintillion',
-        ' quattuorvigintillion',
-        ' quinvigintillion',
-        ' sexvigintillion',
-        ' septenvigintillion',
-        ' octovigintillion',
-        ' novemvigintillion',
-        ' trigintillion',
-        ' untrigintillion',
-        ' duotrigintillion',
-        ' tretrigintillion',
-        ' quattuortrigintillion',
-        ' quintrigintillion',
-        ' sextrigintillion',
-        ' septentrigintillion',
-        ' octotrigintillion',
-        ' novemtrigintillion'
-    ]),
-
-    formatEveryThirdPower([
-        '',
-        ' M',
-        ' B',
-        ' T',
-        ' Qa',
-        ' Qi',
-        ' Sx',
-        ' Sp',
-        ' Oc',
-        ' No',
-        ' De',
-        ' UnD',
-        ' DoD',
-        ' TrD',
-        ' QaD',
-        ' QiD',
-        ' SxD',
-        ' SpD',
-        ' OcD',
-        ' NoD',
-        ' Vg',
-        ' UnV',
-        ' DoV',
-        ' TrV',
-        ' QaV',
-        ' QiV',
-        ' SxV',
-        ' SpV',
-        ' OcV',
-        ' NoV',
-        ' Tg',
-        ' UnT',
-        ' DoT',
-        ' TrT',
-        ' QaT',
-        ' QiT',
-        ' SxT',
-        ' SpT',
-        ' OcT',
-        ' NoT'
-    ]),
-
-    formatEveryThirdPower([
-        '',
-        ' M',
-        ' G',
-        ' T',
-        ' P',
-        ' E',
-        ' Z',
-        ' Y'
-    ]),
-    scientificNotation
-];
-
-function fcBeautify(value) {
-    var negative = (value < 0);
-    value = Math.abs(value);
-    var formatter = numberFormatters[FrozenCookies.numberDisplay];
-    var output = formatter(value).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-    return negative ? '-' + output : output;
 }
 
 // Runs numbers in upgrades and achievements through our beautify function
@@ -2190,7 +2060,7 @@ function autoCookie() {
             disabledPopups = false;
             //      console.log(purchase.name + ': ' + Beautify(recommendation.efficiency) + ',' + Beautify(recommendation.delta_cps));
             recommendation.purchase.buy();
-            FrozenCookies.autobuyCount += 1;
+            
             if (FrozenCookies.trackStats == 5 && recommendation.type == 'upgrade') {
                 saveStats();
             } else if (FrozenCookies.trackStats == 6) {
@@ -2198,10 +2068,7 @@ function autoCookie() {
             }
             logEvent('Store', 'Autobought ' + recommendation.purchase.name + ' for ' + Beautify(recommendation.cost) + ', resulting in ' + Beautify(recommendation.delta_cps) + ' CPS.');
             disabledPopups = true;
-            if (FrozenCookies.autobuyCount >= 10) {
-                Game.Draw();
-                FrozenCookies.autobuyCount = 0;
-            }
+            
             FrozenCookies.recalculateCaches = true;
             FrozenCookies.processing = false;
             itemBought = true;

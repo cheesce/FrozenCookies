@@ -17,8 +17,6 @@ $('<style type="text/css">')
     .appendTo('head');
 
 
-Game.oldUpdateMenu = Game.UpdateMenu;
-
 function drawCircles(t_d, x, y) {
     var maxRadius, heightOffset, i_c, i_tc, t_b, maxWidth, maxHeight, s_t,
         c = $('#backgroundLeftCanvas');
@@ -297,10 +295,7 @@ function updateTimers() {
 }
 
 function FCMenu() {
-    Game.UpdateMenu = function() {
-        if (Game.onMenu !== 'fc_menu') {
-            return Game.oldUpdateMenu();
-        }
+    
         var currentCookies, maxCookies, isTarget, isMax, targetTxt, maxTxt,
             currPrestige, resetPrestige, prestigeDifference,
             currHC, resetHC, cps, baseChosen, frenzyChosen, clickStr, buildTable,
