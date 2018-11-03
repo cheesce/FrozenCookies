@@ -13,7 +13,8 @@ var FrozenCookies = {
 
 // Load external libraries
 var script_list = [
-    FrozenCookies.baseUrl + '/cc_upgrade_prerequisites.js',
+    '//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js',
+	FrozenCookies.baseUrl + '/cc_upgrade_prerequisites.js',
     FrozenCookies.baseUrl + '/fc_button.js',
 	FrozenCookies.baseUrl + '/fc_main.js'  
 ]
