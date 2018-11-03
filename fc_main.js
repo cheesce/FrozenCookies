@@ -423,7 +423,7 @@ function cumulativeProbability(listType, start, stop) {
 
 function probabilitySpan(listType, start, endProbability) {
     var startProbability = getProbabilityList(listType)[start];
-    return _.sortedIndex(getProbabilityList(listType), (startProbability + endProbability - startProbability * endProbability));
+    return Object.sortedIndex(getProbabilityList(listType), (startProbability + endProbability - startProbability * endProbability));
 }
 
 function clickBuffBonus() {
