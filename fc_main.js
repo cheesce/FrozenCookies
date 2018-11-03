@@ -3,7 +3,7 @@ function FCStart() {
     logEvent("Load", "Initial Load of Frozen Cookies v " + FrozenCookies.branch + "." + FrozenCookies.version + ". (You should only ever see this once.)");
 
     // Set all cycleable preferencesau
-    _.keys(FrozenCookies.preferenceValues).forEach(function(preference) {
+    Object.keys(FrozenCookies.preferenceValues).forEach(function(preference) {
         FrozenCookies[preference] = preferenceParse(preference, FrozenCookies.preferenceValues[preference].default);
     });
 
@@ -238,7 +238,7 @@ function preferenceParse(setting, defaultVal) {
 }
 
 function updateLocalStorage() {
-    _.keys(FrozenCookies.preferenceValues).forEach(function(preference) {
+    Object.keys(FrozenCookies.preferenceValues).forEach(function(preference) {
         localStorage[preference] = FrozenCookies[preference];
     });
 
