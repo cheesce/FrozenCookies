@@ -46,8 +46,6 @@ function FCStart() {
     };
     FrozenCookies.calculatedCpsByType = {};
 
-    // Allow autoCookie to run
-    FrozenCookies.processing = false;
 
     // Caching
     FrozenCookies.recalculateCaches = true;
@@ -79,7 +77,7 @@ function FCStart() {
 	Game.oldBackground = Game.DrawBackground;   
     Game.DrawBackground = function() {
         Game.oldBackground();
-	    if (!FrozenCookies.fancyui) updateTimers();
+	    if (FrozenCookies.fancyui) updateTimers();
     }
 	
 	Game.oldUpdateMenu = Game.UpdateMenu;
