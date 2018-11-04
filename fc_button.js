@@ -791,6 +791,7 @@ function FCMenu() {
                     hint = prefVal.hint,
                     display = prefVal.display,
                     extras = prefVal.extras,
+					extras2 = prefVal.extras2,
                     current = FrozenCookies[preference],
                     preferenceButtonId = preference + 'Button';
                 if (display && display.length > 0 && display.length > current) {
