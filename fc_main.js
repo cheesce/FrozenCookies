@@ -79,7 +79,7 @@ function FCStart() {
 	Game.oldBackground = Game.DrawBackground;   
     Game.DrawBackground = function() {
         Game.oldBackground();
-	    updateTimers();
+	    if (!FrozenCookies.fancyui) updateTimers();
     }
 	
 	Game.oldUpdateMenu = Game.UpdateMenu;

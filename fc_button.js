@@ -196,7 +196,12 @@ FrozenCookies.preferenceValues = {
         'hint':'Season to maintain when no others have needed upgrades',
         'display':['Default Season: None','Default Season: Business Day','Default Season: Christmas','Default Season: Easter','Default Season: Halloween',"Default Season: Valentine's Day"],
         'default':0
-    }
+    },
+    'fancyui':{
+        'hint':'As these graphics are very slow, enable it here.',
+        'display':['No graphic','Textbox only','Wheel only','Full graphics'],
+        'default':0
+    }	
 };
 
 // UI Helper functions
@@ -352,7 +357,7 @@ function drawCircles(t_d, x, y) {
             i_c--;
         }
         else
-        {/* //removed for speed reasons
+        { if (FrozenCookies.fancyui > 1) {
             c.drawArc({
                 strokeStyle: t_b[i_c%t_b.length],
                 strokeWidth: 10,
@@ -365,16 +370,19 @@ function drawCircles(t_d, x, y) {
                 x: x + (maxRadius + 5), y:y + maxRadius + 5,
                 radius: maxRadius - 5 - (i_c)*10
            }); */
+		  }
         }
-        /*c.drawArc({
+        if (FrozenCookies.fancyui > 1) {
+			c.drawArc({
             strokeStyle: o_draw.c1,
             x: x + (maxRadius + 5), y:y + maxRadius + 5,
             radius: maxRadius - i_c*10,
             strokeWidth: 7,
             start: 0,
             end: (360 * o_draw.f_percent)
-        }); */
-        if (o_draw.name)
+            });
+		}
+        if ((FrozenCookies.fancyui%2==1) && o_draw.name)
         {
             s_t = o_draw.name + (o_draw.display ? ": "+o_draw.display : "");
             c.drawText({
@@ -638,7 +646,7 @@ function updateTimers() {
     }
 
     height = $('#backgroundLeftCanvas').height() - 140;
-   // drawCircles(t_draw, 20, height);
+    drawCircles(t_draw, 20, height);
 }
 
 function FCMenu() {
