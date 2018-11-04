@@ -103,7 +103,8 @@ FrozenCookies.preferenceValues = {
         'hint':'Same as autoClick but on ClickFrenzy with different click rate if you want',
         'display':['Autofrenzy OFF', 'Autofrenzy ON'],
         'default':0,
-        'extras':'<a class="option" id="frenzyClickSpeed" onclick="updateSpeed(\'frenzyClickSpeed\');">${frenzyClickSpeed} clicks/sec</a><a class="option" id="cookieClickSpeed" onclick="updateSpeed(\'cookieClickSpeed\');">${cookieClickSpeed} clicks/sec</a>'
+        'extras':'<a class="option" id="frenzyClickSpeed" onclick="updateSpeed(\'frenzyClickSpeed\');">${frenzyClickSpeed} clicks/sec</a>',
+		'extras2':'<a class="option" id="cookieClickSpeed" onclick="updateSpeed(\'cookieClickSpeed\');">${cookieClickSpeed} clicks/sec</a>'
     },
      'blacklist':{
         'hint':'Blacklist purchases from the efficiency calculations',
@@ -801,6 +802,8 @@ function FCMenu() {
                     if (extras) {
                         listing.append($(extras.replace(/\$\{(.+)\}/g, function(s,id){return FrozenCookies[id];})));
                     }
+                    if (extras2) {
+                        listing.append($(extras2.replace(/\$\{(.+)\}/g, function(s,id){return FrozenCookies[id];})));
                     subsection.append(listing);
                 }
             });
