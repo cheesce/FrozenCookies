@@ -894,7 +894,8 @@ function delayAmount() {
 }
 
 function haveAll(holiday) {
-    return holidayCookies[holiday].every(function(id) { return Game.UpgradesById[id].unlocked; });
+    if (holiday == '') return true;
+	else return holidayCookies[holiday].every(function(id) { return Game.UpgradesById[id].unlocked; });
 }
 
 function checkPrices(currentUpgrade) {
