@@ -650,7 +650,7 @@ function updateTimers() {
 }
 
 function FCMenu() {
-        if(Game.onmenu == 'fc_menu') {
+        if (Game.onMenu == 'fc_menu') {
         var currentCookies, maxCookies, isTarget, isMax, targetTxt, maxTxt,
             currPrestige, resetPrestige, prestigeDifference,
             currHC, resetHC, cps, baseChosen, frenzyChosen, clickStr, buildTable,
