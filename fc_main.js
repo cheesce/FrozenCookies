@@ -633,6 +633,21 @@ function wrinklerValue() {
     }, 0);
 }
 
+function popValue(w) {
+    var toSuck=1.1;
+    if (Game.Has('Sacrilegious corruption')) toSuck*=1.05;
+    if (w.type==1) toSuck*=3;//shiny wrinklers are an elusive, profitable breed
+    var sucked = w.sucked*toSuck;//cookie dough does weird things inside wrinkler digestive tracts
+    if (Game.Has('Wrinklerspawn')) sucked*=1.05;
+    if (Game.hasGod)
+	{ var godLvl=Game.hasGod('scorn');
+	  if      (godLvl==1) sucked*=1.15;
+	  else if (godLvl==2) sucked*=1.1;
+	  else if (godLvl==3) sucked*=1.05;
+	}
+	return sucked;
+}
+
 function buildingRemaining(building, amount) {
     var cost = cumulativeBuildingCost(building.basePrice, building.amount, amount);
     var availableCookies = Game.cookies + wrinklerValue() + Game.ObjectsById.reduce(function(s, b) {
@@ -879,9 +894,7 @@ function delayAmount() {
 }
 
 function haveAll(holiday) {
-    return _.every(holidayCookies[holiday], function(id) {
-        return Game.UpgradesById[id].unlocked;
-    });
+    return holidayCookies[holiday].every(function(id) { return Game.UpgradesById[id].unlocked; });
 }
 
 function checkPrices(currentUpgrade) {
@@ -1636,20 +1649,7 @@ function logEvent(event, text, popup) {
         Game.Popup(text);
     }
 }
-/*
-function inRect(x, y, rect) {
-    // Duplicate of internally defined method,
-    // only needed because I'm modifying the scope of Game.UpdateWrinklers and it can't see this anymore.
-    var dx = x + Math.sin(-rect.r) * (-(rect.h / 2 - rect.o)),
-        dy = y + Math.cos(-rect.r) * (-(rect.h / 2 - rect.o));
-    var h1 = Math.sqrt(dx * dx + dy * dy);
-    var currA = Math.atan2(dy, dx);
-    var newA = currA - rect.r;
-    var x2 = Math.cos(newA) * h1;
-    var y2 = Math.sin(newA) * h1;
-    return (x2 > -0.5 * rect.w && x2 < 0.5 * rect.w && y2 > -0.5 * rect.h && y2 < 0.5 * rect.h);
-}
-*/
+
 function goldenCookieLife() {
     for (var i in Game.shimmers) {
         if (Game.shimmers[i].type == 'golden') {
@@ -1670,23 +1670,14 @@ function reindeerLife() {
 
 function liveWrinklers() {
     return _.select(Game.wrinklers, function(w) {
-        return w.sucked > 0.5 && w.phase > 0
+        return w.sucked > 0.5 && w.phase > 0 && ((FrozenCookies.shinyPop == 0)? w.type==0:1)
     }).sort(function(w1, w2) {
-        return w1.sucked < w2.sucked
+        return w2.sucked - w1.sucked
     });
 }
 
 function wrinklerMod(num) {
-    return 1.1 * num * num * 0.05 * (Game.Has('Wrinklerspawn') ? 1.05 : 1) + (1 - 0.05 * num);
-}
-
-function popValue(w) {
-    var toSuck=1.1;
-    if (Game.Has('Sacrilegious corruption')) toSuck*=1.05;
-    if (w.type==1) toSuck*=3;//shiny wrinklers are an elusive, profitable breed
-    var sucked = w.sucked*toSuck;//cookie dough does weird things inside wrinkler digestive tracts
-    if (Game.Has('Wrinklerspawn')) sucked*=1.05;
-    return sucked;
+    return num*(num*0.05*1.1)*(Game.Has('Wrinklerspawn')?1.05:1)* (Game.Has('Sacrilegious corruption')?1.05:1)+ (1 - 0.05 * num);
 }
 
 function shouldPopWrinklers() {
@@ -1694,28 +1685,27 @@ function shouldPopWrinklers() {
     var living = liveWrinklers();
     if (living.length > 0) {
         if ((Game.season == 'halloween' || Game.season == 'easter') && !haveAll(Game.season)) {
-            toPop = living.map(function(w) {
+            toPop = living.map(function(w) { 
                 return w.id
             });
-        } else {
-            var delay = delayAmount();
-            var wrinklerList = (FrozenCookies.shinyPop == 0) ? Game.wrinklers.filter(v => v.type == 0) : Game.wrinklers;
-            var nextRecNeeded = nextPurchase().cost + delay - Game.cookies;
-            var nextRecCps = nextPurchase().delta_cps;
-            var wrinklersNeeded = wrinklerList.sort(function(w1, w2) {
-                return w1.sucked < w2.sucked
-            }).reduce(function(current, w) {
-                var futureWrinklers = living.length - (current.ids.length + 1);
-                if (current.total < nextRecNeeded && effectiveCps(delay, Game.elderWrath, futureWrinklers) + nextRecCps > effectiveCps()) {
-                    current.ids.push(w.id);
-                    current.total += popValue(w);
-                }
-                return current;
-            }, {
-                total: 0,
-                ids: []
-            });
-            toPop = (wrinklersNeeded.total > nextRecNeeded) ? wrinklersNeeded.ids : toPop;
+        }
+		else
+		{ var delay = delayAmount();
+          var wrinklerList = (FrozenCookies.shinyPop == 0) ? Game.wrinklers.filter(v => v.type == 0) : Game.wrinklers;
+          var nextRecNeeded = nextPurchase().cost + delay - Game.cookies;
+          var nextRecCps = nextPurchase().delta_cps;
+          var wrinklersNeeded = wrinklerList
+				.sort(function(w1, w2) { return w2.sucked - w1.sucked })
+		        .reduce(function(current, w)
+					{ var futureWrinklers = living.length - (current.ids.length + 1);
+						if (current.total < nextRecNeeded && effectiveCps(delay, Game.elderWrath, futureWrinklers) + nextRecCps > effectiveCps())
+						{ current.ids.push(w.id);
+						  current.total += popValue(w);
+						}	
+						return current;
+					},{ total: 0, ids: [] }
+			    );
+          toPop = (wrinklersNeeded.total > nextRecNeeded) ? wrinklersNeeded.ids : toPop;
         }
     }
     return toPop;
@@ -1802,8 +1792,9 @@ function autoCookie() {
     //console.log('autocookie called');
     if (!FrozenCookies.processing && !Game.OnAscend && !Game.AscendTimer) {
         FrozenCookies.processing = true;
-        var currentHCAmount = Game.HowMuchPrestige(Game.cookiesEarned + Game.cookiesReset + wrinklerValue());
 
+		// Get HC stats
+		var currentHCAmount = Game.HowMuchPrestige(Game.cookiesEarned + Game.cookiesReset + wrinklerValue());
         if (Math.floor(FrozenCookies.lastHCAmount) < Math.floor(currentHCAmount)) {
             var changeAmount = currentHCAmount - FrozenCookies.lastHCAmount;
             FrozenCookies.lastHCAmount = currentHCAmount;
@@ -1816,10 +1807,12 @@ function autoCookie() {
             FrozenCookies.hc_gain += changeAmount;
             updateLocalStorage();
         }
-        updateCaches();
+        
+		updateCaches();
         var recommendation = nextPurchase();
         var delay = delayAmount();
         
+		//Harvest Sugar Lump
         if (FrozenCookies.autoSL) {
              var started = Game.lumpT;
              var ripeAge = Game.lumpRipeAge;
@@ -1828,7 +1821,9 @@ function autoCookie() {
              }
         }
         if (FrozenCookies.autoSL == 2) autoRigidel();
-        if (FrozenCookies.autoWrinkler == 1) {
+
+		//Pop Wrinklers
+		if (FrozenCookies.autoWrinkler == 1) { //efficent pop
             var popCount = 0;
             var popList = shouldPopWrinklers();
             _.filter(Game.wrinklers, function(w) {
@@ -1841,9 +1836,9 @@ function autoCookie() {
                 logEvent('Wrinkler', 'Popped ' + popCount + ' wrinklers.');
             }
         }
-        if (FrozenCookies.autoWrinkler == 2) {
+        if (FrozenCookies.autoWrinkler == 2) {  //instant pop
             var popCount = 0;
-            var popList = Game.wrinklers;
+            var popList = (FrozenCookies.shinyPop == 0) ? Game.wrinklers.filter(v => v.type == 0) : Game.wrinklers;
             popList.forEach(function(w) {
                 if (w.close == true) {
                     w.hp = 0;
@@ -1912,7 +1907,7 @@ function autoCookie() {
 //        }
 
         // This apparently *has* to stay here, or else fast purchases will multi-click it.
-        if (goldenCookieLife() && FrozenCookies.autoGC) {
+        if (FrozenCookies.autoGC && goldenCookieLife()) {
             for (var i in Game.shimmers) {
                 if (Game.shimmers[i].type == 'golden') {
                     Game.shimmers[i].pop();
@@ -1929,7 +1924,8 @@ function autoCookie() {
         if (FrozenCookies.autoBlacklistOff) {
             autoBlacklistOff();
         }
-        var currentFrenzy = (Game.hasBuff('Frenzy') ? Game.buffs['Frenzy'].multCpS : 1) * clickBuffBonus();
+        
+		var currentFrenzy = (Game.hasBuff('Frenzy') ? Game.buffs['Frenzy'].multCpS : 1) * clickBuffBonus();
         if (currentFrenzy != FrozenCookies.last_gc_state) {
             if (FrozenCookies.last_gc_state != 1 && currentFrenzy == 1) {
                 logEvent('GC', 'Frenzy ended, cookie production x1');

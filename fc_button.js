@@ -27,15 +27,15 @@ $('<style type="text/css">')
 document.addEventListener('keydown', function(event) {
     if (!Game.promptOn) {
         if (event.keyCode == 65) {
-            Game.Toggle('autoBuy', 'autobuyButton', 'Autobuy OFF', 'Autobuy ON');
-            toggleFrozen('autoBuy');
+            //Game.Toggle('autoBuy', 'autobuyButton', 'Autobuy OFF', 'Autobuy ON');
+            cyclePreference('autoBuy');
         }
         if (event.keyCode == 66) {
             copyToClipboard(getBuildingSpread());
         }
         if (event.keyCode == 67) {
-            Game.Toggle('autoGC', 'autogcButton', 'Autoclick GC OFF', 'Autoclick GC ON');
-            toggleFrozen('autoGC');
+            //Game.Toggle('autoGC', 'autogcButton', 'Autoclick GC OFF', 'Autoclick GC ON');
+            cyclePreference('autoGC');
         }
         if (event.keyCode == 69) {
             copyToClipboard(Game.WriteSave(true));
@@ -80,12 +80,11 @@ FrozenCookies.preferenceValues = {
         'display':['Autopop Wrinklers OFF', 'Autopop Wrinklers Efficiently', 'Autopop Wrinklers Instantly'],
         'default':0
     },
-/*Not working yet
     'shinyPop':{
         'hint':'Protect the endangered Shiny Wrinkler from being auomatically popped',
         'display':['Save Shiny Wrinklers ON', 'Save Shiny Wrinklers OFF'],
         'default':0
-    },*/
+    },
     'autoSL':{
         'hint':'Automatically harvest sugar lumps when ripe, with option to automatically swap in Rigidel',
         'display':["Autoharvest SL OFF", "Autoharvest SL ON", "Autoharvest SL ON + Auto Rigidel"],
@@ -216,7 +215,7 @@ FrozenCookies.preferenceValues = {
 };
 
 // UI Helper functions
-function toggleFrozen(setting) {
+/*function toggleFrozen(setting) {
     if (!Number(localStorage.getItem(setting))) {
         localStorage.setItem(setting, 1);
         FrozenCookies[setting] = 1;
@@ -226,7 +225,7 @@ function toggleFrozen(setting) {
     }
     StartTimer();
 }
-
+*/
 function copyToClipboard(text) {
     Game.promptOn = 1;
     window.prompt("Copy to clipboard: Ctrl+C, Enter", text);

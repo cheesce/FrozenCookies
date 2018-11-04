@@ -388,8 +388,6 @@ var blacklist = [
 
 var seasons = ['','fools','christmas','easter','halloween','valentines'];
 
-var halloweenCookies = [134,135,136,137,138,139,140];
-var christmasCookies = [143,144,145,146,147,148,149];
 var holidayCookies = {
     halloween: [134,135,136,137,138,139,140],
     christmas: [143,144,145,146,147,148,149],
