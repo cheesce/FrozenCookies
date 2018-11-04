@@ -107,7 +107,6 @@ function FCStart() {
 	// Setup Timers
 	FrozenCookies.cookieBot = 0;
     FrozenCookies.autoClickBot = 0;
-    FrozenCookies.frenzyClickBot = 0;
     FrozenCookies.autoGodzamokBot = 0;
 	FrozenCookies.autoSpellBot = 0;
     FrozenCookies.statBot = 0;
@@ -128,9 +127,9 @@ function StartTimer()
         clearInterval(FrozenCookies.autoClickBot);
         FrozenCookies.autoClickBot = 0;
     }
-	if (FrozenCookies.frenzyClickBot) {
-        clearInterval(FrozenCookies.frenzyClickBot);
-        FrozenCookies.frenzyClickBot = 0;
+	if (FrozenCookies.autoFClickBot) {
+        clearInterval(FrozenCookies.autoFClickBot);
+        FrozenCookies.autoFClickBot = 0;
     }
     if (FrozenCookies.autoGodzamokBot) {
         clearInterval(FrozenCookies.autoGodzamokBot);
@@ -154,18 +153,14 @@ function StartTimer()
         FrozenCookies.cookieBot = setTimeout(autoCookie, FrozenCookies.frequency);
     }
     if (FrozenCookies.autoClick && FrozenCookies.cookieClickSpeed) {
-        FrozenCookies.autoclickBot = setInterval(fcClickCookie, 1000 / FrozenCookies.cookieClickSpeed);
-    }
-    if (FrozenCookies.autoFrenzy && FrozenCookies.frenzyClickSpeed) {
-        FrozenCookies.frenzyClickBot = setInterval(autoFrenzyClick, 1000 / FrozenCookies.frenzyClickSpeed);
-    }
-    if (FrozenCookies.autoGodzamok) {
+	  FrozenCookies.autoClickBot = setInterval(fcClickCookie, 1000 / FrozenCookies.cookieClickSpeed);
+	}  
+	if (FrozenCookies.autoGodzamok) {
         FrozenCookies.autoGodzamokBot = setInterval(autoGodzamokAction, FrozenCookies.frequency)
     }
     if (FrozenCookies.autoSpell) {
         FrozenCookies.autoSpellBot = setInterval(autoCast, FrozenCookies.frequency)
     }
-
     if (statSpeed(FrozenCookies.trackStats) > 0) {
         FrozenCookies.statBot = setInterval(saveStats, statSpeed(FrozenCookies.trackStats));
     } else if (FrozenCookies.trackStats == 6 && !FrozenCookies.smartTrackingBot) {
@@ -1697,20 +1692,10 @@ function smartTrackingStats(delay) {
     }
 }
 
-//frenzyClickBot 
-function autoFrenzyClick() {
-    if (hasClickBuff() && !FrozenCookies.autoFrenzyBot) {
-        if (FrozenCookies.autoclickBot) {
-            clearInterval(FrozenCookies.autoclickBot);
-            FrozenCookies.autoclickBot = 0;
-        }
-        FrozenCookies.autoFrenzyBot = setInterval(fcClickCookie, 1000 / FrozenCookies.frenzyClickSpeed);
-    } else if (!hasClickBuff() && FrozenCookies.autoFrenzyBot) {
-        clearInterval(FrozenCookies.autoFrenzyBot);
-        FrozenCookies.autoFrenzyBot = 0;
-        if (FrozenCookies.autoClick && FrozenCookies.cookieClickSpeed) {
-            FrozenCookies.autoclickBot = setInterval(fcClickCookie, 1000 / FrozenCookies.cookieClickSpeed);
-        }
+//autoClick function
+function fcClickCookie() {
+    if (!Game.OnAscend && !Game.AscendTimer && !Game.specialTabHovered) {
+        Game.ClickCookie();
     }
 }
 
@@ -1722,13 +1707,6 @@ function autoGodzamokAction() {
         var count = Game.Objects['Cursor'].amount;
         Game.Objects['Cursor'].sell(count);
         if (FrozenCookies.autoGodzamok > 1) Game.Objects['Cursor'].buy(count);
-    }
-}
-
-//autoClickBot
-function fcClickCookie() {
-    if (!Game.OnAscend && !Game.AscendTimer && !Game.specialTabHovered) {
-        Game.ClickCookie();
     }
 }
 
@@ -1779,8 +1757,26 @@ function autoCookie() {
             FrozenCookies.last_gc_time = Date.now();
             updateLocalStorage();
         }
-       
-		updateCaches();
+        
+		// Normal cookie click rate or frenzy click rate logic
+		if (FrozenCookies.autoClick && hasClickBuff(){
+		    if (!FrozenCookies.autoFClickBot) {
+			  clearInterval(FrozenCookies.autoClickBot);
+			  FrozenCookies.autoClickBot=0;
+              if (FrozenCookies.frenzyClickSpeed)
+					FrozenCookies.autoFClickBot = setInterval(fcClickCookie, 1000 / FrozenCookies.frenzyClickSpeed);
+            }
+		}
+		else {
+		    if (!FrozenCookies.autoClickBot) { 
+				clearInterval(FrozenCookies.autoFClickBot);
+				FrozenCookies.autoFClickBot=0;
+				if (FrozenCookies.cookieClickSpeed)
+					FrozenCookies.autoClickBot = setInterval(fcClickCookie, 1000 / FrozenCookies.cookieClickSpeed);		
+			}
+        }
+
+	    updateCaches();
         var recommendation = nextPurchase();
         var delay = delayAmount();
         

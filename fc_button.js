@@ -93,18 +93,12 @@ FrozenCookies.preferenceValues = {
         'display':["Autoharvest SL OFF", "Autoharvest SL ON", "Autoharvest SL ON + Auto Rigidel"],
         'default':0
     }, 
- /*   'autoClick':{
-        'hint':'Click the large cookie full time',
-        'display':['Autoclick OFF', 'Autoclick ON'],
+    'autoClick':{
+        'hint':'Automatically click on large cookie.',
+        'display':['AutoClick OFF', 'AutoClick ON'],
         'default':0,
-        'extras':'<a class="option" id="cookieClickSpeed" onclick="updateSpeed(\'cookieClickSpeed\');">${cookieClickSpeed} clicks/sec</a>'
-    },
-  */  'autoFrenzy':{
-        'hint':'Same as autoClick but on ClickFrenzy with different click rate if you want',
-        'display':['Autofrenzy OFF', 'Autofrenzy ON'],
-        'default':0,
-        'extras':'<a class="option" id="frenzyClickSpeed" onclick="updateSpeed(\'frenzyClickSpeed\');">${frenzyClickSpeed} clicks/sec</a>',
-		'extras2':'<a class="option" id="cookieClickSpeed" onclick="updateSpeed(\'cookieClickSpeed\');">${cookieClickSpeed} clicks/sec</a>'
+ 		'extras':'<a class="option" id="cookieClickSpeed" onclick="updateSpeed(\'cookieClickSpeed\');">${cookieClickSpeed} clicks/sec</a>',
+        'extras2':'<a class="option" id="frenzyClickSpeed" onclick="updateSpeed(\'frenzyClickSpeed\');">${frenzyClickSpeed} frency clicks/sec</a>'
     },
      'blacklist':{
         'hint':'Blacklist purchases from the efficiency calculations',
@@ -690,7 +684,6 @@ function FCMenu() {
         menu.append(subsection);
 
         // Golden Cookies
-
         subsection = $('<div>').addClass('subsection');
         subsection.append($('<div>').addClass('title').html('Golden Cookie Information'));
         currentCookies = Math.min(Game.cookies, FrozenCookies.targetBank.cost);
@@ -720,7 +713,6 @@ function FCMenu() {
         menu.append(subsection);
 
         // Heavenly Chips
-
         subsection = $('<div>').addClass('subsection');
         subsection.append($('<div>').addClass('title').html('Heavenly Chips Information'));
         currPrestige = Game.prestige;
@@ -781,7 +773,7 @@ function FCMenu() {
         }
         menu.append(subsection);
 
-
+		//Options
         if (FrozenCookies.preferenceValues) {
             subsection = $('<div>').addClass('subsection');
             subsection.append($('<div>').addClass('title').html('Frozen Cookie Controls'));
@@ -811,7 +803,9 @@ function FCMenu() {
             });
             menu.append(subsection);
         }
-        subsection = $('<div>').addClass('subsection');
+
+		//Recommondationtable
+		subsection = $('<div>').addClass('subsection');
         subsection.append($('<div>').addClass('title').html('Internal Information'));
         buildTable = $('<table id="fcEfficiencyTable"/>').html('<tr><th>Building</th><th>Eff%</th><th>Efficiency</th><th>Cost</th><th>&#916; CPS</th></tr>');
         recommendationList().forEach(function(rec) {
@@ -819,11 +813,13 @@ function FCMenu() {
                 chainStr = (item.unlocked === 0) ? ' (C)' : '';
             buildTable.append($('<tr><td><b>' + item.name + chainStr + '</b></td><td>' + (Math.floor(rec.efficiencyScore * 10000) / 100).toString() + '%</td><td>' + Beautify(rec.efficiency) + '</td><td>' + Beautify(rec.cost) + '</td><td>' + Beautify(rec.delta_cps) + '</td></tr>'));
         });
-        // Table Dividers
+        
+		// Table Dividers
         buildTable.append($('<tr><td colspan="5">&nbsp;</td></tr>'));
         buildTable.append($('<tr><td colspan="5">&nbsp;</td></tr>').css('border-top', '2px dashed #999'));
 
-        banks = [{name: 'Lucky Bank', cost: luckyBank(), efficiency: cookieEfficiency(Game.cookies, luckyBank())},
+		// Bank infos
+		banks = [{name: 'Lucky Bank', cost: luckyBank(), efficiency: cookieEfficiency(Game.cookies, luckyBank())},
                  {name: 'Lucky Frenzy Bank', cost: luckyFrenzyBank(), efficiency: cookieEfficiency(Game.cookies, luckyFrenzyBank())},
                  {name: 'Chain Bank', cost: chainBank(), efficiency: cookieEfficiency(Game.cookies, chainBank())},
 	             {name: 'Harvest Bank', cost: harvestBank(), efficiency: cookieEfficiency(Game.cookies, harvestBank())}];
@@ -832,9 +828,13 @@ function FCMenu() {
             var deltaCps = effectiveCps(bank.cost) - effectiveCps(Game.cookies);
             buildTable.append($('<tr><td colspan="2"><b>' + bank.name + (bank.deltaCps === 0 ? ' (*)' : '') + '</b></td><td>' + Beautify(bank.efficiency) + '</td><td>' + Beautify(Math.max(0, bank.cost - Game.cookies)) + '</td><td>' + Beautify(deltaCps) + '</td></tr>'));
         });
-        buildTable.append($('<tr><td colspan="5">&nbsp;</td></tr>'));
+
+		// Table Dividers		
+		buildTable.append($('<tr><td colspan="5">&nbsp;</td></tr>'));
         buildTable.append($('<tr><td colspan="5">&nbsp;</td></tr>').css('border-top', '2px dashed #999'));
-        $.each({'Pledging/Appeased' : 0, 'One Mind/Awoken' : 1, 'Displeased' : 2, 'Full Wrath/Angered' : 3}, function(k,v) {
+        
+		// Other information
+		$.each({'Pledging/Appeased' : 0, 'One Mind/Awoken' : 1, 'Displeased' : 2, 'Full Wrath/Angered' : 3}, function(k,v) {
             buildTable.append($('<tr><td colspan="2"><b>' + k + (Game.elderWrath === v ? ' (*)' : '') + '</b></td><td colspan="2" title="Ratio of Effective CPS vs Base CPS">' + Beautify(effectiveCps(Game.cookies, v) / baseCps()) + '</td><td>' + Beautify(effectiveCps(Game.cookies, v) - effectiveCps()) + '</td></tr>'));
         });
         subsection.append($('<div>').addClass('listing').append(buildTable));
