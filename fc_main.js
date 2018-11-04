@@ -894,7 +894,7 @@ function delayAmount() {
 }
 
 function haveAll(holiday) {
-    if (holiday == '') return true;
+    if ((holiday == '')||(holiday=='fools')) return true;
 	else return holidayCookies[holiday].every(function(id) { return Game.UpgradesById[id].unlocked; });
 }
 
