@@ -804,7 +804,8 @@ function FCMenu() {
                     }
                     if (extras2) {
                         listing.append($(extras2.replace(/\$\{(.+)\}/g, function(s,id){return FrozenCookies[id];})));
-                    subsection.append(listing);
+                    }
+					subsection.append(listing);
                 }
             });
             menu.append(subsection);
