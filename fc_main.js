@@ -103,6 +103,7 @@ function FCStart() {
     FrozenCookies.delayPurchaseCount = 0;
    
 	// Setup Timers
+	FrozenCookies.menutimer = 0;
 	FrozenCookies.cookieBot = 0;
     FrozenCookies.autoClickBot = 0;
 	FrozenCookies.autoFClickBot = 0;

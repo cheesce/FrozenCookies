@@ -345,7 +345,7 @@ function drawCircles(t_d, x, y) {
     });
     maxWidth = maxMeasure.width;
     maxHeight = maxMeasure.height * t_d.length;
-    c.drawRect({
+    if (FrozenCookies.fancyui%2==1) c.drawRect({
         fillStyle: 'rgba(153, 153, 153, 0.6)',
         x: x + maxRadius * 2 + maxWidth / 2 + 35, y: y + maxRadius + 5,
         width: maxWidth + 20, height: maxHeight + 20
@@ -650,7 +650,7 @@ function updateTimers() {
 }
 
 function FCMenu() {
-    
+        if(Game.onmenu == 'fc_menu') {
         var currentCookies, maxCookies, isTarget, isMax, targetTxt, maxTxt,
             currPrestige, resetPrestige, prestigeDifference,
             currHC, resetHC, cps, baseChosen, frenzyChosen, clickStr, buildTable,
@@ -847,4 +847,10 @@ function FCMenu() {
         });
         subsection.append($('<div>').addClass('listing').append(buildTable));
         menu.append(subsection);
-    }
+        FrozenCookies.menutimer=setTimeout(FCMenu,5000);
+	}
+	else {
+		clearInterval(FrozenCookies.menutimer);
+        FrozenCookies.menutimer = 0;
+	}
+}
