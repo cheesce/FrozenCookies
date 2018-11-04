@@ -27,14 +27,12 @@ $('<style type="text/css">')
 document.addEventListener('keydown', function(event) {
     if (!Game.promptOn) {
         if (event.keyCode == 65) {
-            //Game.Toggle('autoBuy', 'autobuyButton', 'Autobuy OFF', 'Autobuy ON');
             cyclePreference('autoBuy');
         }
         if (event.keyCode == 66) {
             copyToClipboard(getBuildingSpread());
         }
         if (event.keyCode == 67) {
-            //Game.Toggle('autoGC', 'autogcButton', 'Autoclick GC OFF', 'Autoclick GC ON');
             cyclePreference('autoGC');
         }
         if (event.keyCode == 69) {
@@ -59,23 +57,23 @@ FrozenCookies.preferenceValues = {
         'display':["Autobuy OFF","Autobuy ON"],
         'default':0
     },
-    'autoAscend':{
-        'hint':'Automatically ascend when your heavenly chip count hits a certain number. (note: this will skip the upgrade screen)',
-        'display':["Autoascend OFF", "Autoascend ON"],
-        'default':0,
-        'extras':'<a class="option" id="chipsToAscend" onclick="updateAscendAmount(\'HCAscendAmount\');">${HCAscendAmount} heavenly chips</a>'
-    },
     'autoBulk':{
         'hint':'Automatically set buildings to be bought in bulk after reincarnation',
         'display':['Auto Bulkbuy OFF', 'Auto Bulkbuy x10', 'Auto Bulkbuy x100'],
         'default':0
     },
+	'autoAscend':{
+        'hint':'Automatically ascend when your heavenly chip count hits a certain number. (note: this will skip the upgrade screen)',
+        'display':["Autoascend OFF", "Autoascend ON"],
+        'default':0,
+        'extras':'<a class="option" id="chipsToAscend" onclick="updateAscendAmount(\'HCAscendAmount\');">${HCAscendAmount} heavenly chips</a>'
+    },   
     'autoGC':{
         'hint':'Automatically click Golden Cookies when they appear',
         'display':["Autoclick GC OFF", "Autoclick GC ON"],
         'default':0
-    },
-    'autoWrinkler':{
+    },  
+	'autoWrinkler':{
         'hint':'Automatically pop wrinklers efficiently or instantly',
         'display':['Autopop Wrinklers OFF', 'Autopop Wrinklers Efficiently', 'Autopop Wrinklers Instantly'],
         'default':0
@@ -89,12 +87,7 @@ FrozenCookies.preferenceValues = {
         'hint':'Automatically harvest sugar lumps when ripe, with option to automatically swap in Rigidel',
         'display':["Autoharvest SL OFF", "Autoharvest SL ON", "Autoharvest SL ON + Auto Rigidel"],
         'default':0
-    },
-    'autoReindeer':{
-        'hint':'Automatically click reindeer',
-        'display':['Autoclick Reindeer OFF', 'Autoclick Reindeer ON'],
-        'default':0
-    },
+    }, 
     'autoClick':{
         'hint':'Click the large cookie',
         'display':['Autoclick OFF', 'Autoclick ON'],
@@ -107,16 +100,17 @@ FrozenCookies.preferenceValues = {
         'default':0,
         'extras':'<a class="option" id="frenzyClickSpeed" onclick="updateSpeed(\'frenzyClickSpeed\');">${frenzyClickSpeed} clicks/sec</a>'
     },
-    'autoBlacklistOff':{
-        'hint':'Automatically turns off a blacklist once the goal for that blacklist is achieved',
-        'display':['Auto Blacklist OFF', 'Auto Blacklist ON'],
-        'default':0
-    },
-    'blacklist':{
+     'blacklist':{
         'hint':'Blacklist purchases from the efficiency calculations',
         'display':['No Blacklist', 'Speedrun Blacklist', 'Hardcore Blacklist', 'Grandmapocalypse Mode', 'No Buildings'],
         'default':0
     },
+	'autoBlacklistOff':{
+        'hint':'Automatically turns off a blacklist once the goal for that blacklist is achieved',
+        'display':['Auto Blacklist OFF', 'Auto Blacklist ON'],
+        'default':0
+    },
+
 /*  'timeTravelMethod':{
         'hint':'Time travel is unstable. This determines how time travel works. If you\'re unsure, don\'t touch this.',
         'display':['Time Travel DISABLED'],//,'Purchases by Estimated Effective CPS','Purchases by Simulated Real Time','Heavenly Chips by Estimated Effective CPS','Heavenly Chips by Simulated Real Time'],
@@ -149,15 +143,6 @@ FrozenCookies.preferenceValues = {
         'default':0,
         'extras':'<a class="option" id="viewStats" onclick="viewStatGraphs();">View Stat Graphs</a>'
     },
-    
-    /*Doesnt work
-    'showAchievements':{
-        'hint':'Show achievement popups (Kind of broken early game)',
-        'display':['Achievement Popups OFF','Achievement Popups ON'],
-        'default':0
-    },
-    */
-    
     'numberDisplay':{
         'hint':'Change how numbers are shortened',
         'display':["Raw Numbers","Full Word (million, billion)","Initials (M, B)","SI Units (M, G, T)", "Scientific Notation (6.3e12)"],
@@ -215,17 +200,6 @@ FrozenCookies.preferenceValues = {
 };
 
 // UI Helper functions
-/*function toggleFrozen(setting) {
-    if (!Number(localStorage.getItem(setting))) {
-        localStorage.setItem(setting, 1);
-        FrozenCookies[setting] = 1;
-    } else {
-        localStorage.setItem(setting, 0);
-        FrozenCookies[setting] = 0;
-    }
-    StartTimer();
-}
-*/
 function copyToClipboard(text) {
     Game.promptOn = 1;
     window.prompt("Copy to clipboard: Ctrl+C, Enter", text);
