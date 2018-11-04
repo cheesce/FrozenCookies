@@ -73,6 +73,11 @@ FrozenCookies.preferenceValues = {
         'display':["Autoclick GC OFF", "Autoclick GC ON"],
         'default':0
     },  
+	'autoReindeer':{
+        'hint':'Automatically click reindeer',
+        'display':['Autoclick Reindeer OFF', 'Autoclick Reindeer ON'],
+        'default':0
+    },
 	'autoWrinkler':{
         'hint':'Automatically pop wrinklers efficiently or instantly',
         'display':['Autopop Wrinklers OFF', 'Autopop Wrinklers Efficiently', 'Autopop Wrinklers Instantly'],
