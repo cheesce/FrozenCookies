@@ -1760,22 +1760,29 @@ function autoCookie() {
         }
         
 		// Normal cookie click rate or frenzy click rate logic
-		if (FrozenCookies.autoClick && hasClickBuff()){
-		    if (!FrozenCookies.autoFClickBot) {
-			  clearInterval(FrozenCookies.autoClickBot);
-			  FrozenCookies.autoClickBot=0;
-              if (FrozenCookies.frenzyClickSpeed)
-					FrozenCookies.autoFClickBot = setInterval(fcClickCookie, 1000 / FrozenCookies.frenzyClickSpeed);
-            }
-		}
-		else {
-		    if (!FrozenCookies.autoClickBot) { 
-				clearInterval(FrozenCookies.autoFClickBot);
-				FrozenCookies.autoFClickBot=0;
-				if (FrozenCookies.cookieClickSpeed)
-					FrozenCookies.autoClickBot = setInterval(fcClickCookie, 1000 / FrozenCookies.cookieClickSpeed);		
+		if (FrozenCookies.autoClick) {
+			if (hasClickBuff()){
+				if (!FrozenCookies.autoFClickBot) {
+					clearInterval(FrozenCookies.autoClickBot);
+					FrozenCookies.autoClickBot=0;
+					if (FrozenCookies.frenzyClickSpeed) {
+							FrozenCookies.autoFClickBot = setInterval(fcClickCookie, 1000 / FrozenCookies.frenzyClickSpeed);
+							logEvent('AutoClick', 'Clicking cookie on frency speed with  ' + FrozenCookies.frenzyClickSpeed + ' clicks per second.');
+					}
+				}
 			}
-        }
+			else {
+				if (!FrozenCookies.autoClickBot) { 
+					clearInterval(FrozenCookies.autoFClickBot);
+					FrozenCookies.autoFClickBot=0;
+					if (FrozenCookies.cookieClickSpeed) {
+							FrozenCookies.autoClickBot = setInterval(fcClickCookie, 1000 / FrozenCookies.cookieClickSpeed);		
+							logEvent('AutoClick', 'Clicking cookie on normal speed with  ' + FrozenCookies.cookieClickSpeed + ' clicks per second.');
+					}
+				}
+			}
+		}
+		
 
 	    updateCaches();
         var recommendation = nextPurchase();
@@ -1787,7 +1794,8 @@ function autoCookie() {
              var ripeAge = Game.lumpRipeAge;
              if ((Date.now() - started) >= ripeAge) {
                  Game.clickLump();
-             }
+				 logEvent('AutoHarvestSL', 'Got a new Sugar Lump for you.');
+			 }
         }
         if (FrozenCookies.autoSL == 2) autoRigidel();
 
