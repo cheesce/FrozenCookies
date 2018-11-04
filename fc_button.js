@@ -93,13 +93,13 @@ FrozenCookies.preferenceValues = {
         'display':["Autoharvest SL OFF", "Autoharvest SL ON", "Autoharvest SL ON + Auto Rigidel"],
         'default':0
     }, 
-    'autoClick':{
+ /*   'autoClick':{
         'hint':'Click the large cookie full time',
         'display':['Autoclick OFF', 'Autoclick ON'],
         'default':0,
         'extras':'<a class="option" id="cookieClickSpeed" onclick="updateSpeed(\'cookieClickSpeed\');">${cookieClickSpeed} clicks/sec</a>'
     },
-    'autoFrenzy':{
+  */  'autoFrenzy':{
         'hint':'Same as autoClick but on ClickFrenzy with different click rate if you want',
         'display':['Autofrenzy OFF', 'Autofrenzy ON'],
         'default':0,
