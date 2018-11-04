@@ -369,7 +369,7 @@ function drawCircles(t_d, x, y) {
                 strokeWidth: 1,
                 x: x + (maxRadius + 5), y:y + maxRadius + 5,
                 radius: maxRadius - 5 - (i_c)*10
-           }); */
+           });
 		  }
         }
         if (FrozenCookies.fancyui > 1) {
