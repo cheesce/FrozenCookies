@@ -1697,7 +1697,7 @@ function smartTrackingStats(delay) {
     }
 }
 
-//frenzyClickBot
+//frenzyClickBot 
 function autoFrenzyClick() {
     if (hasClickBuff() && !FrozenCookies.autoFrenzyBot) {
         if (FrozenCookies.autoclickBot) {
@@ -1713,7 +1713,6 @@ function autoFrenzyClick() {
         }
     }
 }
-
 
 //autoGodzamokBot
 function autoGodzamokAction() {
