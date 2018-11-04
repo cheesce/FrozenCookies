@@ -807,7 +807,7 @@ function FCMenu() {
                     }
 					subsection.append(listing);
                 }
-            };
+            });
             menu.append(subsection);
         }
         subsection = $('<div>').addClass('subsection');
