@@ -107,6 +107,7 @@ function FCStart() {
 	// Setup Timers
 	FrozenCookies.cookieBot = 0;
     FrozenCookies.autoClickBot = 0;
+	FrozenCookies.autoFClickBot = 0;
     FrozenCookies.autoGodzamokBot = 0;
 	FrozenCookies.autoSpellBot = 0;
     FrozenCookies.statBot = 0;
@@ -1759,7 +1760,7 @@ function autoCookie() {
         }
         
 		// Normal cookie click rate or frenzy click rate logic
-		if (FrozenCookies.autoClick && hasClickBuff(){
+		if (FrozenCookies.autoClick && hasClickBuff()){
 		    if (!FrozenCookies.autoFClickBot) {
 			  clearInterval(FrozenCookies.autoClickBot);
 			  FrozenCookies.autoClickBot=0;
