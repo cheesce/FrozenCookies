@@ -940,6 +940,7 @@ function recommendationList(recalculate) { //ok
             upgradeStats(recalculate)
             .concat(buildingStats(recalculate))
             .concat(santaStats())
+			.concat(dragonStats())
             .sort(function(a, b) {
                 return a.efficiency != b.efficiency ? a.efficiency - b.efficiency : (a.delta_cps != b.delta_cps ? b.delta_cps - a.delta_cps : a.cost - b.cost);
             }));
@@ -1202,6 +1203,48 @@ function buySanta() { //ok
     if (Game.santaLevel + 1 >= Game.santaLevels.length) {
         Game.ToggleSpecialMenu();
     }
+}
+
+function dragonStats() { //ok
+    return Game.Has('How to bake your dragon') && (Game.dragonLevel + 1 < Game.dragonLevels.length) ? {
+        id: 998,
+        efficiency: 1,
+        base_delta_cps: 0,
+        delta_cps: 0,
+        cost: cumulativeDragonCost(Game.dragonLevel+1),
+        type: 'dragon',
+        purchase: {
+            id: 998,
+            name: 'Dragon Upgrade ' + Game.dragonLevel+1 + '( ' + Game.dragonLevels[Game.dragonLevel].name +' )',
+            buy: buyDragon,
+            getCost: function() {
+                return cumulativeDragonCost(Game.dragonLevel+1);
+            }
+        }
+    } : [];
+}
+function buyDragon() { //ok
+    Game.specialTab = 'dragon';
+    Game.UpgradeDragon();
+    if (Game.dragonLevel + 1 >= Game.dragonLevels.length) {
+        Game.ToggleSpecialMenu();
+    }
+}
+
+function cumulativeDragonCost(amount) { //ok
+    var total = 0,
+	dcost=[1000000,1000000*2,1000000*4,1000000*8,1000000*16]
+	.concat(Game.ObjectsById.map(function(a) { return a.getSumPrice(100);}))
+	.concat(Game.ObjectsById.map(function(a) { return a.getSumPrice(50);}).reduce(function(a,b) { return a+b;},0))
+	.concat(Game.ObjectsById.map(function(a) { return a.getSumPrice(200);}).reduce(function(a,b) { return a+b;},0));
+		
+    if (!amount) {
+
+    } 
+	else {
+	total=dcost[amount-1];
+	}
+    return total;
 }
 
 function defaultPurchase() {
@@ -1774,6 +1817,7 @@ function autoCookie() {
 		}
 		     
 		//Harvest Sugar Lump
+        if (FrozenCookies.autoSL == 2) autoRigidel(); //must come before normal harvest
         if (FrozenCookies.autoSL) {
              var started = Game.lumpT;
              var ripeAge = Game.lumpRipeAge;
@@ -1782,7 +1826,6 @@ function autoCookie() {
 				 logEvent('AutoHarvestSL', 'Got a new Sugar Lump for you.');
 			 }
         }
-        if (FrozenCookies.autoSL == 2) autoRigidel();
 
 		//Pop Wrinklers
 		if (FrozenCookies.autoWrinkler == 1) { //efficent pop
