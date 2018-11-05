@@ -308,11 +308,11 @@ var upgradeJson = {
     168: {'buildings': [], 'upgrades': [152], 'santa': 14},
 
     // Season switching
- //   182: {'buildings': [], 'upgrades': [181]},
- //   183: {'buildings': [], 'upgrades': [181]},
- //   184: {'buildings': [], 'upgrades': [181]},
- //   185: {'buildings': [], 'upgrades': [181]},
- //   209: {'buildings': [], 'upgrades': [181]},
+    182: {'buildings': [], 'upgrades': [181]},
+    183: {'buildings': [], 'upgrades': [181]},
+    184: {'buildings': [], 'upgrades': [181]},
+    185: {'buildings': [], 'upgrades': [181]},
+    209: {'buildings': [], 'upgrades': [181]},
     
     // Easter season
     210: {'buildings': [], 'upgrades': [69,209], 'wrinklers': 1},
