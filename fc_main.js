@@ -449,7 +449,7 @@ function effectiveCps(delay, wrathValue, wrinklerCount) {
     var wrinkler = wrinklerMod(wrinklerCount);
 //    if (delay == null) {
 //        delay = delayAmount();
-    }
+//   	}
     return baseCps() * wrinkler + gcPs(cookieValue(delay, wrathValue, wrinklerCount)) + baseClickingCps(FrozenCookies.cookieClickSpeed * FrozenCookies.autoClick) + reindeerCps(wrathValue);
 }
 
