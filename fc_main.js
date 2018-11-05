@@ -447,8 +447,8 @@ function effectiveCps(delay, wrathValue, wrinklerCount) {
     wrathValue = wrathValue != null ? wrathValue : Game.elderWrath;
     wrinklerCount = wrinklerCount != null ? wrinklerCount : (wrathValue ? 10 : 0);
     var wrinkler = wrinklerMod(wrinklerCount);
-    if (delay == null) {
-        delay = delayAmount();
+//    if (delay == null) {
+//        delay = delayAmount();
     }
     return baseCps() * wrinkler + gcPs(cookieValue(delay, wrathValue, wrinklerCount)) + baseClickingCps(FrozenCookies.cookieClickSpeed * FrozenCookies.autoClick) + reindeerCps(wrathValue);
 }
@@ -570,6 +570,22 @@ function reindeerCps(wrathValue) {
     return reindeerValue(wrathValue) / averageTime * FrozenCookies.simulatedGCPercent;
 }
 
+function gcPs(gcValue) {
+    var averageGCTime = probabilitySpan('golden', 0, 0.5) / Game.fps;
+    gcValue /= averageGCTime;
+    gcValue *= FrozenCookies.simulatedGCPercent;
+    return gcValue;
+}
+
+function gcEfficiency() {
+    if (gcPs(weightedCookieValue()) <= 0) {
+        return Number.MAX_VALUE;
+    }
+    var cost = Math.max(0, (maxLuckyValue() * 10 - Game.cookies));
+    var deltaCps = gcPs(weightedCookieValue() - weightedCookieValue(true));
+    return divCps(cost, deltaCps);
+}
+
 function calculateChainValue(bankAmount, cps, digit) {
     x = Math.min(bankAmount, (cps * 60 * 60 * 6 * 4));
     n = Math.floor(Math.log((9 * x) / (4 * digit)) / Math.LN10);
@@ -663,6 +679,8 @@ function shouldPopWrinklers() { //ok?
     }
     return toPop;
 }
+
+
 
 function buildingRemaining(building, amount) {
     var cost = cumulativeBuildingCost(building.basePrice, building.amount, amount);
@@ -881,21 +899,7 @@ function maxCookieTime() {
     return Game.shimmerTypes.golden.maxTime
 }
 
-function gcPs(gcValue) {
-    var averageGCTime = probabilitySpan('golden', 0, 0.5) / Game.fps;
-    gcValue /= averageGCTime;
-    gcValue *= FrozenCookies.simulatedGCPercent;
-    return gcValue;
-}
 
-function gcEfficiency() {
-    if (gcPs(weightedCookieValue()) <= 0) {
-        return Number.MAX_VALUE;
-    }
-    var cost = Math.max(0, (maxLuckyValue() * 10 - Game.cookies));
-    var deltaCps = gcPs(weightedCookieValue() - weightedCookieValue(true));
-    return divCps(cost, deltaCps);
-}
 
 function delayAmount() {
     return bestBank(nextChainedPurchase().efficiency).cost;
@@ -1083,19 +1087,21 @@ function nextChainedPurchase(recalculate) {
 function buildingStats(recalculate) {
     if (recalculate) {
         var buildingBlacklist = blacklist[FrozenCookies.blacklist].buildings;
-        var currentBank = bestBank(0).cost;
+ //       var currentBank = bestBank(0).cost;
         FrozenCookies.caches.buildings = Game.ObjectsById.map(function(current, index) {
             if (buildingBlacklist === true || _.contains(buildingBlacklist, current.id)) {
                 return null;
             }
             var baseCpsOrig = baseCps();
-            var cpsOrig = effectiveCps(Math.min(Game.cookies, currentBank)); 
+//            var cpsOrig = effectiveCps(Math.min(Game.cookies, currentBank)); 
+            var cpsOrig = effectiveCps(); 
             var existingAchievements = Game.AchievementsById.map(function(item, i) {
                 return item.won
             });
             buildingToggle(current);
             var baseCpsNew = baseCps();
-            var cpsNew = effectiveCps(Math.min(Game.cookies, currentBank)); 
+//            var cpsNew = effectiveCps(Math.min(Game.cookies, currentBank)); 
+            var cpsNew = effectiveCps(); 
             buildingToggle(current, existingAchievements);
             var deltaCps = cpsNew - cpsOrig;
             var baseDeltaCps = baseCpsNew - baseCpsOrig;
@@ -1119,16 +1125,17 @@ function buildingStats(recalculate) {
 function upgradeStats(recalculate) {
     if (recalculate) {
         var upgradeBlacklist = blacklist[FrozenCookies.blacklist].upgrades;
-        var currentBank = bestBank(0).cost;
+ //       var currentBank = bestBank(0).cost;
         FrozenCookies.caches.upgrades = Game.UpgradesById.map(function(current) {
             if (!current.bought) {
-                var needed = unfinishedUpgradePrereqs(current);
                 if (isUnavailable(current, upgradeBlacklist)) {
                     return null;
                 }
+                var needed = unfinishedUpgradePrereqs(current);
                 var cost = upgradePrereqCost(current);
                 var baseCpsOrig = baseCps();
-                var cpsOrig = effectiveCps(Math.min(Game.cookies, currentBank)); 
+//                var cpsOrig = effectiveCps(Math.min(Game.cookies, currentBank)); 
+				var cpsOrig = effectiveCps(); 
                 var existingAchievements = Game.AchievementsById.map(function(item) {
                     return item.won
                 });
@@ -1136,8 +1143,9 @@ function upgradeStats(recalculate) {
                 var discounts = totalDiscount() + totalDiscount(true);
                 var reverseFunctions = upgradeToggle(current);
                 var baseCpsNew = baseCps();
-                var cpsNew = effectiveCps(currentBank);
-                var priceReduction = discounts == (totalDiscount() + totalDiscount(true)) ? 0 : checkPrices(current);
+//                var cpsNew = effectiveCps(currentBank);
+                var cpsNew = effectiveCps();
+                var priceReduction = (discounts == (totalDiscount() + totalDiscount(true))) ? 0 : checkPrices(current);
                 upgradeToggle(current, existingAchievements, reverseFunctions);
                 Game.elderWrath = existingWrath;
                 var deltaCps = cpsNew - cpsOrig;

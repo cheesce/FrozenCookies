@@ -289,49 +289,6 @@ var upgradeJson = {
     132: {'buildings': [], 'upgrades': [131]},
     133: {'buildings': [], 'upgrades': [132]},
 
-	// Dragon upgrades
-    1001: {'buildings': [], 'upgrades': [324], 'dragon': 1},	
-    1002: {'buildings': [], 'upgrades': [324], 'dragon': 2},	
-    1003: {'buildings': [], 'upgrades': [324], 'dragon': 3},	
-    1004: {'buildings': [], 'upgrades': [324], 'dragon': 4},	
-    1005: {'buildings': [], 'upgrades': [324], 'dragon': 5},	
-	1006: {'buildings': [100,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], 'upgrades': [324], 'dragon': 6},	
-    1007: {'buildings': [0,100,0,0,0,0,0,0,0,0,0,0,0,0,0,0], 'upgrades': [324], 'dragon': 7},	
-    1008: {'buildings': [0,0,100,0,0,0,0,0,0,0,0,0,0,0,0,0], 'upgrades': [324], 'dragon': 8},	
-    1009: {'buildings': [0,0,0,100,0,0,0,0,0,0,0,0,0,0,0,0], 'upgrades': [324], 'dragon': 9},	
-    1010: {'buildings': [0,0,0,0,100,0,0,0,0,0,0,0,0,0,0,0], 'upgrades': [324], 'dragon': 10},	
-    1011: {'buildings': [0,0,0,0,0,100,0,0,0,0,0,0,0,0,0,0], 'upgrades': [324], 'dragon': 11},	
-    1012: {'buildings': [0,0,0,0,0,0,100,0,0,0,0,0,0,0,0,0], 'upgrades': [324], 'dragon': 12},	
-    1013: {'buildings': [0,0,0,0,0,0,0,100,0,0,0,0,0,0,0,0], 'upgrades': [324], 'dragon': 13},	
-    1014: {'buildings': [0,0,0,0,0,0,0,0,100,0,0,0,0,0,0,0], 'upgrades': [324], 'dragon': 14},	
-    1015: {'buildings': [0,0,0,0,0,0,0,0,0,100,0,0,0,0,0,0], 'upgrades': [324], 'dragon': 15},	
-    1016: {'buildings': [0,0,0,0,0,0,0,0,0,0,100,0,0,0,0,0], 'upgrades': [324], 'dragon': 16},	
-    1017: {'buildings': [0,0,0,0,0,0,0,0,0,0,0,100,0,0,0,0], 'upgrades': [324], 'dragon': 17},	
-    1018: {'buildings': [0,0,0,0,0,0,0,0,0,0,0,0,100,0,0,0], 'upgrades': [324], 'dragon': 18},	
-    1019: {'buildings': [0,0,0,0,0,0,0,0,0,0,0,0,0,100,0,0], 'upgrades': [324], 'dragon': 19},	
-    1020: {'buildings': [0,0,0,0,0,0,0,0,0,0,0,0,0,0,100,0], 'upgrades': [324], 'dragon': 20},	
-    1021: {'buildings': [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,100], 'upgrades': [324], 'dragon': 21},
-    1022: {'buildings': [50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50], 'upgrades': [324], 'dragon': 22},	
-    1023: {'buildings': [200,200,200,200,200,200,200,200,200,200,200,200,200,200,200,200], 'upgrades': [324], 'dragon': 23},	
-	
-    // Santa upgrades
-    152: {'buildings': [], 'upgrades': [182]},
-    153: {'buildings': [], 'upgrades': [152], 'santa': 1},
-    154: {'buildings': [], 'upgrades': [152], 'santa': 2},
-    155: {'buildings': [], 'upgrades': [152], 'santa': 3},
-    156: {'buildings': [], 'upgrades': [152], 'santa': 4},
-    157: {'buildings': [], 'upgrades': [152], 'santa': 5},
-    158: {'buildings': [], 'upgrades': [152], 'santa': 6},
-    159: {'buildings': [], 'upgrades': [152], 'santa': 7},
-    160: {'buildings': [], 'upgrades': [152], 'santa': 8},
-    161: {'buildings': [], 'upgrades': [152], 'santa': 9},
-    162: {'buildings': [], 'upgrades': [152], 'santa': 10},
-    163: {'buildings': [], 'upgrades': [152], 'santa': 11},
-    164: {'buildings': [], 'upgrades': [152], 'santa': 12},
-    165: {'buildings': [], 'upgrades': [152], 'santa': 13},
-    166: {'buildings': [], 'upgrades': [152], 'santa': 14},
-    168: {'buildings': [], 'upgrades': [152], 'santa': 15},
-
     // Season switching
     182: {'buildings': [], 'upgrades': [181]},
     183: {'buildings': [], 'upgrades': [181]},
@@ -386,6 +343,53 @@ var upgradeJson = {
     172: {'buildings': [], 'upgrades': [171,184]},
     173: {'buildings': [], 'upgrades': [172,184]},
     174: {'buildings': [], 'upgrades': [173,184]}
+};
+
+var dragonJson= {
+	// Dragon upgrades
+    1: {'buildings': [], 'upgrades': [324], 'dragon': 1},	
+    2: {'buildings': [], 'upgrades': [324], 'dragon': 2},	
+    3: {'buildings': [], 'upgrades': [324], 'dragon': 3},	
+    4: {'buildings': [], 'upgrades': [324], 'dragon': 4},	
+    5: {'buildings': [], 'upgrades': [324], 'dragon': 5},	
+	6: {'buildings': [100,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], 'upgrades': [324], 'dragon': 6},	
+    7: {'buildings': [0,100,0,0,0,0,0,0,0,0,0,0,0,0,0,0], 'upgrades': [324], 'dragon': 7},	
+    8: {'buildings': [0,0,100,0,0,0,0,0,0,0,0,0,0,0,0,0], 'upgrades': [324], 'dragon': 8},	
+    9: {'buildings': [0,0,0,100,0,0,0,0,0,0,0,0,0,0,0,0], 'upgrades': [324], 'dragon': 9},	
+    10: {'buildings': [0,0,0,0,100,0,0,0,0,0,0,0,0,0,0,0], 'upgrades': [324], 'dragon': 10},	
+    11: {'buildings': [0,0,0,0,0,100,0,0,0,0,0,0,0,0,0,0], 'upgrades': [324], 'dragon': 11},	
+    12: {'buildings': [0,0,0,0,0,0,100,0,0,0,0,0,0,0,0,0], 'upgrades': [324], 'dragon': 12},	
+    13: {'buildings': [0,0,0,0,0,0,0,100,0,0,0,0,0,0,0,0], 'upgrades': [324], 'dragon': 13},	
+    14: {'buildings': [0,0,0,0,0,0,0,0,100,0,0,0,0,0,0,0], 'upgrades': [324], 'dragon': 14},	
+    15: {'buildings': [0,0,0,0,0,0,0,0,0,100,0,0,0,0,0,0], 'upgrades': [324], 'dragon': 15},	
+    16: {'buildings': [0,0,0,0,0,0,0,0,0,0,100,0,0,0,0,0], 'upgrades': [324], 'dragon': 16},	
+    17: {'buildings': [0,0,0,0,0,0,0,0,0,0,0,100,0,0,0,0], 'upgrades': [324], 'dragon': 17},	
+    18: {'buildings': [0,0,0,0,0,0,0,0,0,0,0,0,100,0,0,0], 'upgrades': [324], 'dragon': 18},	
+    19: {'buildings': [0,0,0,0,0,0,0,0,0,0,0,0,0,100,0,0], 'upgrades': [324], 'dragon': 19},	
+    20: {'buildings': [0,0,0,0,0,0,0,0,0,0,0,0,0,0,100,0], 'upgrades': [324], 'dragon': 20},	
+    21: {'buildings': [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,100], 'upgrades': [324], 'dragon': 21},
+    22: {'buildings': [50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50], 'upgrades': [324], 'dragon': 22},	
+    23: {'buildings': [200,200,200,200,200,200,200,200,200,200,200,200,200,200,200,200], 'upgrades': [324], 'dragon': 23}	
+};
+
+var santaJson = {
+// Santa upgrades
+    152: {'buildings': [], 'upgrades': [182]},
+    153: {'buildings': [], 'upgrades': [152], 'santa': 1},
+    154: {'buildings': [], 'upgrades': [152], 'santa': 2},
+    155: {'buildings': [], 'upgrades': [152], 'santa': 3},
+    156: {'buildings': [], 'upgrades': [152], 'santa': 4},
+    157: {'buildings': [], 'upgrades': [152], 'santa': 5},
+    158: {'buildings': [], 'upgrades': [152], 'santa': 6},
+    159: {'buildings': [], 'upgrades': [152], 'santa': 7},
+    160: {'buildings': [], 'upgrades': [152], 'santa': 8},
+    161: {'buildings': [], 'upgrades': [152], 'santa': 9},
+    162: {'buildings': [], 'upgrades': [152], 'santa': 10},
+    163: {'buildings': [], 'upgrades': [152], 'santa': 11},
+    164: {'buildings': [], 'upgrades': [152], 'santa': 12},
+    165: {'buildings': [], 'upgrades': [152], 'santa': 13},
+    166: {'buildings': [], 'upgrades': [152], 'santa': 14},
+    168: {'buildings': [], 'upgrades': [152], 'santa': 15}
 };
 
 var blacklist = [
