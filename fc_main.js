@@ -1162,9 +1162,9 @@ function upgradeStats(recalculate) {
 function santaStats() { //ok
     return Game.Has('A festive hat') && (Game.santaLevel + 1 < Game.santaLevels.length) ? {
         id: 999,
-        efficiency: 99999999999999999999999999999999999999999999999,
+        efficiency: 1,
         base_delta_cps: 0,
-        delta_cps: Infinity,
+        delta_cps: 0,
         cost: cumulativeSantaCost(Game.santaLevel+1)-cumulativeSantaCost(Game.santaLevel),
         type: 'santa',
         purchase: {
