@@ -1234,9 +1234,9 @@ function buyDragon() { //ok
 function cumulativeDragonCost(amount) { //ok
     var total = 0,
 	dcost=[1000000,1000000*2,1000000*4,1000000*8,1000000*16]
-	.concat(Game.ObjectsById.map(function(a) { return a.getSumPrice(100);}))
-	.concat(Game.ObjectsById.map(function(a) { return a.getSumPrice(50);}).reduce(function(a,b) { return a+b;},0))
-	.concat(Game.ObjectsById.map(function(a) { return a.getSumPrice(200);}).reduce(function(a,b) { return a+b;},0));
+	.concat(Game.ObjectsById.map(function(a) { return cumulativeBuildingCost(a.basePrice, a.amount<100?1:a.amount-100, a.amount);}))
+	.concat(Game.ObjectsById.map(function(a) { return cumulativeBuildingCost(a.basePrice, a.amount<50?1:a.amount-50, a.amount);}).reduce(function(a,b) { return a+b;},0))
+	.concat(Game.ObjectsById.map(function(a) { return cumulativeBuildingCost(a.basePrice, a.amount<200?1:a.amount-200, a.amount);}).reduce(function(a,b) { return a+b;},0));
 		
     if (!amount) {
 
