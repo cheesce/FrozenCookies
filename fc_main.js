@@ -944,7 +944,7 @@ function recommendationList(recalculate) { //ok
             upgradeStats(recalculate)
             .concat(buildingStats(recalculate))
             .concat(santaStats())
-			.concat(dragonStats())
+//			.concat(dragonStats())
             .sort(function(a, b) {
                 return a.efficiency != b.efficiency ? a.efficiency - b.efficiency : (a.delta_cps != b.delta_cps ? b.delta_cps - a.delta_cps : a.cost - b.cost);
             }));
