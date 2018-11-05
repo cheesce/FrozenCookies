@@ -1314,7 +1314,7 @@ function upgradePrereqCost(upgrade, full) {
             return sum;
         }, 0);
         if(prereqs.santa)  cost += cumulativeSantaCost(prereqs.santa-1);
-		if(prereqs.dragon) cost += cumulativeDragonCost(prereqs.dragon-1);
+//		if(prereqs.dragon) cost += cumulativeDragonCost(prereqs.dragon-1);
     }
     return cost;
 }
@@ -1362,13 +1362,13 @@ function unfinishedUpgradePrereqs(upgrade) { //looks ok
                 id: 0
             });
         }
-		if (prereqs.dragon) {
+/*		if (prereqs.dragon) {
             needed.push({
                 type: 'dragon',
                 id: 0
             });
         }
-		
+*/		
         if (prereqs.wrinklers && Game.elderWrath == 0) {
             needed.push({
                 type: 'wrinklers',
