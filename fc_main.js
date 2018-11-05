@@ -117,8 +117,8 @@ function FCStart() {
     if (!Game.HasAchiev('Third-party')) { Game.Win('Third-party'); }
 }
 
-function StartTimer()
-{   //  To allow polling frequency to change, clear intervals before setting new ones.
+function StartTimer() {
+   //  To allow polling frequency to change, clear intervals before setting new ones.
     if (FrozenCookies.cookieBot) {
         clearInterval(FrozenCookies.cookieBot);
         FrozenCookies.cookieBot = 0;
@@ -899,15 +899,6 @@ function gcEfficiency() {
 
 function delayAmount() {
     return bestBank(nextChainedPurchase().efficiency).cost;
-    /*
-      if (nextChainedPurchase().efficiency > gcEfficiency() || (Game.frenzy && Game.Has('Get lucky'))) {
-        return maxLuckyValue() * 10;
-      } else if (weightedCookieValue() > weightedCookieValue(true)) {
-        return Math.min(maxLuckyValue() * 10, Math.max(0,(nextChainedPurchase().efficiency - (gcEfficiency() * baseCps())) / gcEfficiency()));
-      } else {
-       return 0;
-      }
-    */
 }
 
 function haveAll(holiday) {
@@ -943,7 +934,7 @@ function purchaseEfficiency(price, deltaCps, baseDeltaCps, currentCps) {
     return efficiency;
 }
 
-function recommendationList(recalculate) {
+function recommendationList(recalculate) { //ok
     if (recalculate) {
         FrozenCookies.caches.recommendationList = addScores(
             upgradeStats(recalculate)
@@ -955,7 +946,7 @@ function recommendationList(recalculate) {
         //If autocasting Spontaneous Edifice, don't buy any Fractal engines after 399
         if (M && FrozenCookies.autoSpell == 3 && Game.Objects['Fractal engine'].amount >= 399) {
             for (var i = 0; i < FrozenCookies.caches.recommendationList.length; i++) {
-                if (FrozenCookies.caches.recommendationList[i].id == 14) {
+                if (FrozenCookies.caches.recommendationList[i].id == 15) {
                     FrozenCookies.caches.recommendationList.splice(i , 1);
                 }
             }
@@ -981,7 +972,49 @@ function recommendationList(recalculate) {
         }
     }
     return FrozenCookies.caches.recommendationList;
-    //  return upgradeStats(recalculate).concat(buildingStats(recalculate)).sort(function(a,b){return (a.efficiency - b.efficiency)});
+}
+
+function isUnavailable(upgrade, upgradeBlacklist) {
+    var result = false;
+
+    var needed = unfinishedUpgradePrereqs(upgrade);
+    result = result || !upgrade.unlocked && !needed;
+    result = result || (upgradeBlacklist === true);
+    result = result || _.contains(upgradeBlacklist, upgrade.id);
+    result = result || (needed && _.find(needed, function(a) {
+        return a.type == "wrinklers"
+    }) != null);
+    result = result || (upgrade.season && (!haveAll(Game.season) || (upgrade.season != seasons[FrozenCookies.defaultSeason] && haveAll(upgrade.season))));
+
+    if  ((upgrade.id == 331) || (upgrade.id ==332)) {
+        result = true; // blacklist golden switch from being used
+    }
+    
+    if ((upgrade.id == 563) || (upgrade.id == 564)) {
+        result = true; // blacklist shimmering veil switch from being used
+    }
+    
+    if (upgrade.id == 333) {
+        result = true; // blacklist milk selector from being used
+    }
+    
+    if (upgrade.id == 414) {
+        result = true; // blacklist background selector from being used
+    }
+
+    if (upgrade.id == 361) {
+        result = true; // blacklist golden cookie sound selector from being used
+    }
+    
+    if (upgrade.id == 452) {
+        result = true; // blacklist sugar frenzy from being used
+    }
+
+    if (upgrade.id == 227) {
+        result = true; // blacklist chocolate egg from being used
+    }
+
+    return result;
 }
 
 function addScores(recommendations) {
@@ -1126,49 +1159,6 @@ function upgradeStats(recalculate) {
     return FrozenCookies.caches.upgrades;
 }
 
-function isUnavailable(upgrade, upgradeBlacklist) {
-    var result = false;
-
-    var needed = unfinishedUpgradePrereqs(upgrade);
-    result = result || !upgrade.unlocked && !needed;
-    result = result || (upgradeBlacklist === true);
-    result = result || _.contains(upgradeBlacklist, upgrade.id);
-    result = result || (needed && _.find(needed, function(a) {
-        return a.type == "wrinklers"
-    }) != null);
-    result = result || (upgrade.season && (!haveAll(Game.season) || (upgrade.season != seasons[FrozenCookies.defaultSeason] && haveAll(upgrade.season))));
-
-    if  ((upgrade.id == 331) || (upgrade.id ==332)) {
-        result = true; // blacklist golden switch from being used, until proper logic can be implemented
-    }
-    
-    if ((upgrade.id == 563) || (upgrade.id == 564)) {
-        result = true; // blacklist shimmering veil switch from being used, until proper logic can be implemented
-    }
-    
-    if (upgrade.id == 333) {
-        result = true; // blacklist milk selector from being used
-    }
-    
-    if (upgrade.id == 414) {
-        result = true; // blacklist background selector from being used
-    }
-
-    if (upgrade.id == 361) {
-        result = true; // blacklist golden cookie sound selector from being used
-    }
-    
-    if (upgrade.id == 452) {
-        result = true; // blacklist sugar frenzy from being used
-    }
-
-    if (upgrade.id == 227) {
-        result = true; // blacklist chocolate egg from being used
-    }
-
-    return result;
-}
-
 function santaStats() {
     return Game.Has('A festive hat') && (Game.santaLevel + 1 < Game.santaLevels.length) ? {
         id: 0,
@@ -1204,6 +1194,14 @@ function cumulativeSantaCost(amount) {
         total = Infinity;
     }
     return total;
+}
+
+function buySanta() { //ok
+    Game.specialTab = 'santa';
+    Game.UpgradeSanta();
+    if (Game.santaLevel + 1 >= Game.santaLevels.length) {
+        Game.ToggleSpecialMenu();
+    }
 }
 
 function defaultPurchase() {
@@ -1277,7 +1275,7 @@ function upgradePrereqCost(upgrade, full) {
     return cost;
 }
 
-function unfinishedUpgradePrereqs(upgrade) {
+function unfinishedUpgradePrereqs(upgrade) { //looks ok
     if (upgrade.unlocked) {
         return null;
     }
@@ -1330,7 +1328,7 @@ function unfinishedUpgradePrereqs(upgrade) {
     return needed.length ? needed : null;
 }
 
-function upgradeToggle(upgrade, achievements, reverseFunctions) {
+function upgradeToggle(upgrade, achievements, reverseFunctions) { //tut so als würde ein upgrade gekauft
     if (!achievements) {
         reverseFunctions = {};
         if (!upgrade.unlocked) {
@@ -1399,7 +1397,7 @@ function upgradeToggle(upgrade, achievements, reverseFunctions) {
     return reverseFunctions;
 }
 
-function buildingToggle(building, achievements) {
+function buildingToggle(building, achievements) { //tut so als würde ein building gekauft
     if (!achievements) {
         building.amount += 1;
         building.bought += 1;
@@ -1499,14 +1497,6 @@ function buyFunctionToggle(upgrade) {
         });
     }
     return null;
-}
-
-function buySanta() {
-    Game.specialTab = 'santa';
-    Game.UpgradeSanta();
-    if (Game.santaLevel + 1 >= Game.santaLevels.length) {
-        Game.ToggleSpecialMenu();
-    }
 }
 
 //Helper functions for Stats
@@ -1782,12 +1772,7 @@ function autoCookie() {
 				}
 			}
 		}
-		
-
-	    updateCaches();
-        var recommendation = nextPurchase();
-        var delay = delayAmount();
-        
+		     
 		//Harvest Sugar Lump
         if (FrozenCookies.autoSL) {
              var started = Game.lumpT;
@@ -1890,9 +1875,16 @@ function autoCookie() {
 //        if (parseInt(fps_amounts[FrozenCookies["fpsModifier"]]) != Game.fps) {
 //            Game.fps = parseInt(fps_amounts[FrozenCookies["fpsModifier"]]);
 //        }
-              
-        if (FrozenCookies.autoBuy && ((Game.cookies >= delay + recommendation.cost) || recommendation.purchase.name == "Elder Pledge") && (FrozenCookies.pastemode || isFinite(nextChainedPurchase().efficiency))) {
-            //    if (FrozenCookies.autoBuy && (Game.cookies >= delay + recommendation.cost)) {
+        
+		// Yeah, buy some stuff
+		updateCaches();
+        var recommendation = nextPurchase();
+        var delay = delayAmount(); //save cookies for bank
+     
+//       if (FrozenCookies.autoBuy && 
+//		((Game.cookies >= delay + recommendation.cost) || recommendation.purchase.name == "Elder Pledge") &&
+//		 (FrozenCookies.pastemode || isFinite(nextChainedPurchase().efficiency))) {
+         if (FrozenCookies.autoBuy && (Game.cookies >= delay + recommendation.cost)) {
             recommendation.time = Date.now() - Game.startDate;
             recommendation.purchase.clickFunction = null;
             recommendation.purchase.buy();
@@ -1904,7 +1896,7 @@ function autoCookie() {
                 FrozenCookies.delayPurchaseCount += 1;
             }
 			
-            logEvent('Store', 'Autobought ' + recommendation.purchase.name + ' for ' + Beautify(recommendation.cost) + ', resulting in ' + Beautify(recommendation.delta_cps) + ' CPS.');
+            logEvent('Store', 'Autobought ' + recommendation.purchase.name + ' for ' + Beautify(recommendation.cost) + ', resulting in ' + Beautify(recommendation.delta_cps) + ' more CPS.');
             
             FrozenCookies.recalculateCaches = true;
         }
