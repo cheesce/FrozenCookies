@@ -1215,7 +1215,7 @@ function dragonStats() { //ok
         type: 'dragon',
         purchase: {
             id: 998,
-            name: 'Dragon Upgrade ' + Game.dragonLevel+1 + '( ' + Game.dragonLevels[Game.dragonLevel].name +' )',
+            name: 'Dragon Upgrade ' + (Game.dragonLevel + 1) + '( ' + Game.dragonLevels[Game.dragonLevel].name +' )',
             buy: buyDragon,
             getCost: function() {
                 return cumulativeDragonCost(Game.dragonLevel+1);
@@ -1234,9 +1234,9 @@ function buyDragon() { //ok
 function cumulativeDragonCost(amount) { //ok
     var total = 0,
 	dcost=[1000000,1000000*2,1000000*4,1000000*8,1000000*16]
-	.concat(Game.ObjectsById.map(function(a) { return cumulativeBuildingCost(a.basePrice, a.amount<100?1:a.amount-100, a.amount);}))
-	.concat(Game.ObjectsById.map(function(a) { return cumulativeBuildingCost(a.basePrice, a.amount<50?1:a.amount-50, a.amount);}).reduce(function(a,b) { return a+b;},0))
-	.concat(Game.ObjectsById.map(function(a) { return cumulativeBuildingCost(a.basePrice, a.amount<200?1:a.amount-200, a.amount);}).reduce(function(a,b) { return a+b;},0));
+	.concat(Game.ObjectsById.map(function(a) { return cumulativeBuildingCost(a.basePrice, a.amount<=100?1:a.amount-100, a.amount);}))
+	.concat(Game.ObjectsById.map(function(a) { return cumulativeBuildingCost(a.basePrice, a.amount<=50?1:a.amount-50, a.amount);}).reduce(function(a,b) { return a+b;},0))
+	.concat(Game.ObjectsById.map(function(a) { return cumulativeBuildingCost(a.basePrice, a.amount<=200?1:a.amount-200, a.amount);}).reduce(function(a,b) { return a+b;},0));
 		
     if (!amount) {
 
@@ -1266,28 +1266,43 @@ function defaultPurchase() {
     }
 }
 
-function totalDiscount(building) {
+function totalDiscount(is_building) { //need more work
     var price = 1;
-    if (building) {
-        if (Game.Has('Season savings')) price *= 0.99;
-        if (Game.Has('Santa\'s dominion')) price *= 0.99;
-        if (Game.Has('Faberge egg')) price *= 0.99;
-        if (Game.Has('Divine discount')) price *= 0.99;
-        if (Game.hasAura('Fierce Hoarder')) price *= 0.98;
-        if (Game.hasBuff('Everything must go')) price *= 0.95;
-    } else {
-        if (Game.Has('Toy workshop')) price *= 0.95;
-        if (Game.Has('Five-finger discount')) price *= Math.pow(0.99, Game.Objects['Cursor'].amount / 100);
-        if (Game.Has('Santa\'s dominion')) price *= 0.98;
-        if (Game.Has('Faberge egg')) price *= 0.99;
-        if (Game.Has('Divine sales')) price *= 0.99;
-        if (Game.hasAura('Master of the Armory')) price *= 0.98;
+    if (is_building) { //Building price reduction
+		if (Game.Has('Season savings')) price*=0.99;
+		if (Game.Has('Santa\'s dominion')) price*=0.99;
+		if (Game.Has('Faberge egg')) price*=0.99;
+		if (Game.Has('Divine discount')) price*=0.99;
+		if (Game.hasAura('Fierce Hoarder')) price*=0.98;
+		if (Game.hasBuff('Everything must go')) price*=0.95;
+		if (Game.hasBuff('Crafty pixies')) price*=0.98;
+		if (Game.hasBuff('Nasty goblins')) price*=1.02;
+		price*=Game.eff('buildingCost');
+		if (Game.hasGod)
+		{
+			var godLvl=Game.hasGod('creation');
+			if (godLvl==1) price*=0.93;
+			else if (godLvl==2) price*=0.95;
+			else if (godLvl==3) price*=0.98;
+		}
+    }
+	else { // Upgrade price reduction
+		if (Game.Has('Toy workshop')) price*=0.95;
+		if (Game.Has('Five-finger discount')) price*=Math.pow(0.99,Game.Objects['Cursor'].amount/100);
+		if (Game.Has('Santa\'s dominion')) price*=0.98;
+		if (Game.Has('Faberge egg')) price*=0.99;
+		if (Game.Has('Divine sales')) price*=0.99;
+		if (Game.hasBuff('Haggler\'s luck')) price*=0.98;
+		if (Game.hasBuff('Haggler\'s misery')) price*=1.02;
+		if (Game.hasAura('Master of the Armory')) price*=0.98;
+		price*=Game.eff('upgradeCost');
+		//if (this.pool=='cookie' && Game.Has('Divine bakeries')) price/=5;
     }
     return price;
 }
 
 function cumulativeBuildingCost(basePrice, startingNumber, endingNumber) {
-    return basePrice * totalDiscount(true) * (Math.pow(Game.priceIncrease, endingNumber) - Math.pow(Game.priceIncrease, startingNumber)) / (Game.priceIncrease - 1);
+    return basePrice * totalDiscount(true) * ((Math.pow(Game.priceIncrease, endingNumber+1) - Math.pow(Game.priceIncrease, startingNumber)) / (Game.priceIncrease - 1));
 }
 
 function upgradePrereqCost(upgrade, full) {
