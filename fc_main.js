@@ -1164,15 +1164,15 @@ function santaStats() {
         id: 999,
         efficiency: Infinity,
         base_delta_cps: 0,
-        delta_cps: 0,
-        cost: cumulativeSantaCost(1),
+        delta_cps: Infinity,
+        cost: cumulativeSantaCost(Game.santaLevel+2)-cumulativeSantaCost(Game.santaLevel+1),
         type: 'santa',
         purchase: {
             id: 999,
             name: 'Santa Stage Upgrade (' + Game.santaLevels[(Game.santaLevel + 1) % Game.santaLevels.length] + ')',
             buy: buySanta,
             getCost: function() {
-                return cumulativeSantaCost(1);
+                return cumulativeSantaCost(Game.santaLevel+2)-cumulativeSantaCost(Game.santaLevel+1);
             }
         }
     } : [];
