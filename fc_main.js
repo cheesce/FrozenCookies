@@ -1302,7 +1302,7 @@ function totalDiscount(is_building) { //need more work
 }
 
 function cumulativeBuildingCost(basePrice, startingNumber, endingNumber) {
-    return basePrice * totalDiscount(true) * ((Math.pow(Game.priceIncrease, endingNumber+1) - Math.pow(Game.priceIncrease, startingNumber)) / (Game.priceIncrease - 1));
+    return basePrice * totalDiscount(true) * ((Math.pow(Game.priceIncrease, endingNumber) - Math.pow(Game.priceIncrease, startingNumber)) / (Game.priceIncrease - 1));
 }
 
 function upgradePrereqCost(upgrade, full) {
