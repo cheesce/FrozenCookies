@@ -1159,26 +1159,26 @@ function upgradeStats(recalculate) {
     return FrozenCookies.caches.upgrades;
 }
 
-function santaStats() {
+function santaStats() { //ok
     return Game.Has('A festive hat') && (Game.santaLevel + 1 < Game.santaLevels.length) ? {
         id: 999,
-        efficiency: Infinity,
+        efficiency: 99999999999999999999999999999999999999999999999,
         base_delta_cps: 0,
         delta_cps: Infinity,
-        cost: cumulativeSantaCost(Game.santaLevel+2)-cumulativeSantaCost(Game.santaLevel+1),
+        cost: cumulativeSantaCost(Game.santaLevel+1)-cumulativeSantaCost(Game.santaLevel),
         type: 'santa',
         purchase: {
             id: 999,
             name: 'Santa Stage Upgrade (' + Game.santaLevels[(Game.santaLevel + 1) % Game.santaLevels.length] + ')',
             buy: buySanta,
             getCost: function() {
-                return cumulativeSantaCost(Game.santaLevel+2)-cumulativeSantaCost(Game.santaLevel+1);
+                return cumulativeSantaCost(Game.santaLevel+1)-cumulativeSantaCost(Game.santaLevel);
             }
         }
     } : [];
 }
 
-function cumulativeSantaCost(amount) {
+function cumulativeSantaCost(amount) { //ok
     var total = 0;
     if (!amount) {
 
