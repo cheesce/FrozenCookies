@@ -1166,43 +1166,27 @@ function santaStats() { //ok
         efficiency: 1,
         base_delta_cps: 0,
         delta_cps: 0,
-        cost: cumulativeSantaCost(Game.santaLevel+1)-cumulativeSantaCost(Game.santaLevel),
+        cost: cumulativeSantaCost(Game.santaLevel),
         type: 'santa',
         purchase: {
             id: 999,
-            name: 'Santa Stage Upgrade (' + Game.santaLevels[(Game.santaLevel + 1) % Game.santaLevels.length] + ')',
+            name: 'Santa Upgrade ' + Game.santaLevel,
             buy: buySanta,
             getCost: function() {
-                return cumulativeSantaCost(Game.santaLevel+1)-cumulativeSantaCost(Game.santaLevel);
+                return cumulativeSantaCost(Game.santaLevel);
             }
         }
     } : [];
 }
 
-function cumulativeSantaCost(amount) { //ok
-    var total = 0;
-    if (!amount) {
-
-    } else if (Game.santaLevel + amount < Game.santaLevels.length) {
-        for (var i = Game.santaLevel + 1; i <= Game.santaLevel + amount; i++) {
-            total += Math.pow(i, i);
-        }
-    } else if (amount < Game.santaLevels.length) {
-        for (var i = Game.santaLevel + 1; i <= amount; i++) {
-            total += Math.pow(i, i);
-        }
-    } else {
-        total = Infinity;
-    }
-    return total;
+function cumulativeSantaCost(level) { //ok
+    return Math.pow(level+1,level+1);
 }
 
 function buySanta() { //ok
     Game.specialTab = 'santa';
     Game.UpgradeSanta();
-    if (Game.santaLevel + 1 >= Game.santaLevels.length) {
-        Game.ToggleSpecialMenu();
-    }
+    Game.ToggleSpecialMenu();
 }
 
 function dragonStats() { //ok
@@ -1211,40 +1195,33 @@ function dragonStats() { //ok
         efficiency: 1,
         base_delta_cps: 0,
         delta_cps: 0,
-        cost: cumulativeDragonCost(Game.dragonLevel+1),
+        cost: cumulativeDragonCost(Game.dragonLevel),
         type: 'dragon',
         purchase: {
             id: 998,
-            name: 'Dragon Upgrade ' + (Game.dragonLevel + 1) + '( ' + Game.dragonLevels[Game.dragonLevel].name +' )',
+            name: 'Dragon Upgrade ' + Game.dragonLevel ),
             buy: buyDragon,
             getCost: function() {
-                return cumulativeDragonCost(Game.dragonLevel+1);
+                return cumulativeDragonCost(Game.dragonLevel);
             }
         }
     } : [];
 }
+
 function buyDragon() { //ok
     Game.specialTab = 'dragon';
     Game.UpgradeDragon();
-    if (Game.dragonLevel + 1 >= Game.dragonLevels.length) {
-        Game.ToggleSpecialMenu();
-    }
+    Game.ToggleSpecialMenu();
+
 }
 
-function cumulativeDragonCost(amount) { //ok
-    var total = 0,
-	dcost=[1000000,1000000*2,1000000*4,1000000*8,1000000*16]
+function cumulativeDragonCost(level) { //ok, but a bit cheaty
+    var dcost=[1000000,1000000*2,1000000*4,1000000*8,1000000*16]
 	.concat(Game.ObjectsById.map(function(a) { return cumulativeBuildingCost(a.basePrice, a.amount<=100?1:a.amount-100, a.amount);}))
 	.concat(Game.ObjectsById.map(function(a) { return cumulativeBuildingCost(a.basePrice, a.amount<=50?1:a.amount-50, a.amount);}).reduce(function(a,b) { return a+b;},0))
 	.concat(Game.ObjectsById.map(function(a) { return cumulativeBuildingCost(a.basePrice, a.amount<=200?1:a.amount-200, a.amount);}).reduce(function(a,b) { return a+b;},0));
 		
-    if (!amount) {
-
-    } 
-	else {
-	total=dcost[amount-1];
-	}
-    return total;
+	return dcost[level];
 }
 
 function defaultPurchase() {
@@ -1301,7 +1278,7 @@ function totalDiscount(is_building) { //need more work
     return price;
 }
 
-function cumulativeBuildingCost(basePrice, startingNumber, endingNumber) {
+function cumulativeBuildingCost(basePrice, startingNumber, endingNumber) { //ok, fixed
     return basePrice * totalDiscount(true) * ((Math.pow(Game.priceIncrease, endingNumber) - Math.pow(Game.priceIncrease, startingNumber)) / (Game.priceIncrease - 1));
 }
 
@@ -1329,6 +1306,7 @@ function upgradePrereqCost(upgrade, full) {
             return sum;
         }, 0);
         cost += cumulativeSantaCost(prereqs.santa);
+		cost += cumulativeDragonCost(prereqs.dragon);
     }
     return cost;
 }
@@ -1376,6 +1354,13 @@ function unfinishedUpgradePrereqs(upgrade) { //looks ok
                 id: 0
             });
         }
+		if (prereqs.dragon) {
+            needed.push({
+                type: 'dragon',
+                id: 0
+            });
+        }
+		
         if (prereqs.wrinklers && Game.elderWrath == 0) {
             needed.push({
                 type: 'wrinklers',
