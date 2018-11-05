@@ -1199,7 +1199,7 @@ function dragonStats() { //ok
         type: 'dragon',
         purchase: {
             id: 998,
-            name: 'Dragon Upgrade ' + Game.dragonLevel ),
+            name: 'Dragon Upgrade ' + Game.dragonLevel,
             buy: buyDragon,
             getCost: function() {
                 return cumulativeDragonCost(Game.dragonLevel);
