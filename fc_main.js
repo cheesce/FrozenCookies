@@ -1253,10 +1253,7 @@ function unfinishedUpgradePrereqs(upgrade) { //looks ok, unsure about wrinklers
         prereqs.upgrades.forEach(function(a) {
             if (!Game.UpgradesById[a].bought) {
 				if (Game.UpgradesById[a].unlocked) { //if unlocked buy it
-					needed.push({
-                        'type': 'upgrade',
-                        'id': a
-                    });
+					needed.push({'type': 'upgrade','id': a});
 				}
 				else { // what is needed for this than
 					var recursiveUpgrade = Game.UpgradesById[a];
@@ -1265,23 +1262,16 @@ function unfinishedUpgradePrereqs(upgrade) { //looks ok, unsure about wrinklers
 					}
 					else { // put it all in
 						recursivePrereqs.forEach(function(a) { //remove double entries
-                        if (!needed.some(function(b) {
-                                return b.id == a.id && b.type == a.type;
-                            })) {
-                            needed.push(a);
-                        }
+							if (!needed.some(function(b) { return b.id == a.id && b.type == a.type;})) {
+								needed.push(a);
+							}
 						});
 					}
 				}
-			});
-        if (prereqs.wrinklers && Game.elderWrath == 0) {
-            needed.push({
-                type: 'wrinklers',
-                id: 0
-            });
-		}
+			}
+		});
+        if (prereqs.wrinklers && Game.elderWrath == 0) { needed.push({type: 'wrinklers',id: 0});}
     }
-	}
     return needed.length ? needed : null;
 }
 
