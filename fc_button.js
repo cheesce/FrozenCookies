@@ -499,7 +499,7 @@ function updateTimers() {
  //       chainTotal = upgradePrereqCost(chainPurchase);
  //       chainFinished = chainTotal - (upgradePrereqCost(chainPurchase) - chainPurchase.getPrice());
  //       chainCompletion = (chainFinished + Math.max(Game.cookies - bankTotal, 0)) / (bankTotal + chainTotal);
-    }
+ //   }
     bankPercent = Math.min(Game.cookies, bankTotal) / (bankTotal + purchaseTotal);
     purchasePercent = purchaseTotal / (purchaseTotal + bankTotal);
     bankMax = bankTotal / (purchaseTotal + bankTotal);
