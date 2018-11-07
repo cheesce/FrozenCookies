@@ -297,35 +297,35 @@ var upgradeJson = {
     209: {'buildings': [], 'upgrades': [181]},
     
     // Easter season
-    210: {'buildings': [], 'upgrades': [69,209], 'wrinklers': 1},
-    211: {'buildings': [], 'upgrades': [69,209], 'wrinklers': 1},
-    212: {'buildings': [], 'upgrades': [69,209], 'wrinklers': 1},
-    213: {'buildings': [], 'upgrades': [69,209], 'wrinklers': 1},
-    214: {'buildings': [], 'upgrades': [69,209], 'wrinklers': 1},
-    215: {'buildings': [], 'upgrades': [69,209], 'wrinklers': 1},
-    216: {'buildings': [], 'upgrades': [69,209], 'wrinklers': 1},
-    217: {'buildings': [], 'upgrades': [69,209], 'wrinklers': 1},
-    218: {'buildings': [], 'upgrades': [69,209], 'wrinklers': 1},
-    219: {'buildings': [], 'upgrades': [69,209], 'wrinklers': 1},
-    220: {'buildings': [], 'upgrades': [69,209], 'wrinklers': 1},
-    221: {'buildings': [], 'upgrades': [69,209], 'wrinklers': 1},
-    222: {'buildings': [], 'upgrades': [69,209], 'wrinklers': 1},
-    223: {'buildings': [], 'upgrades': [69,209], 'wrinklers': 1},
-    224: {'buildings': [], 'upgrades': [69,209], 'wrinklers': 1},
-    225: {'buildings': [], 'upgrades': [69,209], 'wrinklers': 1},
-    226: {'buildings': [], 'upgrades': [69,209], 'wrinklers': 1},
-    227: {'buildings': [], 'upgrades': [69,209], 'wrinklers': 1},
-    228: {'buildings': [], 'upgrades': [69,209], 'wrinklers': 1},
-    229: {'buildings': [], 'upgrades': [69,209], 'wrinklers': 1},
+    210: {'buildings': [], 'upgrades': [209], 'wrinklers': 1},
+    211: {'buildings': [], 'upgrades': [209], 'wrinklers': 1},
+    212: {'buildings': [], 'upgrades': [209], 'wrinklers': 1},
+    213: {'buildings': [], 'upgrades': [209], 'wrinklers': 1},
+    214: {'buildings': [], 'upgrades': [209], 'wrinklers': 1},
+    215: {'buildings': [], 'upgrades': [209], 'wrinklers': 1},
+    216: {'buildings': [], 'upgrades': [209], 'wrinklers': 1},
+    217: {'buildings': [], 'upgrades': [209], 'wrinklers': 1},
+    218: {'buildings': [], 'upgrades': [209], 'wrinklers': 1},
+    219: {'buildings': [], 'upgrades': [209], 'wrinklers': 1},
+    220: {'buildings': [], 'upgrades': [209], 'wrinklers': 1},
+    221: {'buildings': [], 'upgrades': [209], 'wrinklers': 1},
+    222: {'buildings': [], 'upgrades': [209], 'wrinklers': 1},
+    223: {'buildings': [], 'upgrades': [209], 'wrinklers': 1},
+    224: {'buildings': [], 'upgrades': [209], 'wrinklers': 1},
+    225: {'buildings': [], 'upgrades': [209], 'wrinklers': 1},
+    226: {'buildings': [], 'upgrades': [209], 'wrinklers': 1},
+    227: {'buildings': [], 'upgrades': [209], 'wrinklers': 1},
+    228: {'buildings': [], 'upgrades': [209], 'wrinklers': 1},
+    229: {'buildings': [], 'upgrades': [209], 'wrinklers': 1},
 
     // Halloween season
-    134: {'buildings': [], 'upgrades': [69,183], 'wrinklers': 1},
-    135: {'buildings': [], 'upgrades': [69,183], 'wrinklers': 1},
-    136: {'buildings': [], 'upgrades': [69,183], 'wrinklers': 1},
-    137: {'buildings': [], 'upgrades': [69,183], 'wrinklers': 1},
-    138: {'buildings': [], 'upgrades': [69,183], 'wrinklers': 1},
-    139: {'buildings': [], 'upgrades': [69,183], 'wrinklers': 1},
-    140: {'buildings': [], 'upgrades': [69,183], 'wrinklers': 1},
+    134: {'buildings': [], 'upgrades': [183], 'wrinklers': 1},
+    135: {'buildings': [], 'upgrades': [183], 'wrinklers': 1},
+    136: {'buildings': [], 'upgrades': [183], 'wrinklers': 1},
+    137: {'buildings': [], 'upgrades': [183], 'wrinklers': 1},
+    138: {'buildings': [], 'upgrades': [183], 'wrinklers': 1},
+    139: {'buildings': [], 'upgrades': [183], 'wrinklers': 1},
+    140: {'buildings': [], 'upgrades': [183], 'wrinklers': 1},
 
     // Christmas season
     143: {'buildings': [], 'upgrades': [182]},
@@ -342,7 +342,13 @@ var upgradeJson = {
     171: {'buildings': [], 'upgrades': [170,184]},
     172: {'buildings': [], 'upgrades': [171,184]},
     173: {'buildings': [], 'upgrades': [172,184]},
-    174: {'buildings': [], 'upgrades': [173,184]}
+    174: {'buildings': [], 'upgrades': [173,184]},
+
+	// A festive hat (starts Santa Upgrades)
+	152: {'buildings': [], 'upgrades': [182]},
+	
+    // A crumbly egg (starts Dragon Upgrades)
+	324: {'buildings': [], 'upgrades': [323]}
 };
 
 var dragonJson= {
@@ -374,7 +380,6 @@ var dragonJson= {
 
 var santaJson = {
 // Santa upgrades
-    152: {'buildings': [], 'upgrades': [182]},
     153: {'buildings': [], 'upgrades': [152], 'santa': 1},
     154: {'buildings': [], 'upgrades': [152], 'santa': 2},
     155: {'buildings': [], 'upgrades': [152], 'santa': 3},
@@ -427,7 +432,7 @@ var holidayCookies = {
 var cookieInfo = {
     'clot':        {'odds':[0,0.10386789477947,0.19565417350258,0.279830557040944],                   isOverlap:false},
     'frenzy':      {'odds':[0.475438636303817,0.330397784579005,0.17665214624519,0],                  isOverlap:false},
-    'blood':       {'odds':[0,0.021118483342717,0.042826537084539,0.065166067095688],                 isOverlap:false},
+    'elderfrenzy': {'odds':[0,0.021118483342717,0.042826537084539,0.065166067095688],                 isOverlap:false},
     'chain':       {'odds':[0.004445863757111,0.025152456647178,0.046465712706818,0.068600124409242], isOverlap:false},
     'ruin':        {'odds':[0,0.059020277260868,0.111661484235184,0.171880882712373],                 isOverlap:false},
     'frenzyRuin':  {'odds':[0,0.031491314174174,0.033674609798233,0],                                 isOverlap:true},

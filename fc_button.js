@@ -493,11 +493,12 @@ function updateTimers() {
         chainTotal = 0,
         chainFinished,
         chainCompletion = 0;
-    if (nextChainedPurchase().cost > nextPurchase().cost) {
-        chainPurchase = nextChainedPurchase().purchase;
-        chainTotal = upgradePrereqCost(chainPurchase, true) - chainPurchase.getPrice();
-        chainFinished = chainTotal - (upgradePrereqCost(chainPurchase) - chainPurchase.getPrice());
-        chainCompletion = (chainFinished + Math.max(Game.cookies - bankTotal, 0)) / (bankTotal + chainTotal);
+ // strange.. needed further investigation
+ //   if (nextChainedPurchase().cost > nextPurchase().cost) {
+ //       chainPurchase = nextChainedPurchase().purchase;
+ //       chainTotal = upgradePrereqCost(chainPurchase);
+ //       chainFinished = chainTotal - (upgradePrereqCost(chainPurchase) - chainPurchase.getPrice());
+ //       chainCompletion = (chainFinished + Math.max(Game.cookies - bankTotal, 0)) / (bankTotal + chainTotal);
     }
     bankPercent = Math.min(Game.cookies, bankTotal) / (bankTotal + purchaseTotal);
     purchasePercent = purchaseTotal / (purchaseTotal + bankTotal);
@@ -711,7 +712,7 @@ function FCMenu() {
         subsection.append($('<div>').addClass('listing').html('<b>Cookie Bank Required for Max Lucky:</b> ' + Beautify(maxLuckyBank())));
         subsection.append($('<div>').addClass('listing').html('<b>Max Chain Cookie Value:</b> ' + Beautify(calculateChainValue(chainBank(), Game.cookiesPs, (7 - (Game.elderWrath / 3))))));
         subsection.append($('<div>').addClass('listing').html('<b>Cookie Bank Required for Max Chain:</b> ' + Beautify(chainBank())));
-        subsection.append($('<div>').addClass('listing').html('<b>Estimated Cookie CPS:</b> ' + Beautify(gcPs(cookieValue(currentCookies)))));
+        subsection.append($('<div>').addClass('listing').html('<b>Estimated Cookie CPS:</b> ' + Beautify(gCps(cookieValue(currentCookies)))));
         subsection.append($('<div>').addClass('listing').html('<b>Golden Cookie Clicks:</b> ' + Beautify(Game.goldenClicks)));
         subsection.append($('<div>').addClass('listing').html('<b>Missed Golden Cookie Clicks:</b> ' + Beautify(Game.missedGoldenClicks)));
         subsection.append($('<div>').addClass('listing').html('<b>Last Golden Cookie Effect:</b> ' + Game.shimmerTypes.golden.last));
@@ -751,19 +752,19 @@ function FCMenu() {
 	if (FrozenCookies.setHarvestBankPlant){
 	    subsection = $('<div>').addClass('subsection');
 	    subsection.append($('<div>').addClass('title').html('Harvesting Information'));
-	    subsection.append($('<div>').addClass('listing').html('<b>Base CPS:</b> ' + Beautify(baseCps())));
+	    subsection.append($('<div>').addClass('listing').html('<b>Base CPS:</b> ' + Beautify(Game.unbuffedCps)));
 	    subsection.append($('<div>').addClass('listing').html('<b>Plant to harvest:</b> ' + FrozenCookies.harvestPlant));
 	    subsection.append($('<div>').addClass('listing').html('<b>Minutes of CpS:</b> ' + FrozenCookies.harvestMinutes + ' min'));
 	    subsection.append($('<div>').addClass('listing').html('<b>Max percent of Bank:</b> ' + FrozenCookies.harvestMaxPercent*100 + ' %'));
-	    subsection.append($('<div>').addClass('listing').html('<b>Single ' + FrozenCookies.harvestPlant + (FrozenCookies.setHarvestBankPlant < 6 ? ' harvesting' : ' exploding') + ':</b> ' + Beautify(baseCps() * 60 * FrozenCookies.harvestMinutes * FrozenCookies.harvestFrenzy * FrozenCookies.harvestBuilding / Math.pow(10, FrozenCookies.maxSpecials))));
-	    subsection.append($('<div>').addClass('listing').html('<b>Full garden ' + (FrozenCookies.setHarvestBankPlant < 6 ? ' harvesting' : ' exploding') + ' (36 plots):</b> ' + Beautify(36 * baseCps() * 60 * FrozenCookies.harvestMinutes * FrozenCookies.harvestFrenzy * FrozenCookies.harvestBuilding / Math.pow(10, FrozenCookies.maxSpecials))));
+	    subsection.append($('<div>').addClass('listing').html('<b>Single ' + FrozenCookies.harvestPlant + (FrozenCookies.setHarvestBankPlant < 6 ? ' harvesting' : ' exploding') + ':</b> ' + Beautify(Game.unbuffedCps * 60 * FrozenCookies.harvestMinutes * FrozenCookies.harvestFrenzy * FrozenCookies.harvestBuilding / Math.pow(10, FrozenCookies.maxSpecials))));
+	    subsection.append($('<div>').addClass('listing').html('<b>Full garden ' + (FrozenCookies.setHarvestBankPlant < 6 ? ' harvesting' : ' exploding') + ' (36 plots):</b> ' + Beautify(36 * Game.unbuffedCps * 60 * FrozenCookies.harvestMinutes * FrozenCookies.harvestFrenzy * FrozenCookies.harvestBuilding / Math.pow(10, FrozenCookies.maxSpecials))));
 	    menu.append(subsection);
 	}
 		
         // Other Information
         subsection = $('<div>').addClass('subsection');
         subsection.append($('<div>').addClass('title').html('Other Information'));
-        cps = baseCps() + baseClickingCps(FrozenCookies.cookieClickSpeed * FrozenCookies.autoClick);
+        cps = Game.unbuffedCps + baseClickingCps(FrozenCookies.cookieClickSpeed * FrozenCookies.autoClick);
         baseChosen = (Game.hasBuff('Frenzy')) ? '' : ' (*)';
         frenzyChosen = (Game.hasBuff('Frenzy')) ? ' (*)' : '';
         clickStr = (FrozenCookies.autoClick) ? ' + Autoclick' : '';
@@ -843,7 +844,7 @@ function FCMenu() {
         
 		// Other information
 		$.each({'Pledging/Appeased' : 0, 'One Mind/Awoken' : 1, 'Displeased' : 2, 'Full Wrath/Angered' : 3}, function(k,v) {
-            buildTable.append($('<tr><td colspan="2"><b>' + k + (Game.elderWrath === v ? ' (*)' : '') + '</b></td><td colspan="2" title="Ratio of Effective CPS vs Base CPS">' + Beautify(effectiveCps(Game.cookies, v) / baseCps()) + '</td><td>' + Beautify(effectiveCps(Game.cookies, v) - effectiveCps()) + '</td></tr>'));
+            buildTable.append($('<tr><td colspan="2"><b>' + k + (Game.elderWrath === v ? ' (*)' : '') + '</b></td><td colspan="2" title="Ratio of Effective CPS vs Base CPS">' + Beautify(effectiveCps(Game.cookies, v) / Game.unbuffedCps) + '</td><td>' + Beautify(effectiveCps(Game.cookies, v) - effectiveCps()) + '</td></tr>'));
         });
         subsection.append($('<div>').addClass('listing').append(buildTable));
         menu.append(subsection);
