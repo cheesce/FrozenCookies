@@ -403,7 +403,7 @@ function baseClickingCps(clickSpeed) {
 function effectiveCps(bankAmount, wrathValue, wrinklerCount) { //ok
     bankAmount = bankAmount != null ? bankAmount : Game.unbuffedCps;
 	wrathValue = wrathValue != null ? wrathValue : Game.elderWrath;
-    wrinklerCount = wrinklerCount != null ? wrinklerCount : getactiveWwrinklers();
+    wrinklerCount = wrinklerCount != null ? wrinklerCount : getactiveWrinklers();
 
     return Game.unbuffedCps * wrinklerMod(wrinklerCount) + 
 		   gCps(cookieValue(bankAmount, wrathValue, wrinklerCount)) +
@@ -432,7 +432,7 @@ function cookieValue(bankAmount, wrathValue, wrinklerCount) {
     var frenzyCps = baseClickingCps(FrozenCookies.autoClick * FrozenCookies.frenzyClickSpeed);
     var luckyMod = Game.Has('Get lucky') ? 2 : 1;
     wrathValue = wrathValue != null ? wrathValue : Game.elderWrath;
-    wrinklerCount = wrinklerCount != null ? wrinklerCount : getactiveWwrinklers();
+    wrinklerCount = wrinklerCount != null ? wrinklerCount : getactiveWrinklers();
     var wrinkler = wrinklerMod(wrinklerCount);
 
     var value = 0;
