@@ -1270,17 +1270,18 @@ function unfinishedUpgradePrereqs(upgrade) { //looks ok, unsure about wrinklers
                             })) {
                             needed.push(a);
                         }
-                    });
-                }
-            }
-        });
+						});
+					}
+				}
+			});
         if (prereqs.wrinklers && Game.elderWrath == 0) {
             needed.push({
                 type: 'wrinklers',
                 id: 0
             });
-        }
+		}
     }
+	}
     return needed.length ? needed : null;
 }
 
