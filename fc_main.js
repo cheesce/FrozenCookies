@@ -1,4 +1,4 @@
-
+//Version 1.7.3
 function FCStart() {
     logEvent("Load", "Initial Load of Frozen Cookies v " + FrozenCookies.branch + "." + FrozenCookies.version + ". (You should only ever see this once.)");
 
