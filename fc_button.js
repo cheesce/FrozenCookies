@@ -783,6 +783,10 @@ function FCMenu() {
         if (FrozenCookies.reindeerclicks>0)
 		{ subsection.append($('<div>').addClass('listing').html('<b>Reindeer TrueCPS:</b> ' + Beautify((FrozenCookies.reindeerclicksvalue/FrozenCookies.reindeerclicks)/(FrozenCookies.reindeerclickstimer/FrozenCookies.reindeerclicks))));
 		}
+		subsection.append($('<div>').addClass('listing').html('<b>BigCookie CalcCPS :</b> ' + Beautify(baseClickingCps(FrozenCookies.cookieClickSpeed * FrozenCookies.autoClick))));
+        if (FrozenCookies.clicks>0)
+		{ subsection.append($('<div>').addClass('listing').html('<b>BigCookie TrueCPS:</b> ' + Beautify((FrozenCookies.clicksvalue/FrozenCookies.clicks)/(FrozenCookies.clickstimer/FrozenCookies.clicks))));
+		}
         menu.append(subsection);
 
 		//Options
