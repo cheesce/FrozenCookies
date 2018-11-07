@@ -662,32 +662,31 @@ function FCMenu() {
                 .append($('<div>').addClass('title').html('Autobuy Information')),
             recommendation = nextPurchase(),
             chainRecommendation = nextChainedPurchase(),
-            isChained = !(recommendation.id == chainRecommendation.id && recommendation.type == chainRecommendation.type),
-            bankLevel = bestBank(chainRecommendation.efficiency),
+            isChained = !((recommendation.id == chainRecommendation.id) && (recommendation.type == chainRecommendation.type)),
+            bankLevel = bestBank(chainRecommendation.efficiency), // ???
             actualCps = Game.cookiesPs + Game.mouseCps() * FrozenCookies.cookieClickSpeed,
-            chocolateRecoup = (recommendation.type == 'upgrade' ? recommendation.cost : recommendation.cost * 0.425) / (recommendation.delta_cps * 20);
+            chocolateRecoup = (recommendation.type == 'upgrade' ? recommendation.cost : recommendation.cost * 0.425) / (recommendation.delta_cps * 20);// ????
 
         subsection.append($('<div>').addClass('listing').html('<b>Next Purchase:</b> ' + recommendation.purchase.name));
-        if (isChained) {
-            subsection.append($('<div>').addClass('listing').html('<b>Building Chain to:</b> ' + chainRecommendation.purchase.name));
-        }
         subsection.append($('<div>').addClass('listing').html('<b>Time till completion:</b> ' + timeDisplay(divCps((recommendation.cost + bankLevel.cost - Game.cookies), actualCps))));
         subsection.append($('<div>').addClass('listing').html('<b>Estimated Actual completion time:</b> ' + timeDisplay(divCps((recommendation.cost + bankLevel.cost - Game.cookies), effectiveCps()))));
         if (isChained) {
-            subsection.append($('<div>').addClass('listing').html('<b>Time till Chain completion:</b> ' + timeDisplay(divCps(Math.max(0,(chainRecommendation.cost + bankLevel.cost - Game.cookies)), actualCps))));
-        }
-        if (Game.HasUnlocked('Chocolate egg') && !Game.Has('Chocolate egg')) {
+           subsection.append($('<div>').addClass('listing').html('<b>Building Chain to:</b> ' + chainRecommendation.purchase.name));
+           subsection.append($('<div>').addClass('listing').html('<b>Time till Chain completion:</b> ' + timeDisplay(divCps(Math.max(0,(chainRecommendation.cost + bankLevel.cost - Game.cookies)), actualCps))));
+           subsection.append($('<div>').addClass('listing').html('<b>Estimated Actual Chain completion:</b> ' + timeDisplay(divCps(Math.max(0,(chainRecommendation.cost + bankLevel.cost - Game.cookies)), effectiveCps()))));
+       }
+        if (Game.HasUnlocked('Chocolate egg') && !Game.Has('Chocolate egg')) { // ???
             subsection.append($('<div>').addClass('listing').html('<b>Time to Recoup Chocolate:</b> ' + timeDisplay(divCps(recommendation.cost + bankLevel.cost - Game.cookies, effectiveCps()) + chocolateRecoup)));
         }
         subsection.append($('<div>').addClass('listing').html('<b>Cost:</b> ' + Beautify(recommendation.cost)));
-        subsection.append($('<div>').addClass('listing').html('<b>Golden Cookie Bank:</b> ' + Beautify(bankLevel.cost)));
+        subsection.append($('<div>').addClass('listing').html('<b>Bank:</b> ' + Beautify(bankLevel.cost)));
         subsection.append($('<div>').addClass('listing').html('<b>Base &#916; CPS:</b> ' + Beautify(recommendation.base_delta_cps)));
         subsection.append($('<div>').addClass('listing').html('<b>Full &#916; CPS:</b> ' + Beautify(recommendation.delta_cps)));
         subsection.append($('<div>').addClass('listing').html('<b>Purchase Efficiency:</b> ' + Beautify(recommendation.efficiency)));
         if (isChained) {
             subsection.append($('<div>').addClass('listing').html('<b>Chain Efficiency:</b> ' + Beautify(chainRecommendation.efficiency)));
         }
-        if (bankLevel.efficiency > 0) {
+        if (bankLevel.efficiency > 0) { //???
             subsection.append($('<div>').addClass('listing').html('<b>Golden Cookie Efficiency:</b> ' + Beautify(bankLevel.efficiency)));
         }
         menu.append(subsection);
@@ -780,6 +779,10 @@ function FCMenu() {
         if (liveWrinklers().length > 0) {
             subsection.append($('<div>').addClass('listing').html('<b>Wrinkler Value:</b> ' + Beautify(wrinklerValue())));
         }
+		subsection.append($('<div>').addClass('listing').html('<b>Reindeer CalcCPS :</b> ' + Beautify(reindeerCps(Game.elderWrath))));
+        if (FrozenCookies.reindeerclicks>0)
+		{ subsection.append($('<div>').addClass('listing').html('<b>Reindeer TrueCPS:</b> ' + Beautify((FrozenCookies.reindeerclicksvalue/FrozenCookies.reindeerclicks)/(FrozenCookies.reindeerclickstimer/FrozenCookies.reindeerclicks))));
+		}
         menu.append(subsection);
 
 		//Options
