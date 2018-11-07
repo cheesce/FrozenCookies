@@ -780,16 +780,16 @@ function FCMenu() {
             subsection.append($('<div>').addClass('listing').html('<b>Wrinkler Value:</b> ' + Beautify(wrinklerValue())));
         }
         if (FrozenCookies.reindeerclicks>0)
-		subsection.append($('<div>').addClass('listing').html('<b>Reindeer CalcCPS :</b> ' + Beautify(reindeerCps(Game.elderWrath))));
-		{ subsection.append($('<div>').addClass('listing').html('<b>Reindeer TrueCPS:</b> ' + Beautify((FrozenCookies.reindeerclicksvalue/FrozenCookies.reindeerclicks)/((FrozenCookies.reindeerclickstimer/1000)/FrozenCookies.reindeerclicks))));
+		{ subsection.append($('<div>').addClass('listing').html('<b>Reindeer CalcCPS :</b> ' + Beautify(reindeerCps(Game.elderWrath))));
+		 subsection.append($('<div>').addClass('listing').html('<b>Reindeer TrueCPS:</b> ' + Beautify((FrozenCookies.reindeerclicksvalue/FrozenCookies.reindeerclicks)/((FrozenCookies.reindeerclickstimer/1000)/FrozenCookies.reindeerclicks))));
 		subsection.append($('<div>').addClass('listing').html('<b>Reindeer CalcValue :</b> ' + Beautify(reindeerValue(Game.elderWrath))));
 		subsection.append($('<div>').addClass('listing').html('<b>Reindeer avg value:</b> ' + Beautify((FrozenCookies.reindeerclicksvalue/FrozenCookies.reindeerclicks))));
 		subsection.append($('<div>').addClass('listing').html('<b>Reindeer CalcTime :</b> ' + Beautify(probabilitySpan('reindeer', 0, 0.5) / Game.fps)+' seconds'));		
 		subsection.append($('<div>').addClass('listing').html('<b>Reindeer avg Time:</b> ' +  Beautify(((FrozenCookies.reindeerclickstimer/1000)/FrozenCookies.reindeerclicks))+' seconds'));
 		}
         if (FrozenCookies.clicks>0)
-		subsection.append($('<div>').addClass('listing').html('<b>BigCookie CalcCPS :</b> ' + Beautify(baseClickingCps(FrozenCookies.cookieClickSpeed * FrozenCookies.autoClick))));
-		{ subsection.append($('<div>').addClass('listing').html('<b>BigCookie TrueCPS:</b> ' + Beautify((FrozenCookies.clicksvalue/FrozenCookies.clicks)/((FrozenCookies.clickstimer/1000)/FrozenCookies.clicks))));
+		{ subsection.append($('<div>').addClass('listing').html('<b>BigCookie CalcCPS :</b> ' + Beautify(baseClickingCps(FrozenCookies.cookieClickSpeed * FrozenCookies.autoClick))));
+		subsection.append($('<div>').addClass('listing').html('<b>BigCookie TrueCPS:</b> ' + Beautify((FrozenCookies.clicksvalue/FrozenCookies.clicks)/((FrozenCookies.clickstimer/1000)/FrozenCookies.clicks))));
 		subsection.append($('<div>').addClass('listing').html('<b>BigCookie CalcValue:</b> ' + Beautify(cookieValue(0))));
 		subsection.append($('<div>').addClass('listing').html('<b>BigCookie avg value:</b> ' + Beautify((FrozenCookies.clicksvalue/FrozenCookies.clicks))));
 		subsection.append($('<div>').addClass('listing').html('<b>BigCookie SetTime</b> ' +   Beautify(FrozenCookies.cookieClickSpeed)+' clicks/second'));
