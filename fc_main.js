@@ -1219,7 +1219,7 @@ function upgradePrereqCost(upgrade) { //ok, calculate cost for upgrade
     if (prereqs) {
         cost += prereqs.buildings.reduce(function(sum, item, index) {
             var building = Game.ObjectsById[index];
-            (item && building.amount < item) {
+            if (item && building.amount < item) {
                 sum += cumulativeBuildingCost(building.basePrice, building.amount, item);
             }
             return sum;
