@@ -815,7 +815,7 @@ function delayAmount() {
 }
 
 function haveAll(holiday) {
-    if ((typeof(holiday) == 'undefined' )||(holiday == '')||(holiday=='fools')) return true;
+    if ((typeof holiday == 'undefined' )||(holiday == '')||(holiday=='fools')) return true;
 	else return holidayCookies[holiday].every(function(id) { return Game.UpgradesById[id].unlocked; });
 }
 
@@ -896,10 +896,13 @@ function isUnavailable(upgrade, upgradeBlacklist) {
     result = result || (upgradeBlacklist === true);
     result = result || _.contains(upgradeBlacklist, upgrade.id);
     result = result || (needed && (_.find(needed, function(a) { return a.type == "wrinklers"}) != null) && (Game.elderWrath==0) && ((upgrade.id==74) || (upgrade.id==84))); //grandmapocalyps nicht beenden wenn wrinkler nötig
-    result = result || (upgrade.season && (!haveAll(Game.season))); //no season change if not all upgrades of current season purchased
-	result = result || ((upgrade.season != seasons[FrozenCookies.defaultSeason]) && haveAll(upgrade.season)); //no season change if all upgrades of that season purchased
 
-    if  ((upgrade.id == 331) || (upgrade.id ==332)) {
+	if (typeof upgrade.season != 'undefined' ) {
+		result = result || (!haveAll(Game.season))); //no season change if not all upgrades of current season purchased
+	    result = result || ((upgrade.season != seasons[FrozenCookies.defaultSeason]) && haveAll(upgrade.season)); //no season change if all upgrades of that season purchased
+	}
+
+	if  ((upgrade.id == 331) || (upgrade.id ==332)) {
         result = true; // blacklist golden switch from being used
     }
     
