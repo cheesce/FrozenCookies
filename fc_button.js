@@ -791,7 +791,7 @@ function FCMenu() {
         if (FrozenCookies.clicks>0)
 		{ subsection.append($('<div>').addClass('listing').html('<b>BigCookie TrueCPS:</b> ' + Beautify((FrozenCookies.clicksvalue/FrozenCookies.clicks)/((FrozenCookies.clickstimer/1000)/FrozenCookies.clicks))));
 		subsection.append($('<div>').addClass('listing').html('<b>BigCookie avg value:</b> ' + Beautify((FrozenCookies.clicksvalue/FrozenCookies.clicks))));
-		subsection.append($('<div>').addClass('listing').html('<b>BigCookie avg Time</b> ' +   Beautify(((FrozenCookies.clickstimer/1000)/FrozenCookies.clicks))+' seconds'));}
+		subsection.append($('<div>').addClass('listing').html('<b>BigCookie avg Time</b> ' +   Beautify(1000/((FrozenCookies.clickstimer)/FrozenCookies.clicks))+' clicks/second'));}
         menu.append(subsection);
 
 		//Options
