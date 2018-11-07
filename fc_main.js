@@ -898,7 +898,7 @@ function isUnavailable(upgrade, upgradeBlacklist) {
     result = result || (needed && (_.find(needed, function(a) { return a.type == "wrinklers"}) != null) && (Game.elderWrath==0) && ((upgrade.id==74) || (upgrade.id==84))); //grandmapocalyps nicht beenden wenn wrinkler nötig
 
 	if (typeof upgrade.season != 'undefined' ) {
-		result = result || (!haveAll(Game.season))); //no season change if not all upgrades of current season purchased
+		result = result || (!haveAll(Game.season)); //no season change if not all upgrades of current season purchased
 	    result = result || ((upgrade.season != seasons[FrozenCookies.defaultSeason]) && haveAll(upgrade.season)); //no season change if all upgrades of that season purchased
 	}
 
