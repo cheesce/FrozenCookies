@@ -382,11 +382,12 @@ function getProbabilityList(listType) { //ok
 function getProbabilityModifiers(listType) { //ok spawnrate modifier
    var i;
    i=(eval('me='+Game.shimmerTypes[listType].getTimeMod.toString().replace(/me\.wrath/,Game.elderWrath))(me,1))/(Game.fps*60);
-if (typeof Modlist[listType].find(function(a){return a==i;})=='undefined') Modlist[listType].push(i);
+if (typeof Modlist[listType].find(function(a){return a==i;})=='undefined') { Modlist[listType].push(i);
    cumulativeProbabilityList[listType]=Modlist[listType].reduce(function(r,x) {
         r[x] = generateProbabilities(x, 5 * 60 * Game.fps, 3);
         return r;
-    }, {});
+}, {})
+   };
    return i;
 }
 
