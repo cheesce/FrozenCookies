@@ -375,8 +375,8 @@ function getProbabilityList(listType) { //ok
 }
 
 function getProbabilityModifiers(listType) { //ok spawnrate modifier
-   var me=Game.shimmerTypes[listType];
-   if (listType=='golden') me.wrath=Game.elderWrath;
+   var me=new Game.shimmerTypes[listType];
+   if (listType=='golden')me.wrath=Game.elderWrath;
    return Game.shimmerTypes[listType].getTimeMod(me,1)/(Game.fps*60);
 }
 
