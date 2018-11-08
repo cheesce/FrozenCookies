@@ -68,8 +68,8 @@ function FCStart() {
     FrozenCookies.caches.buildings = [];
     FrozenCookies.caches.upgrades = [];
 
-	calcProbs('golden',true); getProbabilityList('golden');
-	calcProbs('reindeer',true); getProbabilityList('reindeer');
+	calcProbs('golden'); getProbabilityList('golden');
+	calcProbs('reindeer'); getProbabilityList('reindeer');
 	
     if (!blacklist[FrozenCookies.blacklist]) {
         FrozenCookies.blacklist = 0;
@@ -348,17 +348,14 @@ function autoCast() {
 }
 
 //calculate Probabilities for spawn of golden cookies and reindeers 
-var Modlist={golden: [1.15,1.1,1.06,1.05,1.03,1,0.99,0.985,0.98,0.97,0.95,0,955,0.5,0.25,0.05,0.01],
-			reindeer:[1,0.97,0.95,0.95,0.9215,0.9025,0.9,0.855,0.5,0.485,0.475,0.475,0.46075,0.45125,0.45,0.4275,0.01]};
+var Modlist={golden: [1,0.5,0.25,0.01], //just some basic values, rest will be added as needed by function
+			reindeer:[1,0.97,0.95,0.9215,0.9025,0.9,0.855,0.5,0.485,0.475,0.46075,0.45125,0.45,0.4275,0.01]}; //should be complete for 2.016
 	
 var cumulativeProbabilityList={golden: [], reindeer: []};	
 
-function calcProbs(listType,recalculate)
-{ if (recalculate)
-  { if (listType=='golden')        cumulativeProbabilityList[listType]=Modlist[listType].reduce(function(r,x) { r[x] = generateProbabilities(x, 5 * 60 * Game.fps, 3); return r;}, {})
-	else if (listType=='reindeer') cumulativeProbabilityList[listType]=Modlist[listType].reduce(function(r,x) { r[x] = generateProbabilities(x, 3 * 60 * Game.fps, 2); return r;}, {})
-	else {}
-  }	
+function calcProbs(listType)
+{ if (listType=='golden')   cumulativeProbabilityList[listType]=Modlist[listType].reduce(function(r,x) { r[x] = generateProbabilities(x, 5 * 60 * Game.fps, 3); return r;}, {})
+  if (listType=='reindeer') cumulativeProbabilityList[listType]=Modlist[listType].reduce(function(r,x) { r[x] = generateProbabilities(x, 3 * 60 * Game.fps, 2); return r;}, {})	
 }
 
 function generateProbabilities(upgradeMult, minBase, maxMult) { //ok
@@ -379,9 +376,9 @@ function getProbabilityList(listType) { //ok
     return cumulativeProbabilityList[listType][getProbabilityModifiers(listType)];
 }
 
-function getProbabilityModifiers(listType) { //slow as fuck and doesnt give the right result, How can this be  
+function getProbabilityModifiers(listType) { //ok 
    var i=(eval('me='+Game.shimmerTypes[listType].getTimeMod.toString().replace(/me\.wrath/,Game.elderWrath))(me,1))/(Game.fps*60);
-   if (typeof Modlist[listType].find(function(a){return a==i;})=='undefined') { Modlist[listType].splice(_.sortedIndex(Modlist[listType],i),0,i); calcProbs(listType,true);}
+   if (Modlist[listType].indexOf(i)==-1) { Modlist[listType].push(i); calcProbs(listType);}
    return i;
 }
 
