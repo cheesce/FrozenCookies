@@ -359,6 +359,8 @@ reindeer : [1].reduce(function(r,x) {
     }, {})
 };
 */
+	
+var cumulativeProbabilityList;	
 function generateProbabilities(upgradeMult, minBase, maxMult) { //ok
     var cumProb = [];
     var remainingProbability = 1;
