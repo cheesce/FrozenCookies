@@ -375,8 +375,9 @@ function getProbabilityList(listType) { //ok
 }
 
 function getProbabilityModifiers(listType) { //ok spawnrate modifier
-   return (eval('me='+Game.shimmerTypes[listType].getTimeMod.toString().replace(/me\.wrath/,Game.elderWrath))(me,1))/(Game.fps*60);
-}
+   i=(eval('me='+Game.shimmerTypes[listType].getTimeMod.toString().replace(/me\.wrath/,Game.elderWrath))(me,1));
+   return i/(Game.fps*60);
+   }
 
 function probabilitySpan(listType, start, endProbability) { //ok
     var startProbability = getProbabilityList(listType)[start];
