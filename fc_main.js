@@ -346,11 +346,11 @@ function autoCast() {
 
 //calculate Probabilities for spawn of golden cookies and reindeers 
 var cumulativeProbabilityList = {
-    golden : [1, 0.95, 0.5, 0.475, 0.25, 0.2375].reduce(function(r,x) {
+    golden : [1, 0.95, 0.5, 0.475, 0.25, 0.2].reduce(function(r,x) {
         r[x] = generateProbabilities(x, 5 * 60 * Game.fps, 3);
         return r;
     }, {}),
-    reindeer : [1, 0.5].reduce(function(r,x) {
+    reindeer : [1, 0.4].reduce(function(r,x) {
         r[x] = generateProbabilities(x, 3 * 60 * Game.fps, 2);
         return r;
     }, {})
@@ -375,10 +375,8 @@ function getProbabilityList(listType) { //ok
 }
 
 function getProbabilityModifiers(listType) { //ok spawnrate modifier
-   var i;
-   i=eval('me='+Game.shimmerTypes[listType].getTimeMod.toString().replace(/me\.wrath/,Game.elderWrath))(me,1);
-   return i/(Game.fps*60);
-   }
+   return(eval('me='+Game.shimmerTypes[listType].getTimeMod.toString().replace(/me\.wrath/,Game.elderWrath))(me,1))/(Game.fps*60);
+}
 
 function probabilitySpan(listType, start, endProbability) { //ok
     var startProbability = getProbabilityList(listType)[start];
