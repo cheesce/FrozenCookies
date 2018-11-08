@@ -348,11 +348,11 @@ var Modlist={golden: [1], reindeer:[1]};
 
 //calculate Probabilities for spawn of golden cookies and reindeers 
 var cumulativeProbabilityList = {
-    golden : Modlist.golden.reduce(function(r,x) {
+    golden : Modlist['golden'].reduce(function(r,x) {
         r[x] = generateProbabilities(x, 5 * 60 * Game.fps, 3);
         return r;
     }, {}),
-    reindeer : Modlist.reindeer.reduce(function(r,x) {
+    reindeer : Modlist['reindeer'].reduce(function(r,x) {
         r[x] = generateProbabilities(x, 3 * 60 * Game.fps, 2);
         return r;
     }, {})
@@ -379,7 +379,7 @@ function getProbabilityList(listType) { //ok
 function getProbabilityModifiers(listType) { //ok spawnrate modifier
    var i;
    i=(eval('me='+Game.shimmerTypes[listType].getTimeMod.toString().replace(/me\.wrath/,Game.elderWrath))(me,1))/(Game.fps*60);
-   if (Modlist.[listType].find(function(a){return a==i};)=='undefined') Modlist.[listType].push(i);
+if (Modlist[listType].find(function(a){return a==i};)=='undefined') Modlist[listType].push(i);
    return i;
 }
 
