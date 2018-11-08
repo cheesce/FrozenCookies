@@ -391,7 +391,7 @@ if (typeof Modlist[listType].find(function(a){return a==i;})=='undefined') Modli
 }
 
 function probabilitySpan(listType, start, endProbability) { //ok
-    var startProbability = getProbabilityList(listType)[start];
+    var startProbability = (getProbabilityList(listType))[start];
     return _.sortedIndex(getProbabilityList(listType), (startProbability + endProbability - startProbability * endProbability));
 }
 
