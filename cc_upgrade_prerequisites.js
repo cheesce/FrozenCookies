@@ -13,7 +13,7 @@ var upgradeJson = {
     109: {'buildings': [300], 'upgrades': []},
     188: {'buildings': [350], 'upgrades': []},
     189: {'buildings': [400], 'upgrades': []},
-
+	
     // Grandma tiered upgrades
     7: {'buildings': [0,1], 'upgrades': []},
     8: {'buildings': [0,5], 'upgrades': []},
@@ -104,7 +104,7 @@ var upgradeJson = {
     434: {'buildings': [0,0,0,0,0,0,0,300], 'upgrades': []},
     486: {'buildings': [0,0,0,0,0,0,0,350], 'upgrades': []},
     512: {'buildings': [0,0,0,0,0,0,0,400], 'upgrades': []},
-
+	
     // Shipment tiered upgrades
     19: {'buildings': [0,0,0,0,0,0,0,0,1], 'upgrades': []},
     20: {'buildings': [0,0,0,0,0,0,0,0,5], 'upgrades': []},
@@ -117,7 +117,7 @@ var upgradeJson = {
     435: {'buildings': [0,0,0,0,0,0,0,0,300], 'upgrades': []},
     487: {'buildings': [0,0,0,0,0,0,0,0,350], 'upgrades': []},
     513: {'buildings': [0,0,0,0,0,0,0,0,400], 'upgrades': []},
-
+	
     // Alchemy lab tiered upgrades
     22: {'buildings': [0,0,0,0,0,0,0,0,0,1], 'upgrades': []},
     23: {'buildings': [0,0,0,0,0,0,0,0,0,5], 'upgrades': []},
@@ -130,7 +130,7 @@ var upgradeJson = {
     436: {'buildings': [0,0,0,0,0,0,0,0,0,300], 'upgrades': []},
     488: {'buildings': [0,0,0,0,0,0,0,0,0,350], 'upgrades': []},
     514: {'buildings': [0,0,0,0,0,0,0,0,0,400], 'upgrades': []},
-
+	
     // Portal tiered upgrades
     25: {'buildings': [0,0,0,0,0,0,0,0,0,0,1], 'upgrades': []},
     26: {'buildings': [0,0,0,0,0,0,0,0,0,0,5], 'upgrades': []},
@@ -143,7 +143,7 @@ var upgradeJson = {
     437: {'buildings': [0,0,0,0,0,0,0,0,0,0,300], 'upgrades': []},
     489: {'buildings': [0,0,0,0,0,0,0,0,0,0,350], 'upgrades': []},
     515: {'buildings': [0,0,0,0,0,0,0,0,0,0,400], 'upgrades': []},
-
+	
     // Time machine tiered upgrades
     28: {'buildings': [0,0,0,0,0,0,0,0,0,0,0,1], 'upgrades': []},
     29: {'buildings': [0,0,0,0,0,0,0,0,0,0,0,5], 'upgrades': []},
@@ -156,7 +156,7 @@ var upgradeJson = {
     438: {'buildings': [0,0,0,0,0,0,0,0,0,0,0,300], 'upgrades': []},
     490: {'buildings': [0,0,0,0,0,0,0,0,0,0,0,350], 'upgrades': []},
     516: {'buildings': [0,0,0,0,0,0,0,0,0,0,0,400], 'upgrades': []},
-
+	
     // Antimatter condenser tiered upgrades
     99: {'buildings': [0,0,0,0,0,0,0,0,0,0,0,0,1], 'upgrades': []},
     100: {'buildings': [0,0,0,0,0,0,0,0,0,0,0,0,5], 'upgrades': []},
@@ -169,7 +169,7 @@ var upgradeJson = {
     439: {'buildings': [0,0,0,0,0,0,0,0,0,0,0,0,300], 'upgrades': []},
     491: {'buildings': [0,0,0,0,0,0,0,0,0,0,0,0,350], 'upgrades': []},
     517: {'buildings': [0,0,0,0,0,0,0,0,0,0,0,0,400], 'upgrades': []},
-
+	
     // Prism tiered upgrades
     175: {'buildings': [0,0,0,0,0,0,0,0,0,0,0,0,0,1], 'upgrades': []},
     176: {'buildings': [0,0,0,0,0,0,0,0,0,0,0,0,0,5], 'upgrades': []},
@@ -182,7 +182,7 @@ var upgradeJson = {
     440: {'buildings': [0,0,0,0,0,0,0,0,0,0,0,0,0,300], 'upgrades': []},
     492: {'buildings': [0,0,0,0,0,0,0,0,0,0,0,0,0,350], 'upgrades': []},
     518: {'buildings': [0,0,0,0,0,0,0,0,0,0,0,0,0,400], 'upgrades': []},
-
+	
     // Chancemaker tiered upgrades
     416: {'buildings': [0,0,0,0,0,0,0,0,0,0,0,0,0,0,1], 'upgrades': []},
     417: {'buildings': [0,0,0,0,0,0,0,0,0,0,0,0,0,0,5], 'upgrades': []},
@@ -254,7 +254,7 @@ var upgradeJson = {
     443: {'buildings': [0,0,0,0,0,0,0,0,0,0,0,0,75,0,75,0], 'upgrades': [394]},
     533: {'buildings': [0,0,0,0,0,0,0,0,0,0,0,0,0,15,0,15], 'upgrades': [393]},
     534: {'buildings': [75,0,0,0,0,0,0,0,0,0,0,0,0,0,0,75], 'upgrades': [394]},
-
+	
     // Reward cookies
     334: {'buildings': [100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100], 'upgrades': []},
     335: {'buildings': [150,150,150,150,150,150,150,150,150,150,150,150,150,150,150,150], 'upgrades': []},
@@ -265,7 +265,7 @@ var upgradeJson = {
     478: {'buildings': [400,400,400,400,400,400,400,400,400,400,400,400,400,400,400,400], 'upgrades': []},
     479: {'buildings': [450,450,450,450,450,450,450,450,450,450,450,450,450,450,450,450], 'upgrades': []},
     497: {'buildings': [500,500,500,500,500,500,500,500,500,500,500,500,500,500,500,500], 'upgrades': []},
-
+	
     // Grandmapocalypse research
     64: {'buildings': [0,6], 'upgrades': [57,58,59,250,251,252,60]}, //,61,62,63,103,180,415]},
     65: {'buildings': [], 'upgrades': [64]},
@@ -288,7 +288,7 @@ var upgradeJson = {
     131: {'buildings': [], 'upgrades': [130]},
     132: {'buildings': [], 'upgrades': [131]},
     133: {'buildings': [], 'upgrades': [132]},
-
+	
     // Season switching
     182: {'buildings': [], 'upgrades': [181]},
     183: {'buildings': [], 'upgrades': [181]},
@@ -317,7 +317,7 @@ var upgradeJson = {
     227: {'buildings': [], 'upgrades': [69,209], 'wrinklers': 1},
     228: {'buildings': [], 'upgrades': [69,209], 'wrinklers': 1},
     229: {'buildings': [], 'upgrades': [69,209], 'wrinklers': 1},
-
+	
     // Halloween season
     134: {'buildings': [], 'upgrades': [69,183], 'wrinklers': 1},
     135: {'buildings': [], 'upgrades': [69,183], 'wrinklers': 1},
@@ -326,7 +326,7 @@ var upgradeJson = {
     138: {'buildings': [], 'upgrades': [69,183], 'wrinklers': 1},
     139: {'buildings': [], 'upgrades': [69,183], 'wrinklers': 1},
     140: {'buildings': [], 'upgrades': [69,183], 'wrinklers': 1},
-
+	
     // Christmas season
     143: {'buildings': [], 'upgrades': [182]},
     144: {'buildings': [], 'upgrades': [182]},
@@ -335,7 +335,7 @@ var upgradeJson = {
     147: {'buildings': [], 'upgrades': [182]},
     148: {'buildings': [], 'upgrades': [182]},
     149: {'buildings': [], 'upgrades': [182]},
-
+	
     // Valentine's Day season
     169: {'buildings': [], 'upgrades': [184]},
     170: {'buildings': [], 'upgrades': [169,184]},
@@ -343,7 +343,7 @@ var upgradeJson = {
     172: {'buildings': [], 'upgrades': [171,184]},
     173: {'buildings': [], 'upgrades': [172,184]},
     174: {'buildings': [], 'upgrades': [173,184]},
-
+	
 	// A festive hat (starts Santa Upgrades)
 	152: {'buildings': [], 'upgrades': [182]},
 	
@@ -379,7 +379,7 @@ var dragonJson= {
 };
 
 var santaJson = {
-// Santa upgrades
+	// Santa upgrades
     153: {'buildings': [], 'upgrades': [152], 'santa': 1},
     154: {'buildings': [], 'upgrades': [152], 'santa': 2},
     155: {'buildings': [], 'upgrades': [152], 'santa': 3},
@@ -401,23 +401,23 @@ var blacklist = [
     {
         'upgrades': [],
         'buildings': []
-    },
+	},
     {
         'upgrades': [129,130,131,132,133],
         'buildings': []
-    },
+	},
     {
         'upgrades': true,
         'buildings': []
-    },
+	},
     {
         'upgrades': [71, 72, 73, 74, 84, 85],
         'buildings': []
-    },
+	},
     {
         'upgrades': [],
         'buildings': true
-    }
+	}
 ];
 
 var seasons = ['','fools','christmas','easter','halloween','valentines'];
@@ -429,7 +429,7 @@ var holidayCookies = {
     easter: [210,211,212,213,214,215,216,217,218,219,220,221,222,223,224,225,226,227,228,229],
 }
 
-var cookieInfo = {
+var cookieInfo = { // work needed
     'clot':        {'odds':[0,0.10386789477947,0.19565417350258,0.279830557040944],                   isOverlap:false},
     'frenzy':      {'odds':[0.475438636303817,0.330397784579005,0.17665214624519,0],                  isOverlap:false},
     'elderfrenzy': {'odds':[0,0.021118483342717,0.042826537084539,0.065166067095688],                 isOverlap:false},
