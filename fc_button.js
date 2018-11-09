@@ -790,7 +790,7 @@ function FCMenu() {
         if (FrozenCookies.clicks>0)
 		{ subsection.append($('<div>').addClass('listing').html('<b>BigCookie CalcCPS :</b> ' + Beautify(baseClickingCps(FrozenCookies.cookieClickSpeed * FrozenCookies.autoClick))));
 			subsection.append($('<div>').addClass('listing').html('<b>BigCookie TrueCPS:</b> ' + Beautify((FrozenCookies.clicksvalue/FrozenCookies.clicks)/((FrozenCookies.clickstimer/1000)/FrozenCookies.clicks))));
-			subsection.append($('<div>').addClass('listing').html('<b>BigCookie CalcValue:</b> ' + Beautify(cookieValue(0))));
+			subsection.append($('<div>').addClass('listing').html('<b>BigCookie CalcValue:</b> ' + Beautify(Game.mouseCps() / clickBuffBonus())));
 			subsection.append($('<div>').addClass('listing').html('<b>BigCookie avg value:</b> ' + Beautify((FrozenCookies.clicksvalue/FrozenCookies.clicks))));
 			subsection.append($('<div>').addClass('listing').html('<b>BigCookie SetTime</b> ' +   Beautify(FrozenCookies.cookieClickSpeed)+' clicks/second'));
 			subsection.append($('<div>').addClass('listing').html('<b>BigCookie avg Time</b> ' +   Beautify(1000/((FrozenCookies.clickstimer)/FrozenCookies.clicks))+' clicks/second'));
