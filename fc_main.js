@@ -75,7 +75,9 @@ function FCStart() {
     
 	//as Beautify is already included in CC, just add the choose from FC
     eval("Beautify="+Beautify.toString().replace(/Game\.prefs\.format\?2:1/g, 'FrozenCookies\.numberDisplay'));
-	
+
+	FrozenCookies.calculatedCps=0;
+	FrozenCookies.calculatedCpsByType=[];
 	//Copy some code for internal use and modify
 	eval('FrozenCookies.safeGainsCalc = ' + Game.CalculateGains.toString().replace(/Game\.cookiesPs/g, 'FrozenCookies.calculatedCps').replace(/Game\.globalCpsMult/g, 'mult'));
 	

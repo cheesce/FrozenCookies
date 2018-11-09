@@ -398,23 +398,23 @@ var santaJson = {
 };
 
 var blacklist = [
-    {
+    {   // no blacklist
         'upgrades': [],
         'buildings': []
 	},
-    {
+    {   // Speedrun Blacklist
         'upgrades': [129,130,131,132,133],
         'buildings': []
 	},
-    {
+    {   // Hardcore Blacklist
         'upgrades': true,
         'buildings': []
 	},
-    {
+    {   // Grandmapocalypse Mode 
         'upgrades': [71, 72, 73, 74, 84, 85],
         'buildings': []
 	},
-    {
+    {    // No Buildings
         'upgrades': [],
         'buildings': true
 	}
