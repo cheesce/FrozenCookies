@@ -405,7 +405,7 @@ function clickBuffBonus() {
 }
 
 function multBuffBonus() {
-    var ret = 1
+    var ret = 1;
     for (var i in Game.buffs) {
         if (typeof Game.buffs[i].multCpS != 'undefined') {
             ret *= Game.buffs[i].multCpS;
@@ -415,18 +415,18 @@ function multBuffBonus() {
 }
 
 function hasClickBuff() {
-//'Click frenzy' 'Dragonflight' 'Devastation' 'Cursed finger'
-var ret = 0;
+	//'Click frenzy' 'Dragonflight' 'Devastation' 'Cursed finger'
+	var ret = 0;
     for (var i in Game.buffs) {
         if (typeof Game.buffs[i].multClick != 'undefined') ret++;
 	}
-	if (Game.hasBuff('Cursed finger') ret++;
+	if (Game.hasBuff('Cursed finger')) ret++;
 	return ret;
 }
 
 function hasMultBuff() {
-// 'Frenzy' 'Elder frenzy' 'Clot' 'Dragon Harvest' 'building buff' 'building debuff' 'Sugar frenzy'
-var ret = 0;
+	// 'Frenzy' 'Elder frenzy' 'Clot' 'Dragon Harvest' 'building buff' 'building debuff' 'Sugar frenzy'
+	var ret = 0;
     for (var i in Game.buffs) {
         if (typeof Game.buffs[i].multCpS != 'undefined') ret++;
 	}
