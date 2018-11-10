@@ -355,7 +355,7 @@ function autoCast() {
 var Modlist={golden: [1,0.5,0.25,0.01], //just some basic values, rest will be added as needed by function
 reindeer:[1,0.97,0.95,0.9215,0.9025,0.9,0.855,0.5,0.485,0.475,0.46075,0.45125,0.45,0.4275,0.01]}; //should be complete for 2.016
 
-var cumulativeProbabilityList={golden: [], reindeer: []};	
+var cumulativeProbabilityList={golden: [0], reindeer: [0]};	
 
 function calcProbs(listType) { //ok
 	if (listType=='golden')   cumulativeProbabilityList[listType]=Modlist[listType].reduce(function(r,x) { r[x] = generateProbabilities(x, 5 * 60 * Game.fps, 3); return r;}, {})
@@ -387,10 +387,8 @@ function getProbabilityModifiers(listType) { //ok
 }
 
 function probabilitySpan(listType, start, endProbability) { //ok
-	logEvent('Debug','list='+listType+'start='+start);
 	var pl=getProbabilityList(listType);
-    logEvent('Debug','pl is type '+typeof pl);
-	if (typeof pl=='undefined') return 0;
+	if (typeof pl=='undefined') return 0; //don't know why this happens at first call after start or reset
 	var startProbability=pl[start];
     return _.sortedIndex(pl, (startProbability + endProbability - startProbability * endProbability));
 }
