@@ -429,7 +429,8 @@ var holidayCookies = {
     easter: [210,211,212,213,214,215,216,217,218,219,220,221,222,223,224,225,226,227,228,229],
 }
 
-var cookieInfo = { // work needed
+var cookieInfo = { // work needed. these odds are all outdated. And since these odds depend on a varity of parameters 
+	//computing all and put them in here is an terrible idea. Trying to get the odds during gameplay by measureing 
     'clot':        {'odds':[0,0.10386789477947,0.19565417350258,0.279830557040944],                   isOverlap:false},
     'frenzy':      {'odds':[0.475438636303817,0.330397784579005,0.17665214624519,0],                  isOverlap:false},
     'elderfrenzy': {'odds':[0,0.021118483342717,0.042826537084539,0.065166067095688],                 isOverlap:false},

@@ -316,7 +316,7 @@ function autoCast() {
             case 1:
 			var CBG = M.spellsById[0];
 			if (M.magicM < Math.floor(CBG.costMin + CBG.costPercent*M.magicM)) return;
-			if(cpsBonus() >= FrozenCookies.minCpSMult) {
+			if(multBuffBonus() >= FrozenCookies.minCpSMult) {
 				M.castSpell(CBG);
 				logEvent('AutoSpell', 'Cast Conjure Baked Goods');
 			}
@@ -324,7 +324,7 @@ function autoCast() {
             case 2:
 			var FTHOF = M.spellsById[1];
 			if (M.magicM < Math.floor(FTHOF.costMin + FTHOF.costPercent*M.magicM)) return;
-			if(cpsBonus() >= FrozenCookies.minCpSMult || Game.hasBuff('Dragonflight') || Game.hasBuff('Click frenzy')) {
+			if(multBuffBonus() >= FrozenCookies.minCpSMult || Game.hasBuff('Dragonflight') || Game.hasBuff('Click frenzy')) {
 				M.castSpell(FTHOF);
 				logEvent('AutoSpell', 'Cast Force the Hand of Fate');
 			}
@@ -351,24 +351,14 @@ function autoCast() {
 	}
 }
 
-function cpsBonus() { //autocast helper function
-    var ret = 1
-    for (var i in Game.buffs) {
-        if (typeof Game.buffs[i].multCpS != 'undefined') {
-            ret *= Game.buffs[i].multCpS;
-		}
-	}
-    return ret;
-}
-
 //calculate Probabilities for spawn of golden cookies and reindeers 
 var Modlist={golden: [1,0.5,0.25,0.01], //just some basic values, rest will be added as needed by function
 reindeer:[1,0.97,0.95,0.9215,0.9025,0.9,0.855,0.5,0.485,0.475,0.46075,0.45125,0.45,0.4275,0.01]}; //should be complete for 2.016
 
 var cumulativeProbabilityList={golden: [], reindeer: []};	
 
-function calcProbs(listType)
-{ if (listType=='golden')   cumulativeProbabilityList[listType]=Modlist[listType].reduce(function(r,x) { r[x] = generateProbabilities(x, 5 * 60 * Game.fps, 3); return r;}, {})
+function calcProbs(listType) { //ok
+	if (listType=='golden')   cumulativeProbabilityList[listType]=Modlist[listType].reduce(function(r,x) { r[x] = generateProbabilities(x, 5 * 60 * Game.fps, 3); return r;}, {})
 	if (listType=='reindeer') cumulativeProbabilityList[listType]=Modlist[listType].reduce(function(r,x) { r[x] = generateProbabilities(x, 3 * 60 * Game.fps, 2); return r;}, {})	
 }
 
@@ -403,12 +393,41 @@ function probabilitySpan(listType, start, endProbability) { //ok
 
 // math
 function clickBuffBonus() {
-    var ret = 1
+    var ret = 1;
     for (var i in Game.buffs) {
         // Devastation, Godzamok's buff, is too variable
-        if (typeof Game.buffs[i].multClick != 'undefined' && Game.buffs[i].name != 'Devastation') {
+        if ((typeof Game.buffs[i].multClick != 'undefined') { //&& (Game.buffs[i].name != 'devastation') {
             ret *= Game.buffs[i].multClick;
 		}
+	}
+	return ret;
+}
+
+function multBuffBonus() {
+    var ret = 1
+    for (var i in Game.buffs) {
+        if (typeof Game.buffs[i].multCpS != 'undefined') {
+            ret *= Game.buffs[i].multCpS;
+		}
+	}
+	return ret;
+}
+
+function hasClickBuff() {
+//'Click frenzy' 'Dragonflight' 'Devastation' 'Cursed finger'
+var ret = 0;
+    for (var i in Game.buffs) {
+        if (typeof Game.buffs[i].multClick != 'undefined') ret++;
+	}
+	if (Game.hasBuff('Cursed finger') ret++;
+	return ret;
+}
+
+function hasMultBuff() {
+// 'Frenzy' 'Elder frenzy' 'Clot' 'Dragon Harvest' 'building buff' 'building debuff' 'Sugar frenzy'
+var ret = 0;
+    for (var i in Game.buffs) {
+        if (typeof Game.buffs[i].multCpS != 'undefined') ret++;
 	}
 	return ret;
 }
@@ -423,10 +442,6 @@ function divCps(value, cps) {
 		}
 	}
     return result;
-}
-
-function hasClickBuff() {
-    return Game.hasBuff('Cursed finger') || clickBuffBonus() != 1;
 }
 
 function baseClickingCps(clickSpeed) {
@@ -444,6 +459,11 @@ function effectiveCps(bankAmount, wrathValue, wrinklerCount) { //ok
 	baseClickingCps(FrozenCookies.cookieClickSpeed * FrozenCookies.autoClick) +
 	reindeerCps(wrathValue);
 }
+
+
+var gcProbs=new Object;
+gcProbs['totalclicks']=0;
+
 
 function frenzyProbability(wrathValue) { //ok
     wrathValue = wrathValue != null ? wrathValue : Game.elderWrath;
@@ -1071,7 +1091,7 @@ function upgradeStats(recalculate) {
                 Game.elderWrath = existingWrath;
                 var deltaCps = cpsNew - cpsOrig;
                 var baseDeltaCps = baseCpsNew - baseCpsOrig;
-                var efficiency = ((typeof current.season != 'undefinded') && (current.season == seasons[FrozenCookies.defaultSeason])) ? cost / baseCpsOrig : (priceReduction > cost) ? 1 : purchaseEfficiency(cost, deltaCps, baseDeltaCps, cpsOrig);
+                var efficiency = ((typeof current.season != 'undefined') && (current.season == seasons[FrozenCookies.defaultSeason])) ? cost / baseCpsOrig : (priceReduction > cost) ? 1 : purchaseEfficiency(cost, deltaCps, baseDeltaCps, cpsOrig);
                 return {
                     'id': current.id,
                     'efficiency': efficiency,
@@ -1698,9 +1718,7 @@ function autoGodzamokAction() {
 
 //main function
 function autoCookie() {
-    if (!Game.OnAscend && !Game.AscendTimer) {
-		// Objectclick stats
-		
+    if (!Game.OnAscend && !Game.AscendTimer) {		
 		// Get HC stats
 		var currentHCAmount = Game.HowMuchPrestige(Game.cookiesEarned + Game.cookiesReset + wrinklerValue());
         if (Math.floor(FrozenCookies.lastHCAmount) < Math.floor(currentHCAmount)) {
@@ -1814,12 +1832,14 @@ function autoCookie() {
             for (var i in Game.shimmers) {
                 if (Game.shimmers[i].type == 'golden') {
                     Game.shimmers[i].pop();
-					FrozenCookies.gcclicksvalue+=(1);// how to measure this is the question
+					FrozenCookies.gcclicksvalue=Game.cookies;// start value
                     FrozenCookies.gcclicks++;
 					var tmp=Date.now();
 					FrozenCookies.gcclickstimer+=(tmp-FrozenCookies.gcclickstimerlast);
 					FrozenCookies.gcclickstimerlast=tmp;
-				}
+				    if (typeof gcProbs[Game.shimmerTypes.golden.last] == 'undefined') gcProbs[Game.shimmerTypes.golden.last]={clicks:[0,0,0,0]};
+					gcProbs[Game.shimmerTypes.golden.last].clicks[Game.elderWrath]++;
+					}
 			}
 		}
         
@@ -1844,7 +1864,7 @@ function autoCookie() {
 			!Game.Upgrades['Golden switch [off]'].bought) {
 				Game.Upgrades['Golden switch [off]'].buy();
 			}
-			} else if (cpsBonus() <= 1) {
+			} else if (multBuffBonus() <= 1) {
 			if (Game.Upgrades['Golden switch [on]'].unlocked &&
 			!Game.Upgrades['Golden switch [on]'].bought) {
 				Game.CalculateGains(); // Ensure price is updated since Frenzy ended
