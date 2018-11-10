@@ -66,8 +66,8 @@ function FCStart() {
     FrozenCookies.caches.buildings = [];
     FrozenCookies.caches.upgrades = [];
 	
-	calcProbs('golden'); getProbabilityList('golden');
-	calcProbs('reindeer'); getProbabilityList('reindeer');
+	calcProbs('golden');
+	calcProbs('reindeer');
 	
     if (!blacklist[FrozenCookies.blacklist]) {
         FrozenCookies.blacklist = 0;
@@ -220,7 +220,7 @@ function fcReset() {
 	FrozenCookies.reindeerclickstimerlast=Date.now();
  
 	updateLocalStorage();
-    recommendationList(true);
+	recommendationList(true);
 }
 
 function fcWin(what) { //ok updated code to 2.016 version
@@ -387,8 +387,9 @@ function getProbabilityModifiers(listType) { //ok
 }
 
 function probabilitySpan(listType, start, endProbability) { //ok
-    var startProbability=getProbabilityList(listType)[start];
-    return _.sortedIndex(getProbabilityList(listType), (startProbability + endProbability - startProbability * endProbability));
+	var pl=getProbabilityList(listType);
+	var startProbability=pl[start];
+    return _.sortedIndex(pl, (startProbability + endProbability - startProbability * endProbability));
 }
 
 // math
@@ -396,7 +397,7 @@ function clickBuffBonus() {
     var ret = 1;
     for (var i in Game.buffs) {
         // Devastation, Godzamok's buff, is too variable
-        if ((typeof Game.buffs[i].multClick != 'undefined') { //&& (Game.buffs[i].name != 'devastation') {
+        if (typeof Game.buffs[i].multClick != 'undefined') { //&& (Game.buffs[i].name != 'devastation') {
             ret *= Game.buffs[i].multClick;
 		}
 	}
@@ -455,7 +456,7 @@ function effectiveCps(bankAmount, wrathValue, wrinklerCount) { //ok
     wrinklerCount = wrinklerCount != null ? wrinklerCount : getactiveWrinklers();
 	
     return Game.unbuffedCps * wrinklerMod(wrinklerCount) + 
-	gCps(cookieValue(bankAmount, wrathValue, wrinklerCount)) +
+	goldenCps(cookieValue(bankAmount, wrathValue, wrinklerCount)) +
 	baseClickingCps(FrozenCookies.cookieClickSpeed * FrozenCookies.autoClick) +
 	reindeerCps(wrathValue);
 }
@@ -535,17 +536,17 @@ function reindeerCps(wrathValue) { //ok
     return reindeerValue(wrathValue) / averageTime;
 }
 
-function gCps(gcValue) { //ok
+function goldenCps(gcValue) { //ok
     var averageTime = probabilitySpan('golden', 0, 0.5) / Game.fps;
     return gcValue / averageTime;
 }
 
 function gcEfficiency() {
-    if (gCps(weightedCookieValue()) <= 0) {
+    if (goldenCps(weightedCookieValue()) <= 0) {
         return Number.MAX_VALUE;
 	}
     var cost = Math.max(0, (maxLuckyValue() * 10 - Game.cookies));
-    var deltaCps = gCps(weightedCookieValue() - weightedCookieValue(true));
+    var deltaCps = goldenCps(weightedCookieValue() - weightedCookieValue(true));
     return divCps(cost, deltaCps);
 }
 
@@ -759,13 +760,13 @@ function cookieEfficiency(startingPoint, bankAmount) {
     var results = Number.MAX_VALUE;
     var currentValue = cookieValue(startingPoint);
     var bankValue = cookieValue(bankAmount);
-    var bankCps = gCps(bankValue);
+    var bankCps = goldenCps(bankValue);
     if (bankCps > 0) {
         if (bankAmount <= startingPoint) {
             results = 0;
 			} else {
             var cost = Math.max(0, (bankAmount - startingPoint));
-            var deltaCps = gCps(bankValue - currentValue);
+            var deltaCps = goldenCps(bankValue - currentValue);
             results = divCps(cost, deltaCps);
 		}
 		} else if (bankAmount <= startingPoint) {
@@ -1487,7 +1488,7 @@ function updateCaches() {
         FrozenCookies.recalculateCaches = false;
         currentBank = bestBank(0);
         targetBank = bestBank(recommendation.efficiency);
-        currentCookieCPS = gCps(cookieValue(currentBank.cost));
+        currentCookieCPS = goldenCps(cookieValue(currentBank.cost));
         currentUpgradeCount = Game.UpgradesInStore.length;
         FrozenCookies.safeGainsCalc();
 		
