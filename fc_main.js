@@ -1103,7 +1103,7 @@ function upgradeStats(recalculate) {
                 var baseDeltaCps = baseCpsNew - baseCpsOrig;
                 var efficiency = ((typeof current.season != 'undefined') && (current.season == seasons[FrozenCookies.defaultSeason])) ? cost / baseCpsOrig : (priceReduction > cost) ? 1 : purchaseEfficiency(cost, deltaCps, baseDeltaCps, cpsOrig);
                 // fake some effis to force buy
-				select (current.id)
+				switch (current.id)
 				{ 	case 229: // "egg"
 					case 226: // omeltte
 					case 224: // Wrinklerspawn
@@ -1115,7 +1115,6 @@ function upgradeStats(recalculate) {
 					case 152: //A festive hat
 					case 324: //A crumbly egg
 					efficiency=1;
-					default:
 				}
 				return {
                     'id': current.id,
