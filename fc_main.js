@@ -1070,7 +1070,7 @@ function upgradeStats(recalculate) {
 		//       var currentBank = bestBank(0).cost;
 		var n1=Game.UpgradesById.filter(function(a,b){return !a.unlocked && !a.bought && a.pool!='debug' && a.pool!='prestige';}).length;
 		var n2=Game.UpgradesById.filter(function(a,b){return a.unlocked && !a.bought && a.pool!='debug' && a.pool!='prestige';}).length;
-		if (n2>n1) var list=Game.UpgradesById.filter(function(a,b){return a.unlocked && !a.bought && a.pool!='debug' && a.pool!='prestige';});
+		if (n2<=n1) var list=Game.UpgradesById.filter(function(a,b){return a.unlocked && !a.bought && a.pool!='debug' && a.pool!='prestige';});
 		else var list=Game.UpgradesById.filter(function(a,b){return !a.unlocked && !a.bought && a.pool!='debug' && a.pool!='prestige';});
 	    FrozenCookies.caches.upgrades = list
 		.map(function(current) {
