@@ -942,7 +942,7 @@ function isUnavailable(upgrade, upgradeBlacklist) { //ok
         result = true; 
 	}
     
-	if ((upgrade.id == 84) || (upgrade.id==85) { // blacklist (Revoke) Elder Covenant from being used *needs logic*
+	if ((upgrade.id == 84) || (upgrade.id==85)) { // blacklist (Revoke) Elder Covenant from being used *needs logic*
         result = true; 
 	}
    
