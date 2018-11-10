@@ -26,7 +26,11 @@ function FCStart() {
 	// Basic Settings
 	FrozenCookies.frequency = 100; // Base timer interval 100ms
 	
-    // Set default values for calculations
+	//Init probabilites
+	calcProbs('golden');
+	calcProbs('reindeer');	
+
+	// Set default values for calculations
     FrozenCookies.clicks=0;
 	FrozenCookies.clicksvalue=0;
 	FrozenCookies.clickstimer=0;
@@ -65,9 +69,6 @@ function FCStart() {
     FrozenCookies.caches.recommendationList = [];
     FrozenCookies.caches.buildings = [];
     FrozenCookies.caches.upgrades = [];
-	
-	calcProbs('golden');
-	calcProbs('reindeer');
 	
     if (!blacklist[FrozenCookies.blacklist]) {
         FrozenCookies.blacklist = 0;
