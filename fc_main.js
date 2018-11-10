@@ -881,7 +881,7 @@ function recommendationList(recalculate) { //ok, but needs more logic to tempory
         FrozenCookies.caches.recommendationList = addScores(
 		upgradeStats(recalculate)
 		.concat(buildingStats(recalculate))
-		.concat(santaStats())
+//		.concat(santaStats())
 //		.concat(dragonStats())
 		.sort(function(a, b) {
 			return a.efficiency != b.efficiency ? a.efficiency - b.efficiency : (a.delta_cps != b.delta_cps ? b.delta_cps - a.delta_cps : a.cost - b.cost);
@@ -934,32 +934,36 @@ function isUnavailable(upgrade, upgradeBlacklist) { //ok
 	    result = result || ((upgrade.season != seasons[FrozenCookies.defaultSeason]) && haveAll(upgrade.season)); //do not revisite season unless it is the default season
 	}
 	
-	if  ((upgrade.id == 331) || (upgrade.id ==332)) {
-        result = true; // blacklist golden switch from being used
+	if  ((upgrade.id == 331) || (upgrade.id ==332)) { // blacklist golden switch from being used *needs logic*
+        result = true; 
 	}
     
-    if ((upgrade.id == 563) || (upgrade.id == 564)) {
-        result = true; // blacklist shimmering veil switch from being used
+    if ((upgrade.id == 563) || (upgrade.id == 564)) { // blacklist shimmering veil switch from being used *needs logic*
+        result = true; 
 	}
     
-    if (upgrade.id == 333) {
-        result = true; // blacklist milk selector from being used
+	if ((upgrade.id == 84) || (upgrade.id==85) { // blacklist (Revoke) Elder Covenant from being used *needs logic*
+        result = true; 
+	}
+   
+    if (upgrade.id == 333) { // blacklist milk selector from being used
+        result = true; 
 	}
     
-    if (upgrade.id == 414) {
-        result = true; // blacklist background selector from being used
+    if (upgrade.id == 414) { // blacklist background selector from being used
+        result = true; 
 	}
 	
-    if (upgrade.id == 361) {
-        result = true; // blacklist golden cookie sound selector from being used
+    if (upgrade.id == 361) { // blacklist golden cookie sound selector from being used
+        result = true; 
 	}
     
-    if (upgrade.id == 452) {
-        result = true; // blacklist sugar frenzy from being used
+    if (upgrade.id == 452) { // blacklist sugar frenzy from being used randomly *needs logic*
+        result = true; 
 	}
 	
-    if (upgrade.id == 227) {
-        result = true; // blacklist chocolate egg from being used
+    if (upgrade.id == 227) { // blacklist chocolate egg from being used ramdomly
+        result = true; 
 	}
 	
     return result;
@@ -1098,7 +1102,22 @@ function upgradeStats(recalculate) {
                 var deltaCps = cpsNew - cpsOrig;
                 var baseDeltaCps = baseCpsNew - baseCpsOrig;
                 var efficiency = ((typeof current.season != 'undefined') && (current.season == seasons[FrozenCookies.defaultSeason])) ? cost / baseCpsOrig : (priceReduction > cost) ? 1 : purchaseEfficiency(cost, deltaCps, baseDeltaCps, cpsOrig);
-                return {
+                // fake some effis to force buy
+				select (current.id)
+				{ 	case 229: // "egg"
+					case 226: // omeltte
+					case 224: // Wrinklerspawn
+					case 163: // santa's bottemless bag
+					case 158: // weighted sleighs
+					case 71:  //communal brainsweep
+					case 73:  //Elder Pact
+					case 87:  // Sacrificial rolling pins 
+					case 152: //A festive hat
+					case 324: //A crumbly egg
+					efficiency=1;
+					default:
+				}
+				return {
                     'id': current.id,
                     'efficiency': efficiency,
                     'base_delta_cps': baseDeltaCps,
