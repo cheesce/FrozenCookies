@@ -387,7 +387,7 @@ function getProbabilityModifiers(listType) { //ok
 }
 
 function probabilitySpan(listType, start, endProbability) { //ok
-	logEvent('Debug','list='listType+'start='+start);
+	logEvent('Debug','list='+listType+'start='+start);
 	var pl=getProbabilityList(listType);
     logEvent('Debug','pl is type '+typeof pl + 'pl='+pl.toString);
 	var startProbability=pl[start];
