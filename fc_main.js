@@ -1157,14 +1157,14 @@ function upgradeStats(recalculate) {
 function santaStats() { //ok
     return Game.Has('A festive hat') && (Game.santaLevel + 1 < Game.santaLevels.length) ? {
         id: santaJson[Game.santaLevel],
-        efficiency: 1,
+        efficiency: 0,
         base_delta_cps: 0,
         delta_cps: 0,
         cost: singleSantaCost(Game.santaLevel),
         type: 'santa',
         purchase: {
             id: santaJson[Game.santaLevel],
-            name: 'Santa Upgrade ' + Game.santaLevel,
+            name: 'Santa Upgrade ' + Game.santaLevel + 1,
             buy: buySanta,
             getCost: function() {
                 return singleSantaCost(Game.santaLevel);
@@ -1189,17 +1189,17 @@ function buySanta() { //ok
     Game.ToggleSpecialMenu();
 }
 
-function dragonStats() { //more work needed, check for needed buildings,calculate real efficency
+function dragonStats() { // ok
     if (Game.Has('A crumbly egg') && (Game.dragonLevel + 1 < Game.dragonLevels.length)) {		
-		return { id: Game.dragonLevel+1,
-			efficiency: 1,
+		return { id: Game.dragonLevel + 1,
+			efficiency: 0,
 			base_delta_cps: 0,
 			delta_cps: 0,
 			cost: singleDragonCost(Game.dragonLevel),
 			type: 'dragon',
 			purchase: {
-				id: Game.dragonLevel+1,
-				name: 'Dragon Upgrade ' + Game.dragonLevel,
+				id: Game.dragonLevel + 1,
+				name: 'Dragon Upgrade ' + Game.dragonLevel + 1,
 				buy: buyDragon,
 				getCost: function() { return singleDragonCost(Game.dragonLevel);}
 			}
@@ -1231,7 +1231,8 @@ function cumulativeDragonCost(level) { // ok costs for all levels needed to comp
 
 function unfinishedDragonPrereqs(dragonid) { //ok
 	var needed = [];
-    var prereqs = dragonJson[dragonid + 1];
+	if (dragonid==Game.dragonLevels.length-1) return null;
+	var prereqs = dragonJson[dragonid + 1];
 //	logEvent('Dragon','Prereq Dragon Level '+dragonid);
 	prereqs.buildings.forEach(function(a, b) {
             if (a && Game.ObjectsById[b].amount < a) {
