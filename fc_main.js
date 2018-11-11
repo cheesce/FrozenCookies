@@ -1877,7 +1877,7 @@ function autoCookie() {
 		// AutoGodzamok, needs work
 		if (T && autoGodzamok) {
 			//Now has option to not trigger until current Devastation buff expires (i.e. won't rapidly buy & sell cursors throughout Godzamok duration)
-			if ((Game.hasGod('ruin') && (Game.Objects['Cursor'].amount > 10) {
+			if ((Game.hasGod('ruin') && (Game.Objects['Cursor'].amount > 10)) {
 				if ((FrozenCookies.autoGodzamok == 1) && Game.hasBuff('Devastation')){ // crazy mode, only during Devastation
 					var count = Game.Objects['Cursor'].amount;
 					Game.Objects['Cursor'].sell(count);
