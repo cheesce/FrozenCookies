@@ -1785,7 +1785,7 @@ function autoCookie() {
         
 		// Normal cookie click rate or frenzy click rate logic
 		if (FrozenCookies.autoClick) {
-			if (hasClickBuff() {
+			if (hasClickBuff()) {
 				if (FrozenCookies.frenzyClickSpeed && (FrozenCookies.autoClickMode==0)) {
 					clearInterval(FrozenCookies.autoClickBot);
 					FrozenCookies.autoClickBot = setInterval(fcClickCookie, 1000 / FrozenCookies.frenzyClickSpeed);

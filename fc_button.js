@@ -776,7 +776,6 @@ function FCMenu() {
 		}
 		if (!Game.hasAura('Earth Shatterer')) {
             subsection.append($('<div>').addClass('listing').html('<b>Earth Shatterer:</b> ' + Beautify(earthShatter(true))));
-			}
 		}
         if (liveWrinklers().length > 0) {
             subsection.append($('<div>').addClass('listing').html('<b>Wrinkler Value:</b> ' + Beautify(wrinklerValue())));
