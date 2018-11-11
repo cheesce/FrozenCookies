@@ -766,7 +766,7 @@ function bestBank(minEfficiency) {
 	return (bank.efficiency >= 0 && bank.efficiency <= minEfficiency) ? bank : null;}
 	);
    if (bankLevels[0] != 'undefined') return bankLevels[0];
-   else return { 'cost': 0, 'efficiency': 0};
+   else return { 'cost': 0, 'efficiency': 1};
  }
 
 function cookieEfficiency(startingPoint, bankAmount) {
@@ -1406,7 +1406,7 @@ function santaStats() { //ok
         type: 'santa',
         purchase: {
             id: santaJson[Game.santaLevel],
-            name: 'Santa Upgrade ' + Game.santaLevel + 1,
+            name: 'Santa Upgrade ' + (Game.santaLevel + 1),
             buy: buySanta,
             getCost: function() {
                 return singleSantaCost(Game.santaLevel);
@@ -1442,7 +1442,7 @@ function dragonStats() { // ok
 			type: 'dragon',
 			purchase: {
 				id: Game.dragonLevel + 1,
-				name: 'Dragon Upgrade ' + Game.dragonLevel + 1,
+				name: 'Dragon Upgrade ' + (Game.dragonLevel + 1),
 				buy: buyDragon,
 				getCost: function() { return singleDragonCost(Game.dragonLevel);}
 			}
