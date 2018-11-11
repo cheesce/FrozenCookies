@@ -680,7 +680,7 @@ function FCMenu() {
             subsection.append($('<div>').addClass('listing').html('<b>Time to Recoup Chocolate:</b> ' + timeDisplay(divCps(recommendation.cost + bankLevel.cost - Game.cookies, effectiveCps()) + chocolateRecoup)));
 		}
         subsection.append($('<div>').addClass('listing').html('<b>Cost:</b> ' + Beautify(recommendation.cost)));
-        subsection.append($('<div>').addClass('listing').html('<b>Bank:</b> ' + Beautify(bankLevel.cost)));
+  //      subsection.append($('<div>').addClass('listing').html('<b>Bank:</b> ' + Beautify(bankLevel.cost)));
         subsection.append($('<div>').addClass('listing').html('<b>Base &#916; CPS:</b> ' + Beautify(recommendation.base_delta_cps)));
         subsection.append($('<div>').addClass('listing').html('<b>Full &#916; CPS:</b> ' + Beautify(recommendation.delta_cps)));
         subsection.append($('<div>').addClass('listing').html('<b>Purchase Efficiency:</b> ' + Beautify(recommendation.efficiency)));
