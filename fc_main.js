@@ -933,7 +933,7 @@ function isUnavailable(upgrade, upgradeBlacklist) { //ok
     result = result || (upgradeBlacklist === true);
     result = result || _.contains(upgradeBlacklist, upgrade.id);
     if (needed && (_.find(needed, function(a) { return a.type == "wrinklers"}) != null)) { //need wrinklers for upgrade?
-		if ((upgrade.id==74) || (upgrade.id==84)) result = true; //don't buy Elder Pledge or Elder Covenant
+		if (upgrade.id==74) result = true; //don't buy Elder Pledge 
 	} 
 	
 	if (typeof upgrade.season != 'undefined' ) { // need season change?
@@ -1515,7 +1515,7 @@ function setDragonAura(aura,slot) { //ok - non cheating version
 
 function autoAura(){ //work in progress, set best auras as soon as they are availble
 	if (Game.dragonLevel>=5){ // first aura
-		switch Game.dragonLevel
+		switch (Game.dragonLevel)
 		{ 	case 5: setDragonAura('Breath of Milk',0); break;
 			case 6: setDragonAura('Dragon Cursor',0); break;
 			case 7: setDragonAura('Elder Battalion',0); break;
