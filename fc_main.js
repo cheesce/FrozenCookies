@@ -1188,7 +1188,7 @@ function buySanta() { //ok
 }
 
 function dragonStats() { //more work needed, check for needed buildings,calculate real efficency
-    if Game.Has('A crumbly egg') && (Game.dragonLevel + 1 < Game.dragonLevels.length) {		
+    if (Game.Has('A crumbly egg') && (Game.dragonLevel + 1 < Game.dragonLevels.length)) {		
 		return { id: dragonJson[Game.dragonLevel],
 			efficiency: 1,
 			base_delta_cps: 0,
@@ -1816,7 +1816,7 @@ function autoCookie() {
 					clearInterval(FrozenCookies.autoClickBot);
 					FrozenCookies.autoClickBot = setInterval(fcClickCookie, 1000 / FrozenCookies.frenzyClickSpeed);
 					FrozenCookies.autoClickBotMode=1;
-					logEvent('AutoClick', 'Clicking cookie on frency speed with  ' + FrozenCookies.frenzyClickSpeed + ' clicks per second.');
+//					logEvent('AutoClick', 'Clicking cookie on frency speed with  ' + FrozenCookies.frenzyClickSpeed + ' clicks per second.');
 				}	
 			}
 			else {
@@ -1824,7 +1824,7 @@ function autoCookie() {
 					clearInterval(FrozenCookies.autoClickBot);
 					FrozenCookies.autoClickBot = setInterval(fcClickCookie, 1000 / FrozenCookies.cookieClickSpeed);		
 					FrozenCookies.autoClickBotMode=0;
-					logEvent('AutoClick', 'Clicking cookie on normal speed with  ' + FrozenCookies.cookieClickSpeed + ' clicks per second.');
+//					logEvent('AutoClick', 'Clicking cookie on normal speed with  ' + FrozenCookies.cookieClickSpeed + ' clicks per second.');
 				}
 			}
 		}
