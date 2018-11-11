@@ -902,14 +902,6 @@ function recommendationList(recalculate) { //ok, but needs more logic to tempory
 			return a.efficiency != b.efficiency ? a.efficiency - b.efficiency : (a.delta_cps != b.delta_cps ? b.delta_cps - a.delta_cps : a.cost - b.cost);
 		}));
 		
-		//If autocasting Spontaneous Edifice, don't buy any Fractal engines after 399
-        if (M && FrozenCookies.autoSpell == 3 && Game.Objects['Fractal engine'].amount >= 399) {
-            for (var i = 0; i < FrozenCookies.caches.recommendationList.length; i++) {
-                if (FrozenCookies.caches.recommendationList[i].id == 15) {
-                    FrozenCookies.caches.recommendationList.splice(i , 1);
-				}
-			}
-		}
         //Stop buying wizard towers at max Mana if enabled
         if (M && FrozenCookies.towerLimit && M.magicM >= FrozenCookies.manaMax) {
             for (var i = 0; i < FrozenCookies.caches.recommendationList.length; i++) {
@@ -1219,7 +1211,6 @@ function upgradeStats(recalculate) {
 			if (isUnavailable(current, upgradeBlacklist)) {
 				return null;
 			}
-			//			var needed = unfinishedUpgradePrereqs(current);
 			var cost = upgradePrereqCost(current);
 			var baseCpsOrig = Game.unbuffedCps;
 			//                var cpsOrig = effectiveCps(Math.min(Game.cookies, currentBank)); 
@@ -1505,13 +1496,13 @@ function setDragonAura(aura,slot) { //ok - non cheating version
 	if ((Game.dragonAura==auraid) || (Game.dragonAura2==auraid)) return true; // already set
 
 	if (typeof slot!='undefined') {
-		if ((slot==1) && Game.dragonLevel<23)) return false; // don't have second auro yet
+		if ((slot==1) && (Game.dragonLevel<23)) return false; // don't have second auro yet
 		if (slot==0) Game.dragonAura=auraid;
 		else Game.dragonAura2==auraid;
 	}
 	else { //auto-select slot
 		if (Game.dragonAura==0) Game.dragonAura=auraid;
-		else if ((Game.dragonAura2==0) && Game.dragonLevel>=23)) Game.dragonAura2=auraid;
+		else if ((Game.dragonAura2==0) && (Game.dragonLevel>=23)) Game.dragonAura2=auraid;
 		else Game.dragonAura=auraid; //first slot if nothing is free	
 	}		
 
