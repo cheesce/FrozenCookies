@@ -1787,18 +1787,18 @@ function autoCookie() {
 		// Normal cookie click rate or frenzy click rate logic
 		if (FrozenCookies.autoClick) {
 			if (hasClickBuff()) {
-				if (FrozenCookies.frenzyClickSpeed && (FrozenCookies.autoClickMode==0)) {
+				if (FrozenCookies.frenzyClickSpeed && (FrozenCookies.autoClickBotMode==0)) {
 					clearInterval(FrozenCookies.autoClickBot);
 					FrozenCookies.autoClickBot = setInterval(fcClickCookie, 1000 / FrozenCookies.frenzyClickSpeed);
-					FrozenCookies.autoClickMode=1;
+					FrozenCookies.autoClickBotMode=1;
 					logEvent('AutoClick', 'Clicking cookie on frency speed with  ' + FrozenCookies.frenzyClickSpeed + ' clicks per second.');
 				}	
 			}
 			else {
-				if (FrozenCookies.cookieClickSpeed && (FrozenCookies.autoClickMode==1)) {
+				if (FrozenCookies.cookieClickSpeed && (FrozenCookies.autoClickBotMode==1)) {
 					clearInterval(FrozenCookies.autoClickBot);
 					FrozenCookies.autoClickBot = setInterval(fcClickCookie, 1000 / FrozenCookies.cookieClickSpeed);		
-					FrozenCookies.autoClickMode=0;
+					FrozenCookies.autoClickBotMode=0;
 					logEvent('AutoClick', 'Clicking cookie on normal speed with  ' + FrozenCookies.cookieClickSpeed + ' clicks per second.');
 				}
 			}
@@ -1897,7 +1897,7 @@ function autoCookie() {
 		}
 		
 		// AutoCast
-		if (M && FrozenCookies.autoSpell) autocast();
+		if (M && FrozenCookies.autoSpell) autoCast();
 		
 		// AutoGS
 		if (hasClickBuff()) {
