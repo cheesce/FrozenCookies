@@ -543,7 +543,7 @@ function earthShatter(valueonly) { //ok
 
 	var highestBuilding = 0;
 	Game.ObjectsById.forEach(function(b) { if (b.amount > 0) highestBuilding=b;}); 
-    if (!Game.hasAura('Earth Shatterer') && (Game.dragonLevel>=8) && (highestBuilding!=0)) value-= b.getPrice(1);	
+    if (!Game.hasAura('Earth Shatterer') && (Game.dragonLevel>=8) && (highestBuilding!=0)) value-= highestBuilding.getPrice(1);	
     value *= 0.05;
 	
 	if (valueonly==false) //you shoud do this only when ascending ;)
