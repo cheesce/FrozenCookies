@@ -1995,8 +1995,8 @@ function autoCookie() {
 		// Yeah, buy some stuff
 		updateCaches();
         var recommendation = nextPurchase();
-        var delay = delayAmount(); //save cookies for bank
-		
+ //       var delay = delayAmount(); //save cookies for bank
+ var delay=0;
 		//       if (FrozenCookies.autoBuy && 
 		//		((Game.cookies >= delay + recommendation.cost) || recommendation.purchase.name == "Elder Pledge") &&
 		//		 (FrozenCookies.pastemode || isFinite(nextChainedPurchase().efficiency))) {
