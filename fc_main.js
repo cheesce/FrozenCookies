@@ -874,7 +874,6 @@ function checkPrices(currentUpgrade) {
     return value;
 }
 
-// Use this for changes to future efficiency calcs
 function purchaseEfficiency(price, deltaCps, baseDeltaCps, currentCps) {
     var efficiency = Number.POSITIVE_INFINITY;
     if (deltaCps > 0) {
@@ -888,8 +887,8 @@ function recommendationList(recalculate) { //ok, but needs more logic to tempory
         FrozenCookies.caches.recommendationList = addScores(
 		upgradeStats(recalculate)
 		.concat(buildingStats(recalculate))
-//		.concat(santaStats())
-//		.concat(dragonStats())
+		.concat(santaStats())
+		.concat(dragonStats())
 		.sort(function(a, b) {
 			return a.efficiency != b.efficiency ? a.efficiency - b.efficiency : (a.delta_cps != b.delta_cps ? b.delta_cps - a.delta_cps : a.cost - b.cost);
 		}));
@@ -1008,14 +1007,27 @@ function nextPurchase(recalculate) {
         var target = null;
         for (var i = 0; i < recList.length; i++) {
             target = recList[i];
-            if (target.type == 'upgrade' && unfinishedUpgradePrereqs(Game.UpgradesById[target.id])) {
+            if (target.type == 'upgrade') {
                 var prereqList = unfinishedUpgradePrereqs(Game.UpgradesById[target.id]);
-                purchase = recList.filter(function(a) {
-                    return prereqList.some(function(b) {
-                        return b.id == a.id && b.type == a.type
-					})
-				})[0];
-				} else {
+                if (prereqList) {
+					purchase = recList.filter(function(a) {
+						return prereqList.some(function(b) {
+							return b.id == a.id && b.type == a.type
+						})
+					})[0];
+				}
+			} 
+			else if (target.type == 'dragon') {
+			var prereqList = unfinishedDragonPrereqs(target.id);
+                if (prereqList) {
+					purchase = recList.filter(function(a) {
+						return prereqList.some(function(b) {
+							return b.id == a.id && b.type == a.type
+						})
+					})[0];
+				}			
+			}
+			else {
                 purchase = target;
 			}
             if (purchase) {
@@ -1032,7 +1044,7 @@ function nextPurchase(recalculate) {
     return FrozenCookies.caches.nextPurchase;
 }
 
-function nextChainedPurchase(recalculate) {
+function nextChainedPurchase(recalculate) { //ok
     nextPurchase(recalculate);
     return FrozenCookies.caches.nextChainedPurchase;
 }
@@ -1140,16 +1152,16 @@ function upgradeStats(recalculate) {
     return FrozenCookies.caches.upgrades;
 }
 
-function santaStats() { //ok, more work needed
+function santaStats() { //ok
     return Game.Has('A festive hat') && (Game.santaLevel + 1 < Game.santaLevels.length) ? {
-        id: 999,
+        id: santaJson[Game.santaLevel],
         efficiency: 1,
         base_delta_cps: 0,
         delta_cps: 0,
         cost: singleSantaCost(Game.santaLevel),
         type: 'santa',
         purchase: {
-            id: 999,
+            id: santaJson[Game.santaLevel],
             name: 'Santa Upgrade ' + Game.santaLevel,
             buy: buySanta,
             getCost: function() {
@@ -1176,29 +1188,28 @@ function buySanta() { //ok
 }
 
 function dragonStats() { //more work needed, check for needed buildings,calculate real efficency
-    return Game.Has('A crumbly egg') && (Game.dragonLevel + 1 < Game.dragonLevels.length) ? {
-        id: 998,
-        efficiency: 1,
-        base_delta_cps: 0,
-        delta_cps: 0,
-        cost: singleDragonCost(Game.dragonLevel),
-        type: 'dragon',
-        purchase: {
-            id: 998,
-            name: 'Dragon Upgrade ' + Game.dragonLevel,
-            buy: buyDragon,
-            getCost: function() {
-                return singleDragonCost(Game.dragonLevel);
+    if Game.Has('A crumbly egg') && (Game.dragonLevel + 1 < Game.dragonLevels.length) {		
+		return { id: dragonJson[Game.dragonLevel],
+			efficiency: 1,
+			base_delta_cps: 0,
+			delta_cps: 0,
+			cost: singleDragonCost(Game.dragonLevel),
+			type: 'dragon',
+			purchase: {
+				id: dragonJson[Game.dragonLevel],
+				name: 'Dragon Upgrade ' + Game.dragonLevel,
+				buy: buyDragon,
+				getCost: function() { return singleDragonCost(Game.dragonLevel);}
 			}
 		}
-	} : [];
+	}
+	else return[];
 }
 
 function buyDragon() { //ok
     Game.specialTab = 'dragon';
     Game.UpgradeDragon();
-    Game.ToggleSpecialMenu();
-	
+    Game.ToggleSpecialMenu();	
 }
 
 function singleDragonCost(level) { //ok, cookie costs or costs to rebuy buildings for given level
@@ -1214,6 +1225,20 @@ function cumulativeDragonCost(level) { // ok costs for all levels needed to comp
 	var sum=0;
 	for (var i=level; i< Game.dragonLevels.length; i++) { sum+=singleDragonCost(i); }
     return sum;
+}
+
+function unfinishedDragonPrereqs(dragonid) { //ok
+	var needed = [];
+    var prereqs = dragonJson[dragonid];
+	prereqs.buildings.forEach(function(a, b) {
+            if (a && Game.ObjectsById[b].amount < a) {
+                needed.push({
+                    'type': 'building',
+                    'id': b
+				});
+			}
+		});
+	return needed.length ? needed : null;
 }
 
 function defaultPurchase() {
