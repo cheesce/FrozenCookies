@@ -1189,14 +1189,14 @@ function buySanta() { //ok
 
 function dragonStats() { //more work needed, check for needed buildings,calculate real efficency
     if (Game.Has('A crumbly egg') && (Game.dragonLevel + 1 < Game.dragonLevels.length)) {		
-		return { id: dragonJson[Game.dragonLevel+1],
+		return { id: parseInt(dragonJson[Game.dragonLevel+1]),
 			efficiency: 1,
 			base_delta_cps: 0,
 			delta_cps: 0,
 			cost: singleDragonCost(Game.dragonLevel),
 			type: 'dragon',
 			purchase: {
-				id: dragonJson[Game.dragonLevel+1],
+				id: parseInt(dragonJson[Game.dragonLevel+1]),
 				name: 'Dragon Upgrade ' + Game.dragonLevel,
 				buy: buyDragon,
 				getCost: function() { return singleDragonCost(Game.dragonLevel);}
