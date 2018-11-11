@@ -765,11 +765,8 @@ function bestBank(minEfficiency) {
 	.filter(function(bank) {
 	return (bank.efficiency >= 0 && bank.efficiency <= minEfficiency) ? bank : null;}
 	);
- //return bankLevels[0];
-return {
-	'cost': bankLevels[0].cost,
-        'efficiency': bankLevels[0].efficiency
-};
+   if (bankLevels[0] != 'undefined') return bankLevels[0];
+   else return { 'cost': 0, 'efficiency': 0};
  }
 
 function cookieEfficiency(startingPoint, bankAmount) {
