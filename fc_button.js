@@ -725,7 +725,7 @@ function FCMenu() {
         subsection = $('<div>').addClass('subsection');
         subsection.append($('<div>').addClass('title').html('Heavenly Chips Information'));
         currPrestige = Game.prestige;
-        resetPrestige = Game.HowMuchPrestige(Game.cookiesReset + Game.cookiesEarned + wrinklerValue() + chocolateValue());
+        resetPrestige = Game.HowMuchPrestige(Game.cookiesReset + Game.cookiesEarned + earthShatter(true));
         prestigeDifference = resetPrestige - currPrestige;
         currHC = Game.heavenlyChips;
         resetHC = currHC + prestigeDifference;
