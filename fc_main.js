@@ -1189,14 +1189,14 @@ function buySanta() { //ok
 
 function dragonStats() { //more work needed, check for needed buildings,calculate real efficency
     if (Game.Has('A crumbly egg') && (Game.dragonLevel + 1 < Game.dragonLevels.length)) {		
-		return { id: dragonJson[Game.dragonLevel],
+		return { id: dragonJson[Game.dragonLevel+1],
 			efficiency: 1,
 			base_delta_cps: 0,
 			delta_cps: 0,
 			cost: singleDragonCost(Game.dragonLevel),
 			type: 'dragon',
 			purchase: {
-				id: dragonJson[Game.dragonLevel],
+				id: dragonJson[Game.dragonLevel+1],
 				name: 'Dragon Upgrade ' + Game.dragonLevel,
 				buy: buyDragon,
 				getCost: function() { return singleDragonCost(Game.dragonLevel);}
@@ -1230,8 +1230,8 @@ function cumulativeDragonCost(level) { // ok costs for all levels needed to comp
 function unfinishedDragonPrereqs(dragonid) { //ok
 	var needed = [];
     var prereqs = dragonJson[dragonid + 1];
-	logEvent('Dragon','Prereq Dragon Level '+dragonid);
-/*	prereqs.buildings.forEach(function(a, b) {
+//	logEvent('Dragon','Prereq Dragon Level '+dragonid);
+	prereqs.buildings.forEach(function(a, b) {
             if (a && Game.ObjectsById[b].amount < a) {
                 needed.push({
                     'type': 'building',
@@ -1239,7 +1239,7 @@ function unfinishedDragonPrereqs(dragonid) { //ok
 				});
 			}
 		});
-*/	return needed.length ? needed : null;
+	return needed.length ? needed : null;
 }
 
 function defaultPurchase() {
