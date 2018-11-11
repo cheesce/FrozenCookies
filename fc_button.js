@@ -122,11 +122,12 @@ FrozenCookies.preferenceValues = {
         'display':['Pastemode OFF','Pastemode ON'],
         'default':0
 	},
-    'simulatedGCPercent':{
+  /*  'simulatedGCPercent':{
         'hint':'What percentage of Golden Cookies should be assumed as "clicked" for GC efficiency calculations (100% recommended)',
         'display':["0%","100%"],
         'default':1
 	},
+  */
 	/*  'fpsModifier':{
         'hint':'The frame rate at which the game runs. 60 is twice as fast, 15 is half as fast, etc. If you\'re not sure, keep this at 30',
         'display':['24','25','30','48','50','60','72','90','100','120','144','200','240','300'],
@@ -771,9 +772,10 @@ function FCMenu() {
         subsection.append($('<div>').addClass('listing').html('<b>Frenzy CPS' + clickStr + frenzyChosen + ':</b> ' + Beautify(cps * 7)));
         subsection.append($('<div>').addClass('listing').html('<b>Estimated Effective CPS:</b> ' + Beautify(effectiveCps())));
         if (Game.HasUnlocked('Chocolate egg') && !Game.Has('Chocolate egg')) {
-            subsection.append($('<div>').addClass('listing').html('<b>Chocolate Egg Value:</b> ' + Beautify(chocolateValue())));
-            if (!Game.hasAura('Earth Shatterer')) {
-                subsection.append($('<div>').addClass('listing').css('text-indent', '2em').html('<b>+ Earth Shatterer:</b> ' + Beautify(chocolateValue(null, true))));
+            subsection.append($('<div>').addClass('listing').html('<b>Chocolate Egg Value:</b> ' + Beautify(chocolateEggValue())));
+		}
+		if (!Game.hasAura('Earth Shatterer')) {
+            subsection.append($('<div>').addClass('listing').html('<b>Earth Shatterer:</b> ' + Beautify(earthShatter(true))));
 			}
 		}
         if (liveWrinklers().length > 0) {

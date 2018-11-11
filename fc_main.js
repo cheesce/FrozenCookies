@@ -1,5 +1,5 @@
 
-function FCStart() {
+function FCStart() { //ok
     logEvent("Load", "Initial Load of Frozen Cookies v " + FrozenCookies.branch + "." + FrozenCookies.version + ". (You should only ever see this once.)");
 	
     // Set all cycleable preferencesau
@@ -117,40 +117,25 @@ function FCStart() {
 	
 	// Setup Timers
 	FrozenCookies.menutimer = 0;
-	FrozenCookies.cookieBot = 0;
-    FrozenCookies.autoClickBot = 0;
-	FrozenCookies.autoFClickBot = 0;
-    FrozenCookies.autoGodzamokBot = 0;
-	FrozenCookies.autoSpellBot = 0;
+	FrozenCookies.autoClickBot = 0;
+	FrozenCookies.autoClickBotMode=0;
     FrozenCookies.statBot = 0;
     FrozenCookies.smartTrackingBot = 0;
-    StartTimer();
+
+	StartTimer();
 	
     // Give free achievements!
     if (!Game.HasAchiev('Third-party')) { Game.Win('Third-party'); }
 }
 
-function StartTimer() {
-	//  To allow polling frequency to change, clear intervals before setting new ones.
+function StopTimer() { // ok	
     if (FrozenCookies.cookieBot) {
-        clearInterval(FrozenCookies.cookieBot);
+		clearInterval(FrozenCookies.cookieBot);      
         FrozenCookies.cookieBot = 0;
 	}
     if (FrozenCookies.autoClickBot) {
         clearInterval(FrozenCookies.autoClickBot);
         FrozenCookies.autoClickBot = 0;
-	}
-	if (FrozenCookies.autoFClickBot) {
-        clearInterval(FrozenCookies.autoFClickBot);
-        FrozenCookies.autoFClickBot = 0;
-	}
-    if (FrozenCookies.autoGodzamokBot) {
-        clearInterval(FrozenCookies.autoGodzamokBot);
-        FrozenCookies.autoGodzamokBot = 0;
-	}
-    if (FrozenCookies.autoSpellBot) {
-        clearInterval(FrozenCookies.autoSpellBot);
-        FrozenCookies.autoSpellBot = 0;
 	}
 	if (FrozenCookies.statBot) {
         clearInterval(FrozenCookies.statBot);
@@ -160,20 +145,19 @@ function StartTimer() {
         clearInterval(FrozenCookies.smartTrackingBot);
         FrozenCookies.smartTrackingBot = 0;
 	}
-	
-    // Now create new intervals with their specified frequencies.
-    if (FrozenCookies.frequency) {
-        FrozenCookies.cookieBot = setTimeout(autoCookie, FrozenCookies.frequency);
+}
+
+function StartTimer() {	//ok
+	//  To allow polling frequency to change, clear intervals before setting new ones.
+	StopTimer();
+	// Now create new intervals with their specified frequencies.
+ 	if (FrozenCookies.frequency) {
+	   FrozenCookies.cookieBot = setTimeout(autoCookie, FrozenCookies.frequency);
 	}
     if (FrozenCookies.autoClick && FrozenCookies.cookieClickSpeed) {
 		FrozenCookies.autoClickBot = setInterval(fcClickCookie, 1000 / FrozenCookies.cookieClickSpeed);
+		FrozenCookies.autoClickBotMode=0;
 	}  
-	if (FrozenCookies.autoGodzamok) {
-        FrozenCookies.autoGodzamokBot = setInterval(autoGodzamokAction, FrozenCookies.frequency)
-	}
-    if (FrozenCookies.autoSpell) {
-        FrozenCookies.autoSpellBot = setInterval(autoCast, FrozenCookies.frequency)
-	}
     if (statSpeed(FrozenCookies.trackStats) > 0) {
         FrozenCookies.statBot = setInterval(saveStats, statSpeed(FrozenCookies.trackStats));
 		} else if (FrozenCookies.trackStats == 6 && !FrozenCookies.smartTrackingBot) {
@@ -186,13 +170,8 @@ function StartTimer() {
 }
 
 function fcReset() {
-    Game.CollectWrinklers();
-    if (Game.HasUnlocked('Chocolate egg') && !Game.Has('Chocolate egg')) {
-        Game.ObjectsById.forEach(function(b) {
-            b.sell(-1);
-		});
-        Game.Upgrades['Chocolate egg'].buy();
-	}
+    StopTimer();
+	earthShatter(false); //sell everything 
     Game.oldReset();
     FrozenCookies.frenzyTimes = {};
     FrozenCookies.last_gc_state = (Game.hasBuff('Frenzy') ? Game.buffs['Frenzy'].multCpS : 1) * (clickBuffBonus()/(Game.hasBuff('Devastation')?Game.buffs['Devastation'].multCpS:1));// remove devastaion due to variabiliy)
@@ -222,6 +201,7 @@ function fcReset() {
  
 	updateLocalStorage();
 	recommendationList(true);
+    StartTimer();
 }
 
 function fcWin(what) { //ok updated code to 2.016 version
@@ -554,27 +534,53 @@ function calculateChainValue(bankAmount, cps, digit) {
     return 125 * Math.pow(9, (n - 3)) * digit;
 }
 
-function chocolateValue(bankAmount, earthShatter) { //work needes
-    var value = 0;
-    if (Game.HasUnlocked('Chocolate egg') && !Game.Has('Chocolate egg')) {
-        bankAmount = (bankAmount != null && bankAmount !== 0) ? bankAmount : Game.cookies;
-        var sellRatio = Game.getSellMultiplier;
-        var highestBuilding = 0;
-        if (earthShatter == null) {
-            if (Game.hasAura('Earth Shatterer')) sellRatio = 0.5;
-			} else if (earthShatter) {
-            sellRatio = 0.5;
-            if (!Game.hasAura('Earth Shatterer')) {
-                for (var i in Game.Objects) {
-                    if (Game.Objects[i].amount > 0) highestBuilding = Game.Objects[i];
-				}
-			}
-		}
-        value = 0.05 * (wrinklerValue() + bankAmount + Game.ObjectsById.reduce(function(s, b) {
-            return s + cumulativeBuildingCost(b.basePrice, 1, (b == highestBuilding ? b.amount : b.amount + 1) - b.free) * sellRatio
-		}, 0));
-	}
+function earthShatter(valueonly) { //ok
+    if ((typeof valueonly=='undefined') || (valueonly==null)) valueonly==true;
+	var value = 0;
+    value+=Game.cookies;
+	value+=wrinklerValue();
+	Game.ObjectsById.forEach(function(b) { value+=(b.getReverseSumPrice(b.amount)*2);}); 
+
+	var highestBuilding = 0;
+	Game.ObjectsById.forEach(function(b) { if (b.amount > 0) highestBuilding=b;}); 
+    if (!Game.hasAura('Earth Shatterer') && (Game.dragonLevel>=8) && (highestBuilding!=0)) value-= b.getPrice(1);	
+    value *= 0.05;
+	
+	if (valueonly==false) //you shoud do this only when ascending ;)
+	{ if (!Game.hasAura('Earth Shatterer') && (Game.dragonLevel>=8)) setDragonAura('Earth Shatterer');
+	  Game.ObjectsById.forEach(function(b) { b.sell(-1);});
+	  Game.CollectWrinklers();
+	  if (Game.HasUnlocked('Chocolate egg') && !Game.Has('Chocolate egg')) Game.Upgrades['Chocolate egg'].buy();
+	} 
     return value;
+}
+
+function chocolateEggValue() { //ok
+    var value = 0;
+    if (Game.HasUnlocked('Chocolate egg') && !Game.Has('Chocolate egg')) value = Game.cookies * 0.05;
+    return value;
+}
+
+function setDragonAura(aura,slot) { //ok - non cheating version
+	var auraid=-1;
+	for (var i in Game.dragonAuras) { if (i.name==aura) { auraid=parseInt(i); break;}}
+	if (auraid==-1) return false; //unknown aura
+	if (Game.dragonLevel < auraid+4) return false; // level too low for aura
+
+	var highestBuilding=0;
+	for (var i in Game.Objects) {if (Game.Objects[i].amount>0) highestBuilding=Game.Objects[i];}
+	if (highestBuilding!=0) highestBuilding.sacrifice(1);
+	
+	if (typeof slot!='undefined') {
+		if (slot==0) Game.dragonAura=auraid;
+		else Game.dragonAura2==auraid;
+	}
+	else { //auto-select slot
+		if (Game.dragonAura==0) Game.dragonAura=auraid;
+		else if (Game.dragonAura2==0) Game.dragonAura2=auraid;
+		else Game.dragonAura=auraid; //first slot if nothing is free	
+	}		
+	return true;
 }
 
 //functions for dealing with the wrinklers
@@ -1729,17 +1735,6 @@ function fcClickCookie() {
 	}
 }
 
-//autoGodzamokBot
-function autoGodzamokAction() {
-    if (!T) return; //Just leave if Pantheon isn't here yet
-    //Now has option to not trigger until current Devastation buff expires (i.e. won't rapidly buy & sell cursors throughout Godzamok duration)
-    if (Game.hasGod('ruin') && Game.Objects['Cursor'].amount > 10 && (!Game.hasBuff('Devastation') || FrozenCookies.autoGodzamok == 1 || FrozenCookies.autoGodzamok == 3) && hasClickBuff()) {
-        var count = Game.Objects['Cursor'].amount;
-        Game.Objects['Cursor'].sell(count);
-        if (FrozenCookies.autoGodzamok > 1) Game.Objects['Cursor'].buy(count);
-	}
-}
-
 //main function
 function autoCookie() {
     if (!Game.OnAscend && !Game.AscendTimer) {		
@@ -1790,24 +1785,20 @@ function autoCookie() {
         
 		// Normal cookie click rate or frenzy click rate logic
 		if (FrozenCookies.autoClick) {
-			if (hasClickBuff()){
-				if (!FrozenCookies.autoFClickBot) {
+			if (hasClickBuff() {
+				if (FrozenCookies.frenzyClickSpeed && (FrozenCookies.autoClickMode==0)) {
 					clearInterval(FrozenCookies.autoClickBot);
-					FrozenCookies.autoClickBot=0;
-					if (FrozenCookies.frenzyClickSpeed) {
-						FrozenCookies.autoFClickBot = setInterval(fcClickCookie, 1000 / FrozenCookies.frenzyClickSpeed);
-						logEvent('AutoClick', 'Clicking cookie on frency speed with  ' + FrozenCookies.frenzyClickSpeed + ' clicks per second.');
-					}
-				}
+					FrozenCookies.autoClickBot = setInterval(fcClickCookie, 1000 / FrozenCookies.frenzyClickSpeed);
+					FrozenCookies.autoClickMode=1;
+					logEvent('AutoClick', 'Clicking cookie on frency speed with  ' + FrozenCookies.frenzyClickSpeed + ' clicks per second.');
+				}	
 			}
 			else {
-				if (!FrozenCookies.autoClickBot) { 
-					clearInterval(FrozenCookies.autoFClickBot);
-					FrozenCookies.autoFClickBot=0;
-					if (FrozenCookies.cookieClickSpeed) {
-						FrozenCookies.autoClickBot = setInterval(fcClickCookie, 1000 / FrozenCookies.cookieClickSpeed);		
-						logEvent('AutoClick', 'Clicking cookie on normal speed with  ' + FrozenCookies.cookieClickSpeed + ' clicks per second.');
-					}
+				if (FrozenCookies.cookieClickSpeed && (FrozenCookies.autoClickMode==1)) {
+					clearInterval(FrozenCookies.autoClickBot);
+					FrozenCookies.autoClickBot = setInterval(fcClickCookie, 1000 / FrozenCookies.cookieClickSpeed);		
+					FrozenCookies.autoClickMode=0;
+					logEvent('AutoClick', 'Clicking cookie on normal speed with  ' + FrozenCookies.cookieClickSpeed + ' clicks per second.');
 				}
 			}
 		}
@@ -1883,6 +1874,30 @@ function autoCookie() {
 			}
 		}
         
+		// AutoGodzamok, needs work
+		if (T && autoGodzamok) {
+			//Now has option to not trigger until current Devastation buff expires (i.e. won't rapidly buy & sell cursors throughout Godzamok duration)
+			if ((Game.hasGod('ruin') && (Game.Objects['Cursor'].amount > 10) {
+				if ((FrozenCookies.autoGodzamok == 1) && Game.hasBuff('Devastation')){ // crazy mode, only during Devastation
+					var count = Game.Objects['Cursor'].amount;
+					Game.Objects['Cursor'].sell(count);
+					Game.Objects['Cursor'].buy(count);
+				}
+				if ((FrozenCookies.autoGodzamok == 2) && hasClickBuff()) { // do it in a sane way for every clickBuff
+					var count = Game.Objects['Cursor'].amount;
+					Game.Objects['Cursor'].sell(count);
+				}
+				if ((FrozenCookies.autoGodzamok == 2) && hasClickBuff()) { // do it in an insane way for every clickBuff
+					var count = Game.Objects['Cursor'].amount;
+					Game.Objects['Cursor'].sell(count);
+					Game.Objects['Cursor'].buy(count);
+				}	
+			}
+		}
+		
+		// AutoCast
+		if (M && FrozenCookies.autoSpell) autocast();
+		
 		// AutoGS
 		if (hasClickBuff()) {
 			if (Game.Upgrades['Golden switch [off]'].unlocked &&
@@ -1958,7 +1973,7 @@ function autoCookie() {
 		// todo: add earth shatter
         if (FrozenCookies.autoAscend) {
             var currPrestige = Game.prestige;
-            var resetPrestige = Game.HowMuchPrestige(Game.cookiesReset + Game.cookiesEarned + wrinklerValue() + chocolateValue());
+            var resetPrestige = Game.HowMuchPrestige(Game.cookiesReset + Game.cookiesEarned + earthShatter());
             var ascendChips = FrozenCookies.HCAscendAmount;
             if ((resetPrestige - currPrestige) >= ascendChips && ascendChips > 0) {
                 Game.ClosePrompt();
