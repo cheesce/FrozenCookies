@@ -1016,6 +1016,7 @@ function nextPurchase(recalculate) {
 						})
 					})[0];
 				}
+				else purchase = target;
 			} 
 			else if (target.type == 'dragon') {
 			var prereqList = unfinishedDragonPrereqs(target.id);
@@ -1025,7 +1026,8 @@ function nextPurchase(recalculate) {
 							return b.id == a.id && b.type == a.type
 						})
 					})[0];
-				}			
+				}
+				else purchase = target;
 			}
 			else {
                 purchase = target;
