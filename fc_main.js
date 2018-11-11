@@ -1231,7 +1231,7 @@ function unfinishedDragonPrereqs(dragonid) { //ok
 	var needed = [];
     var prereqs = dragonJson[dragonid + 1];
 	logEvent('Dragon','Prereq Dragon Level '+dragonid);
-	prereqs.buildings.forEach(function(a, b) {
+/*	prereqs.buildings.forEach(function(a, b) {
             if (a && Game.ObjectsById[b].amount < a) {
                 needed.push({
                     'type': 'building',
@@ -1239,7 +1239,7 @@ function unfinishedDragonPrereqs(dragonid) { //ok
 				});
 			}
 		});
-	return needed.length ? needed : null;
+*/	return needed.length ? needed : null;
 }
 
 function defaultPurchase() {
