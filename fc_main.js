@@ -754,7 +754,7 @@ function bestBank(minEfficiency) {
     var bankLevels = [0, luckyBank(), luckyFrenzyBank(), chainBank()];
 	if ((FrozenCookies.autoSpell == 3) || FrozenCookies.holdSEBank) bankLevels.push(edificeBank());
 	if (FrozenCookies.setHarvestBankPlant) bankLevels.push(harvestBank());
-	bankLevels.sort(function(a, b) { return b - a;})
+	var bestBank=bankLevels.sort(function(a, b) { return b - a;})
 	.map(function(bank) {
 		return {
             'cost': bank,
@@ -765,7 +765,7 @@ function bestBank(minEfficiency) {
 	.filter(function(bank) {
 	return (bank.efficiency >= 0 && bank.efficiency <= minEfficiency) ? bank : null;}
 	);
-   if (bankLevels[0] != 'undefined') return bankLevels[0];
+   if (bestBank[0] != 'undefined') return bestBank[0];
    else return { 'cost': 0, 'efficiency': 1};
  }
 
