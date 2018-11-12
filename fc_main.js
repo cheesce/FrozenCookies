@@ -1130,7 +1130,7 @@ function buyFunctionToggle(upgrade) { //ok
 }
 
 function isBuildingUnavailable(building, buildingBlacklist) { //ok , but needs more logic to temporary disable build block to buy upgrades
-	if ((buildingBlacklist === true) || (_.contains(buildingBlacklist, current.id))) { return true; }
+	if ((buildingBlacklist === true) || (_.contains(buildingBlacklist, building.id))) { return true; }
         
 	//Stop buying wizard towers at max Mana if enabled
     if ((building.id==7) && M && FrozenCookies.towerLimit && (M.magicM >= FrozenCookies.manaMax)) { return true; }
