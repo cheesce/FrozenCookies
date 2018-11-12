@@ -806,7 +806,7 @@ function maxCookieTime() {
 }
 
 // General buying stuff
-function defaultPurchase() {
+function defaultPurchase() { //ok
     return {
         id: 0,
         efficiency: Infinity,
@@ -863,6 +863,7 @@ function updateCaches() {
 		}
         recalcCount += 1;
 	} while (FrozenCookies.recalculateCaches && recalcCount < 10);
+    console.log('updatecache: recalcCount='+recalcCount);
 }
 
 function checkPrices(currentUpgrade) {
@@ -884,14 +885,14 @@ function checkPrices(currentUpgrade) {
     return value;
 }
 
-function purchaseEfficiency(price, deltaCps, baseDeltaCps, currentCps) {
+function purchaseEfficiency(price, deltaCps, baseDeltaCps, currentCps) { //ok
     var efficiency = divCps(price, currentCps); //Number.POSITIVE_INFINITY;
     if (deltaCps > 0) efficiency += divCps(price, deltaCps);
 	else if(baseDeltaCps > 0) efficiency += divCps(price, baseDeltaCps);
     return efficiency;
 }
 
-function recommendationList(recalculate) { //ok, but needs more logic to tempory disable build block to buy upgrades
+function recommendationList(recalculate) { //ok
     if (recalculate) {
         FrozenCookies.caches.recommendationList = addScores(
 		upgradeStats(recalculate)
@@ -902,81 +903,12 @@ function recommendationList(recalculate) { //ok, but needs more logic to tempory
 			return a.efficiency != b.efficiency ? a.efficiency - b.efficiency : (a.delta_cps != b.delta_cps ? b.delta_cps - a.delta_cps : a.cost - b.cost);
 		}));
 		
-        //Stop buying wizard towers at max Mana if enabled
-        if (M && FrozenCookies.towerLimit && M.magicM >= FrozenCookies.manaMax) {
-            for (var i = 0; i < FrozenCookies.caches.recommendationList.length; i++) {
-                if (FrozenCookies.caches.recommendationList[i].id == 7) {
-                    FrozenCookies.caches.recommendationList.splice(i , 1);
-				}
-			}
-		}
-        //Stop buying Cursors if at set limit
-        if (FrozenCookies.cursorLimit && Game.Objects['Cursor'].amount >= FrozenCookies.cursorMax) {
-            for (var i = 0; i < FrozenCookies.caches.recommendationList.length; i++) {
-                if (FrozenCookies.caches.recommendationList[i].id == 0) {
-                    FrozenCookies.caches.recommendationList.splice(i, 1);
-				}
-			}
-		}
-        if (FrozenCookies.pastemode) {
-            FrozenCookies.caches.recommendationList.reverse();
-		}
+        if (FrozenCookies.pastemode) { FrozenCookies.caches.recommendationList.reverse();}
 	}
     return FrozenCookies.caches.recommendationList;
 }
 
-function isUnavailable(upgrade, upgradeBlacklist) { //ok
-    var result = false;
-	
-    var needed = unfinishedUpgradePrereqs(upgrade);
-    result = result || (!upgrade.unlocked && !needed);
-    result = result || (upgradeBlacklist === true);
-    result = result || _.contains(upgradeBlacklist, upgrade.id);
- 
-	//dont'buy Elder Pledge if Wrinklers are needed - so only in easter or halloween season and when not all upgrades for this season are bought
-	if ((upgrade.id==74) && (((Game.season=='easter') && !haveAll('easter')) || ((Game.season=='halloween')&& !haveAll('halloween')))) return true;
-	
-	if (typeof upgrade.season != 'undefined' ) { // want season change?
-		result = result || (!haveAll(Game.season)); //don't if not all upgrades of current season purchased
-	    result = result || ((upgrade.season != seasons[FrozenCookies.defaultSeason]) && haveAll(upgrade.season)); //do not revisite season unless it is the default season
-	}
-	
-	if  ((upgrade.id == 331) || (upgrade.id ==332)) { // blacklist golden switch from being used *needs logic*
-        result = true; 
-	}
-    
-    if ((upgrade.id == 563) || (upgrade.id == 564)) { // blacklist shimmering veil switch from being used *needs logic*
-        result = true; 
-	}
-    
-	if ((upgrade.id == 84) || (upgrade.id==85)) { // blacklist (Revoke) Elder Covenant from being used *needs logic*
-        result = true; 
-	}
-	
-    if (upgrade.id == 333) { // blacklist milk selector from being used
-        result = true; 
-	}
-    
-    if (upgrade.id == 414) { // blacklist background selector from being used
-        result = true; 
-	}
-	
-    if (upgrade.id == 361) { // blacklist golden cookie sound selector from being used
-        result = true; 
-	}
-    
-    if (upgrade.id == 452) { // blacklist sugar frenzy from being used randomly *needs logic*
-        result = true; 
-	}
-	
-    if (upgrade.id == 227) { // blacklist chocolate egg from being used ramdomly
-        result = true; 
-	}
-	
-    return result;
-}
-
-function addScores(recommendations) { // ok
+function addScores(recommendations) { //ok
     var filteredList = recommendations.filter(function(a) {
         return a.efficiency < Number.POSITIVE_INFINITY && a.efficiency > Number.NEGATIVE_INFINITY;
 	})
@@ -1001,7 +933,7 @@ function addScores(recommendations) { // ok
     return recommendations;
 }
 
-function nextPurchase(recalculate) {
+function nextPurchase(recalculate) { //ok
     if (recalculate) {
         var recList = recommendationList(recalculate);
         var purchase = null;
@@ -1053,15 +985,15 @@ function nextChainedPurchase(recalculate) { //ok
 }
 
 //Buy Buildings Stuff
-function buildingStats(recalculate) {
+function buildingStats(recalculate) { //ok
     if (recalculate) {
         var buildingBlacklist = blacklist[FrozenCookies.blacklist].buildings;
 		//       var currentBank = bestBank(0).cost;
         FrozenCookies.caches.buildings = Game.ObjectsById.map(function(current, index) {
-            if (buildingBlacklist === true || _.contains(buildingBlacklist, current.id)) {
-                return null;
+            if (isBuildingUnavailable(current, buildingBlacklist)) {
+				return null;
 			}
-            var baseCpsOrig = Game.unbuffedCps;
+			var baseCpsOrig = Game.unbuffedCps;
 			//            var cpsOrig = effectiveCps(Math.min(Game.cookies, currentBank)); 
             var cpsOrig = effectiveCps(Game.cookies); 
             var existingAchievements = Game.AchievementsById.map(function(item, i) {
@@ -1091,11 +1023,11 @@ function buildingStats(recalculate) {
     return FrozenCookies.caches.buildings;
 }
 
-function cumulativeBuildingCost(basePrice, startingNumber, endingNumber) { //ok, fixed
+function cumulativeBuildingCost(basePrice, startingNumber, endingNumber) { //ok
     return basePrice * totalDiscount(true) * ((Math.pow(Game.priceIncrease, endingNumber) - Math.pow(Game.priceIncrease, startingNumber)) / (Game.priceIncrease - 1));
 }
 
-function buildingToggle(building, achievements) { //tut so als würde ein building gekauft
+function buildingToggle(building, achievements) { //ok
     if (!achievements) {
         building.amount += 1;
         building.bought += 1;
@@ -1117,7 +1049,7 @@ function buildingToggle(building, achievements) { //tut so als würde ein buildi
     Game.CalculateGains();
 }
 
-function buyFunctionToggle(upgrade) {
+function buyFunctionToggle(upgrade) { //ok
     if (upgrade && upgrade.id==452) return null;
     if (upgrade && !upgrade.length) {
         if (!upgrade.buyFunction) {
@@ -1197,8 +1129,20 @@ function buyFunctionToggle(upgrade) {
     return null;
 }
 
+function isBuildingUnavailable(building, buildingBlacklist) { //ok , but needs more logic to temporary disable build block to buy upgrades
+	if ((buildingBlacklist === true) || (_.contains(buildingBlacklist, current.id))) { return true; }
+        
+	//Stop buying wizard towers at max Mana if enabled
+    if ((building.id==7) && M && FrozenCookies.towerLimit && (M.magicM >= FrozenCookies.manaMax)) { return true; }
+    
+	//Stop buying Cursors if at set limit
+    if ((building.id==0) && FrozenCookies.cursorLimit && (Game.Objects['Cursor'].amount >= FrozenCookies.cursorMax)) { return true; }
+
+	return false;
+}
+
 // Buy Upgrades Stuff
-function upgradeStats(recalculate) {
+function upgradeStats(recalculate) { //ok
     if (recalculate) {
         var upgradeBlacklist = blacklist[FrozenCookies.blacklist].upgrades;
 		//       var currentBank = bestBank(0).cost;
@@ -1208,7 +1152,7 @@ function upgradeStats(recalculate) {
 		else var list=Game.UpgradesById.filter(function(a,b){return !a.bought && a.pool!='debug' && a.pool!='prestige';});
 	    FrozenCookies.caches.upgrades = list
 		.map(function(current) {
-			if (isUnavailable(current, upgradeBlacklist)) {
+			if (isUpgradeUnavailable(current, upgradeBlacklist)) {
 				return null;
 			}
 			var cost = upgradePrereqCost(current);
@@ -1263,7 +1207,7 @@ function upgradeStats(recalculate) {
     return FrozenCookies.caches.upgrades;
 }
 
-function upgradePrereqCost(upgrade) { //ok, calculate cost for upgrade
+function upgradePrereqCost(upgrade) { //ok
     var cost = upgrade.getPrice();
     if (upgrade.unlocked) {
         return cost;
@@ -1288,7 +1232,7 @@ function upgradePrereqCost(upgrade) { //ok, calculate cost for upgrade
     return cost;
 }
 
-function unfinishedUpgradePrereqs(upgrade) { //looks ok
+function unfinishedUpgradePrereqs(upgrade) { //ok
     if (upgrade.unlocked) {
         return null;
 	}
@@ -1327,7 +1271,7 @@ function unfinishedUpgradePrereqs(upgrade) { //looks ok
     return needed.length ? needed : null;
 }
 
-function upgradeToggle(upgrade, achievements, reverseFunctions) { //tut so als würde ein upgrade gekauft
+function upgradeToggle(upgrade, achievements, reverseFunctions) { //ok 
     if (!achievements) {
         reverseFunctions = {};
         if (!upgrade.unlocked) {
@@ -1396,6 +1340,57 @@ function upgradeToggle(upgrade, achievements, reverseFunctions) { //tut so als w
     return reverseFunctions;
 }
 
+function isUpgradeUnavailable(upgrade, upgradeBlacklist) { //ok
+    var needed = unfinishedUpgradePrereqs(upgrade);
+    if (!upgrade.unlocked && !needed) return true;
+    if (upgradeBlacklist === true) return true;
+    if (_.contains(upgradeBlacklist, upgrade.id) return true;
+ 
+	//dont'buy Elder Pledge if Wrinklers are needed - so only in easter or halloween season and when not all upgrades for this season are bought
+	if ((upgrade.id==74) && (((Game.season=='easter') && !haveAll('easter')) || ((Game.season=='halloween')&& !haveAll('halloween')))) return true;
+
+	if ((upgrade.ide==87) && (Game.pledges<10)) return true; // Sacrificial rolling pins only after 10 elder pledges
+	
+	if (typeof upgrade.season != 'undefined' ) { // want season change?
+		if (!haveAll(Game.season)) return true; //don't if not all upgrades of current season purchased
+	    if ((upgrade.season != seasons[FrozenCookies.defaultSeason]) && haveAll(upgrade.season)) return true; //do not revisite season unless it is the default season
+	}
+	
+	if  ((upgrade.id == 331) || (upgrade.id ==332)) { // blacklist golden switch from being used *needs logic*
+        result = true; 
+	}
+    
+    if ((upgrade.id == 563) || (upgrade.id == 564)) { // blacklist shimmering veil switch from being used *needs logic*
+        result = true; 
+	}
+    
+	if ((upgrade.id == 84) || (upgrade.id==85)) { // blacklist (Revoke) Elder Covenant from being used *needs logic*
+        result = true; 
+	}
+	
+    if (upgrade.id == 333) { // blacklist milk selector from being used
+        result = true; 
+	}
+    
+    if (upgrade.id == 414) { // blacklist background selector from being used
+        result = true; 
+	}
+	
+    if (upgrade.id == 361) { // blacklist golden cookie sound selector from being used
+        result = true; 
+	}
+    
+    if (upgrade.id == 452) { // blacklist sugar frenzy from being used randomly *needs logic*
+        result = true; 
+	}
+	
+    if (upgrade.id == 227) { // blacklist chocolate egg from being used ramdomly
+        result = true; 
+	}
+	
+    return false;
+}
+
 // Buy Santa Stuff
 function santaStats() { //ok
     return Game.Has('A festive hat') && (Game.santaLevel + 1 < Game.santaLevels.length) ? {
@@ -1420,7 +1415,7 @@ function singleSantaCost(level) { //ok costs for given level
     return Math.pow(level+1,level+1);
 }
 
-function cumulativeSantaCost(level) { // ok costs for all levels needed to complete
+function cumulativeSantaCost(level) { //ok costs for all levels needed to complete
 	var sum=0;
 	for (var i=level; i< Game.santaLevels.length; i++) { sum+=singleSantaCost(i); }
     return sum;
@@ -1433,7 +1428,7 @@ function buySanta() { //ok
 }
 
 // Buy Dragon Stuff
-function dragonStats() { // ok
+function dragonStats() { //ok
     if (Game.Has('A crumbly egg') && (Game.dragonLevel + 1 < Game.dragonLevels.length)) {		
 		return { id: Game.dragonLevel + 1,
 			efficiency: 0.1,
@@ -1461,7 +1456,7 @@ function singleDragonCost(level) { //ok, cookie costs or costs to rebuy building
 	return dcost[level];
 }
 
-function cumulativeDragonCost(level) { // ok costs for all levels needed to complete
+function cumulativeDragonCost(level) { //ok costs for all levels needed to complete
 	var sum=0;
 	for (var i=level; i< Game.dragonLevels.length; i++) { sum+=singleDragonCost(i); }
     return sum;
@@ -1617,7 +1612,7 @@ function totalDiscount(is_building) { //need more work
     return price;
 }
 
-function logEvent(event, text, popup) {
+function logEvent(event, text, popup) { //ok
     var time = '[' + timeDisplay((Date.now() - Game.startDate) / 1000) + ']';
     var output = time + ' ' + event + ': ' + text;
     if (FrozenCookies.logging) {
@@ -1628,7 +1623,7 @@ function logEvent(event, text, popup) {
 	}
 }
 
-function preferenceParse(setting, defaultVal) {
+function preferenceParse(setting, defaultVal) { //ok
     var value = localStorage.getItem(setting);
     if (typeof(value) == 'undefined' || value == null || isNaN(Number(value))) {
         value = defaultVal;
@@ -1637,7 +1632,7 @@ function preferenceParse(setting, defaultVal) {
     return Number(value);
 }
 
-function updateLocalStorage() {
+function updateLocalStorage() { //ok
     _.keys(FrozenCookies.preferenceValues).forEach(function(preference) {
         localStorage[preference] = FrozenCookies[preference];
 	});
@@ -1658,7 +1653,7 @@ function updateLocalStorage() {
 }
 
 //Helper functions for Stats
-function statSpeed() {
+function statSpeed() { //ok
     var speed = 0;
     switch (FrozenCookies.trackStats) {
         case 1: // 60s
@@ -1677,7 +1672,7 @@ function statSpeed() {
     return speed;
 }
 
-function transpose(a) {
+function transpose(a) { //ok
     return Object.keys(a[0]).map(function(c) {
         return a.map(function(r) {
             return r[c];
@@ -1685,7 +1680,7 @@ function transpose(a) {
 	});
 }
 
-function viewStatGraphs() {
+function viewStatGraphs() { //ok
     saveStats(true);
     var containerDiv = $('#statGraphContainer').length ?
 	$('#statGraphContainer') :
@@ -1766,7 +1761,7 @@ function viewStatGraphs() {
 }
 
 //statBot
-function saveStats(fromGraph) {
+function saveStats(fromGraph) { //ok
     FrozenCookies.trackedStats.push({
         time: Date.now() - Game.startDate,
         baseCps: Game.unbuffedCps,
@@ -1779,7 +1774,7 @@ function saveStats(fromGraph) {
 }
 
 //smartTrackingBot
-function smartTrackingStats(delay) {
+function smartTrackingStats(delay) { //ok
     saveStats();
     if (FrozenCookies.trackStats == 6) {
         delay /= (FrozenCookies.delayPurchaseCount == 0) ? (1 / 1.5) : (delay > FrozenCookies.minDelay ? 2 : 1);
@@ -1791,7 +1786,7 @@ function smartTrackingStats(delay) {
 }
 
 //autoClick function
-function fcClickCookie() {
+function fcClickCookie() { //ok
     if (!Game.OnAscend && !Game.AscendTimer && !Game.specialTabHovered) {
 		var tmp=Game.cookies;
 		Game.ClickCookie();
@@ -1804,7 +1799,7 @@ function fcClickCookie() {
 }
 
 //main function
-function autoCookie() {
+function autoCookie() { //ok
     if (!Game.OnAscend && !Game.AscendTimer) {		
 		// Get HC stats
 		var currentHCAmount = Game.HowMuchPrestige(Game.cookiesEarned + Game.cookiesReset + wrinklerValue());
