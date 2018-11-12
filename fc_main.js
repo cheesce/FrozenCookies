@@ -2012,9 +2012,10 @@ function autoCookie() { //ok
 			logEvent('Store', 'Autobought ' + recommendation.purchase.name + ' for ' + Beautify(recommendation.cost) + ', resulting in ' + Beautify(recommendation.delta_cps) + ' more CPS.');
             
 			FrozenCookies.recalculateCaches = true;
+			FrozenCookies.recalcCount=0;			
 		}
-		else FrozenCookies.recalculateCaches = false;
-			
+		else { FrozenCookies.recalcCount++; FrozenCookies.recalculateCaches = false;}
+		if (FrozenCookies.recalcCount==10){FrozenCookies.recalculateCaches = true; FrozenCookies.recalcCount=0;	}	
 		// handle autoAscend
         if (FrozenCookies.autoAscend) {
             var currPrestige = Game.prestige;
