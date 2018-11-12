@@ -1357,7 +1357,7 @@ function isUpgradeUnavailable(upgrade, upgradeBlacklist) { //ok
 	//dont'buy Elder Pledge if Wrinklers are needed - so only in easter or halloween season and when not all upgrades for this season are bought
 	if ((upgrade.id==74) && (((Game.season=='easter') && !haveAll('easter')) || ((Game.season=='halloween')&& !haveAll('halloween')))) return true;
 
-	if ((upgrade.ide==87) && (Game.pledges<10)) return true; // Sacrificial rolling pins only after 10 elder pledges
+	if ((upgrade.id==87) && (Game.pledges<10)) return true; // Sacrificial rolling pins only after 10 elder pledges
 	
 	if (typeof upgrade.season != 'undefined' ) { // want season change?
 		if (!haveAll(Game.season)) return true; //don't if not all upgrades of current season purchased
