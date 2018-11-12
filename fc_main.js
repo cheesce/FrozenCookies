@@ -91,7 +91,10 @@ function FCStart() { //ok
 	Game.oldReset = Game.Reset;
     Game.Reset = fcReset;
     
-    Game.Win = fcWin; //Block showing fast-click achievments every few seconds
+	Game.oldAscend = Game.Ascend;
+	Game.Ascend = fcAscend;
+
+	Game.Win = fcWin; //Block showing fast-click achievments every few seconds
     
 	Game.oldBackground = Game.DrawBackground;   
     Game.DrawBackground = function() {
@@ -171,9 +174,13 @@ function StartTimer() {	//ok
     FCMenu();
 }
 
+function fcAscend(bybass) { //ok
+  earthShatter(false); //sell everything 
+  Game.oldAscend(bypass);	
+}
+
 function fcReset() {
     StopTimer();
-	earthShatter(false); //sell everything 
     Game.oldReset();
     FrozenCookies.frenzyTimes = {};
     FrozenCookies.last_gc_state = (Game.hasBuff('Frenzy') ? Game.buffs['Frenzy'].multCpS : 1) * (clickBuffBonus()/(Game.hasBuff('Devastation')?Game.buffs['Devastation'].multCpS:1));// remove devastaion due to variabiliy)
@@ -2008,14 +2015,13 @@ function autoCookie() { //ok
 		else FrozenCookies.recalculateCaches = false;
 			
 		// handle autoAscend
-		// todo: add earth shatter
         if (FrozenCookies.autoAscend) {
             var currPrestige = Game.prestige;
-            var resetPrestige = Game.HowMuchPrestige(Game.cookiesReset + Game.cookiesEarned + earthShatter());
+            var resetPrestige = Game.HowMuchPrestige(Game.cookiesReset + Game.cookiesEarned + earthShatter(true));
             var ascendChips = FrozenCookies.HCAscendAmount;
             if ((resetPrestige - currPrestige) >= ascendChips && ascendChips > 0) {
-                Game.ClosePrompt();
-                Game.Ascend(1);
+				Game.ClosePrompt();
+                fcAscend(1);
                 setTimeout(function() {
                     Game.ClosePrompt();
                     Game.Reincarnate(1);
