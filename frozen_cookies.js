@@ -5,7 +5,7 @@ var baseUrl = scriptElement !== null ? scriptElement.getAttribute('src').replace
 var FrozenCookies = {
     'baseUrl': baseUrl,
     'branch': '',
-    'version': '1.7.4'
+    'version': '1.7.5'
 };
 
 // Load external libraries
