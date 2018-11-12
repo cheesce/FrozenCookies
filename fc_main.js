@@ -1344,7 +1344,7 @@ function isUpgradeUnavailable(upgrade, upgradeBlacklist) { //ok
     var needed = unfinishedUpgradePrereqs(upgrade);
     if (!upgrade.unlocked && !needed) return true;
     if (upgradeBlacklist === true) return true;
-    if (_.contains(upgradeBlacklist, upgrade.id) return true;
+    if (_.contains(upgradeBlacklist, upgrade.id)) return true;
  
 	//dont'buy Elder Pledge if Wrinklers are needed - so only in easter or halloween season and when not all upgrades for this season are bought
 	if ((upgrade.id==74) && (((Game.season=='easter') && !haveAll('easter')) || ((Game.season=='halloween')&& !haveAll('halloween')))) return true;
