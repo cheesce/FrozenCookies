@@ -22,6 +22,8 @@ function FCStart() { //ok
     FrozenCookies.lastHCTime = Number(localStorage.getItem('lastHCTime'));
     FrozenCookies.prevLastHCTime = Number(localStorage.getItem('prevLastHCTime'));
     FrozenCookies.maxHCPercent = Number(localStorage.getItem('maxHCPercent'));
+	FrozenCookies.gcProbs=JSON.parse(localStorage.getItem('gcProbs')) || {};
+	if (!FrozenCookies.gcProbs.totalclicks) FrozenCookies.gcProbs.totalclicks=0;
     
 	// Basic Settings
 	FrozenCookies.frequency = 100; // Base timer interval 100ms
@@ -332,8 +334,6 @@ function autoCast() {
 var Modlist={golden: [1,0.5,0.25,0.01], //just some basic values, rest will be added as needed by function
 reindeer:[1,0.97,0.95,0.9215,0.9025,0.9,0.855,0.5,0.485,0.475,0.46075,0.45125,0.45,0.4275,0.01]}; //should be complete for 2.016
 var cumulativeProbabilityList={golden: [0], reindeer: [0]};	
-var gcProbs=new Object;
-gcProbs['totalclicks']=0;
 
 function calcProbs(listType) { //ok
 	if (listType=='golden')   cumulativeProbabilityList[listType]=Modlist[listType].reduce(function(r,x) { r[x] = generateProbabilities(x, 5 * 60 * Game.fps, 3); return r;}, {})
@@ -933,9 +933,10 @@ function isUnavailable(upgrade, upgradeBlacklist) { //ok
     result = result || (!upgrade.unlocked && !needed);
     result = result || (upgradeBlacklist === true);
     result = result || _.contains(upgradeBlacklist, upgrade.id);
-    if (needed && (_.find(needed, function(a) { return a.type == "wrinklers"}) != null)) { //need wrinklers for upgrade?
-		if (upgrade.id==74) result = true; //don't buy Elder Pledge 
-	} 
+ //   if (needed && (_.find(needed, function(a) { return a.type == "wrinklers"}) != null)) { //need wrinklers for upgrade?
+//		if (upgrade.id==74) result = true; //don't buy Elder Pledge 
+//	} 
+	if ((upgrade.id==74) && (((Game.season=='easter') && !haveAll('easter')) || ((Game.season=='halloween')&& !haveAll('halloween')))) return true;
 	
 	if (typeof upgrade.season != 'undefined' ) { // need season change?
 		result = result || (!haveAll(Game.season)); //don't if not all upgrades of current season purchased
@@ -1009,9 +1010,10 @@ function nextPurchase(recalculate) {
         var target = null;
         for (var i = 0; i < recList.length; i++) {
             target = recList[i];
-            if (target.type == 'upgrade') {
+			if (target.type == 'upgrade') {
                 var prereqList = unfinishedUpgradePrereqs(Game.UpgradesById[target.id]);
                 if (prereqList) {
+//					if (prereqList.some(function(b) { return b.type == 'wrinklers';})) { FrozenCookies.banElderPlege=1;}
 					purchase = recList.filter(function(a) {
 						return prereqList.some(function(b) {
 							return b.id == a.id && b.type == a.type
@@ -1321,7 +1323,7 @@ function unfinishedUpgradePrereqs(upgrade) { //looks ok
 				}
 			}
 		});
-        if (prereqs.wrinklers && Game.elderWrath == 0) { needed.push({type: 'wrinklers',id: 0});}
+//        if (prereqs.wrinklers && Game.elderWrath == 0) { needed.push({type: 'wrinklers',id: 0});}
 	}
     return needed.length ? needed : null;
 }
@@ -1635,6 +1637,7 @@ function updateLocalStorage() {
     localStorage.manaMax = FrozenCookies.manaMax;
     localStorage.maxSpecials = FrozenCookies.maxSpecials;
     localStorage.prevLastHCTime = FrozenCookies.prevLastHCTime;
+	localStorage.gcProbs=JSON.stringify(FrozenCookies.gcProbs);
 }
 
 //Helper functions for Stats
@@ -1897,12 +1900,12 @@ function autoCookie() {
                     Game.shimmers[i].pop();
 					FrozenCookies.gcclicksvalue=Game.cookies;// start value
                     FrozenCookies.gcclicks++;
-					gcProbs.totalclicks++;
+					FrozenCookies.gcProbs.totalclicks++;
 					var tmp=Date.now();
 					FrozenCookies.gcclickstimer+=(tmp-FrozenCookies.gcclickstimerlast);
 					FrozenCookies.gcclickstimerlast=tmp;
-				    if (typeof gcProbs[Game.shimmerTypes.golden.last] == 'undefined') gcProbs[Game.shimmerTypes.golden.last]={clicks:[0,0,0,0]};
-					gcProbs[Game.shimmerTypes.golden.last].clicks[Game.elderWrath]++;
+				    if (typeof FrozenCookies.gcProbs[Game.shimmerTypes.golden.last] == 'undefined') FrozenCookies.gcProbs[Game.shimmerTypes.golden.last]={clicks:[0,0,0,0]};
+					FrozenCookies.gcProbs[Game.shimmerTypes.golden.last].clicks[Game.elderWrath]++;
 				}
 			}
 		}
@@ -1995,26 +1998,27 @@ function autoCookie() {
 		// Yeah, buy some stuff
 		updateCaches();
         var recommendation = nextPurchase();
- //       var delay = delayAmount(); //save cookies for bank
- var delay=0;
+        var delay = delayAmount(); //save cookies for bank
+
 		//       if (FrozenCookies.autoBuy && 
 		//		((Game.cookies >= delay + recommendation.cost) || recommendation.purchase.name == "Elder Pledge") &&
 		//		 (FrozenCookies.pastemode || isFinite(nextChainedPurchase().efficiency))) {
 		if (FrozenCookies.autoBuy && (Game.cookies >= delay + recommendation.cost)) {
-            recommendation.time = Date.now() - Game.startDate;
-            recommendation.purchase.clickFunction = null;
-            recommendation.purchase.buy();
+			recommendation.time = Date.now() - Game.startDate;
+			recommendation.purchase.clickFunction = null;
+			recommendation.purchase.buy();
             
 			//Smart Stats
-            if (FrozenCookies.trackStats == 5 && recommendation.type == 'upgrade') {
-                saveStats();
-				} else if (FrozenCookies.trackStats == 6) {
-                FrozenCookies.delayPurchaseCount += 1;
+			if (FrozenCookies.trackStats == 5 && recommendation.type == 'upgrade') {
+				saveStats();
+			} 
+			else if (FrozenCookies.trackStats == 6) {
+				FrozenCookies.delayPurchaseCount += 1;
 			}
 			
-            logEvent('Store', 'Autobought ' + recommendation.purchase.name + ' for ' + Beautify(recommendation.cost) + ', resulting in ' + Beautify(recommendation.delta_cps) + ' more CPS.');
+			logEvent('Store', 'Autobought ' + recommendation.purchase.name + ' for ' + Beautify(recommendation.cost) + ', resulting in ' + Beautify(recommendation.delta_cps) + ' more CPS.');
             
-            FrozenCookies.recalculateCaches = true;
+			FrozenCookies.recalculateCaches = true;
 		}
 		
 		// handle autoAscend
