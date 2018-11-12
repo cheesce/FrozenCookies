@@ -1493,7 +1493,7 @@ function buyDragon() { //ok
 
 function setDragonAura(aura,slot) { //ok - non cheating version
 	var auraid=-1;
-	for (var i in Game.dragonAuras) { if (Game.dragonAuras[parseInt(i)].name==aura) { auraid=parseInt(i); break;}}
+	for (var i in Game.dragonAuras) { if (Game.dragonAuras[i].name==aura) { auraid=parseInt(i); break;}}
 	if (auraid==-1) return false; //unknown aura
 	if (Game.dragonLevel < auraid+4) return false; // level too low for aura
 	if ((Game.dragonAura==auraid) || (Game.dragonAura2==auraid)) return true; // already set
@@ -1501,7 +1501,7 @@ function setDragonAura(aura,slot) { //ok - non cheating version
 	if (typeof slot!='undefined') {
 		if ((slot==1) && (Game.dragonLevel<23)) return false; // don't have second auro yet
 		if (slot==0) Game.dragonAura=auraid;
-		else Game.dragonAura2==auraid;
+		else Game.dragonAura2=auraid;
 	}
 	else { //auto-select slot
 		if (Game.dragonAura==0) Game.dragonAura=auraid;
@@ -1519,15 +1519,33 @@ function setDragonAura(aura,slot) { //ok - non cheating version
 function autoAura(){ //work in progress, set best auras as soon as they are availble
 	if (Game.dragonLevel>=5){ // first aura
 		switch (Game.dragonLevel)
-		{ 	case 5: setDragonAura('Breath of Milk',0); break;
+		{ 	case 0:
+			case 1:
+			case 2:
+			case 3:
+			case 4: break;
+			case 5: setDragonAura('Breath of Milk',0); break;
 			case 6: setDragonAura('Dragon Cursor',0); break;
 			case 7: setDragonAura('Elder Battalion',0); break;
-			case 8: setDragonAura('Reaper of Fields',0); break;
-			case 14: setDragonAura('Dragonflight',0); break;
-			case 19: setDragonAura('Radiant Appetite',0); break;
+			case 8: 
+			case 9:
+			case 10:
+			case 11:
+			case 12:
+			case 13:
+			case 14:
+			case 15:
+			case 16:
+			case 17: 
+			case 18: setDragonAura('Reaper of Fields',0); break;
+			case 19: 
+			case 20:
+			case 21:
+			case 22: setDragonAura('Radiant Appetite',0); break;
+			case 23: setDragonAura('Dragonflight',0); break;			
 		}
 	}	
-	if (Game.dragonLevel>=23) { //second aura
+	if (Game.dragonLevel==23) { //second aura
 		setDragonAura('Radiant Appetite',1);
 	}
 }
