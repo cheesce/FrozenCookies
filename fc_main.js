@@ -174,7 +174,7 @@ function StartTimer() {	//ok
     FCMenu();
 }
 
-function fcAscend(bybass) { //ok
+function fcAscend(bypass) { //ok
   earthShatter(false); //sell everything 
   Game.oldAscend(bypass);	
 }
@@ -222,7 +222,8 @@ function fcWin(what) { //ok updated code to 2.016 version
 				Game.Achievements[what].won=1;
 				if (Game.prefs.popups) Game.Popup('Achievement unlocked :<br>'+name);
 				// suppress notify because of fast clicking
-				// else Game.Notify('Achievement unlocked','<div class="title" style="font-size:18px;margin-top:-2px;">'+name+'</div>',Game.Achievements[what].icon);
+				else if (name=='Uncanny clicker'){}
+				else Game.Notify('Achievement unlocked','<div class="title" style="font-size:18px;margin-top:-2px;">'+name+'</div>',Game.Achievements[what].icon);
 				if (Game.CountsAsAchievementOwned(Game.Achievements[what].pool)) Game.AchievementsOwned++;
 				Game.recalculateGains=1;    		    
 			}
