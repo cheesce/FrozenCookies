@@ -750,7 +750,7 @@ function harvestBank() {
 }
 
 function bestBank(minEfficiency) {
-    var results = {};
+ var results = {};
     var bankLevels = [0, luckyBank(), luckyFrenzyBank(), chainBank()];
 	if ((FrozenCookies.autoSpell == 3) || FrozenCookies.holdSEBank) bankLevels.push(edificeBank());
 	if (FrozenCookies.setHarvestBankPlant) bankLevels.push(harvestBank());
@@ -1243,7 +1243,7 @@ function upgradeStats(recalculate) {
 				case 87:  // Sacrificial rolling pins
 				case 152: //A festive hat
 				case 324: //A crumbly egg
-				efficiency=0;
+				efficiency=0.1;
 			}
 			return {
 				'id': current.id,
@@ -1399,7 +1399,7 @@ function upgradeToggle(upgrade, achievements, reverseFunctions) { //tut so als w
 function santaStats() { //ok
     return Game.Has('A festive hat') && (Game.santaLevel + 1 < Game.santaLevels.length) ? {
         id: santaJson[Game.santaLevel],
-        efficiency: 0,
+        efficiency: 0.1,
         base_delta_cps: 0,
         delta_cps: 0,
         cost: singleSantaCost(Game.santaLevel),
@@ -1435,7 +1435,7 @@ function buySanta() { //ok
 function dragonStats() { // ok
     if (Game.Has('A crumbly egg') && (Game.dragonLevel + 1 < Game.dragonLevels.length)) {		
 		return { id: Game.dragonLevel + 1,
-			efficiency: 0,
+			efficiency: 0.1,
 			base_delta_cps: 0,
 			delta_cps: 0,
 			cost: singleDragonCost(Game.dragonLevel),
