@@ -1356,38 +1356,15 @@ function isUpgradeUnavailable(upgrade, upgradeBlacklist) { //ok
 	    if ((upgrade.season != seasons[FrozenCookies.defaultSeason]) && haveAll(upgrade.season)) return true; //do not revisite season unless it is the default season
 	}
 	
-	if  ((upgrade.id == 331) || (upgrade.id ==332)) { // blacklist golden switch from being used *needs logic*
-        result = true; 
-	}
-    
-    if ((upgrade.id == 563) || (upgrade.id == 564)) { // blacklist shimmering veil switch from being used *needs logic*
-        result = true; 
-	}
-    
-	if ((upgrade.id == 84) || (upgrade.id==85)) { // blacklist (Revoke) Elder Covenant from being used *needs logic*
-        result = true; 
-	}
-	
-    if (upgrade.id == 333) { // blacklist milk selector from being used
-        result = true; 
-	}
-    
-    if (upgrade.id == 414) { // blacklist background selector from being used
-        result = true; 
-	}
-	
-    if (upgrade.id == 361) { // blacklist golden cookie sound selector from being used
-        result = true; 
-	}
-    
-    if (upgrade.id == 452) { // blacklist sugar frenzy from being used randomly *needs logic*
-        result = true; 
-	}
-	
-    if (upgrade.id == 227) { // blacklist chocolate egg from being used ramdomly
-        result = true; 
-	}
-	
+	if  ((upgrade.id == 331) || (upgrade.id ==332)) return true; // blacklist golden switch from being used *needs logic*
+    if ((upgrade.id == 563) || (upgrade.id == 564)) return true; // blacklist shimmering veil switch from being used *needs logic*
+	if ((upgrade.id == 84) || (upgrade.id==85)) return true; // blacklist (Revoke) Elder Covenant from being used *needs logic*
+    if (upgrade.id == 333) return true; // blacklist milk selector from being used
+    if (upgrade.id == 414) return true; // blacklist background selector from being used
+    if (upgrade.id == 361) return true; // blacklist golden cookie sound selector from being used
+    if (upgrade.id == 452) return true; // blacklist sugar frenzy from being used randomly *needs logic*
+    if (upgrade.id == 227) return true; // blacklist chocolate egg from being used ramdomly
+
     return false;
 }
 
@@ -2008,8 +1985,8 @@ function autoCookie() { //ok
 		//        }
         
 		// Yeah, buy some stuff
-		updateCaches();
-        var recommendation = nextPurchase();
+//		updateCaches();
+        var recommendation = nextPurchase(FrozenCookies.recalculateCaches);
         var delay = delayAmount(); //save cookies for bank
 		if (FrozenCookies.autoBuy && (Game.cookies >= delay + recommendation.cost)) {
 			recommendation.time = Date.now() - Game.startDate;
@@ -2028,7 +2005,8 @@ function autoCookie() { //ok
             
 			FrozenCookies.recalculateCaches = true;
 		}
-		
+		else FrozenCookies.recalculateCaches = false;
+			
 		// handle autoAscend
 		// todo: add earth shatter
         if (FrozenCookies.autoAscend) {
