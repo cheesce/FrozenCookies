@@ -540,7 +540,7 @@ function earthShatter(valueonly) { //ok
 	var value = 0;
     value+=Game.cookies;
 	value+=wrinklerValue();
-	Game.ObjectsById.forEach(function(b) { value+=(b.getReverseSumPrice(b.amount)*2);}); 
+	Game.ObjectsById.forEach(function(b) { value+=(b.getReverseSumPrice(b.amount)*(Game.hasAura('Earth Shatterer')?2:1));}); 
 	
 	var highestBuilding = 0;
 	Game.ObjectsById.forEach(function(b) { if (b.amount > 0) highestBuilding=b;}); 
@@ -885,10 +885,9 @@ function checkPrices(currentUpgrade) {
 }
 
 function purchaseEfficiency(price, deltaCps, baseDeltaCps, currentCps) {
-    var efficiency = Number.POSITIVE_INFINITY;
-    if (deltaCps > 0) {
-        efficiency = divCps(price, currentCps) + divCps(price, deltaCps);
-	}
+    var efficiency = divCps(price, currentCps); //Number.POSITIVE_INFINITY;
+    if (deltaCps > 0) efficiency += divCps(price, deltaCps);
+	else if(baseDeltaCps > 0) efficiency += divCps(price, baseDeltaCps);
     return efficiency;
 }
 
@@ -933,12 +932,11 @@ function isUnavailable(upgrade, upgradeBlacklist) { //ok
     result = result || (!upgrade.unlocked && !needed);
     result = result || (upgradeBlacklist === true);
     result = result || _.contains(upgradeBlacklist, upgrade.id);
- //   if (needed && (_.find(needed, function(a) { return a.type == "wrinklers"}) != null)) { //need wrinklers for upgrade?
-//		if (upgrade.id==74) result = true; //don't buy Elder Pledge 
-//	} 
+ 
+	//dont'buy Elder Pledge if Wrinklers are needed - so only in easter or halloween season and when not all upgrades for this season are bought
 	if ((upgrade.id==74) && (((Game.season=='easter') && !haveAll('easter')) || ((Game.season=='halloween')&& !haveAll('halloween')))) return true;
 	
-	if (typeof upgrade.season != 'undefined' ) { // need season change?
+	if (typeof upgrade.season != 'undefined' ) { // want season change?
 		result = result || (!haveAll(Game.season)); //don't if not all upgrades of current season purchased
 	    result = result || ((upgrade.season != seasons[FrozenCookies.defaultSeason]) && haveAll(upgrade.season)); //do not revisite season unless it is the default season
 	}
@@ -1013,7 +1011,6 @@ function nextPurchase(recalculate) {
 			if (target.type == 'upgrade') {
                 var prereqList = unfinishedUpgradePrereqs(Game.UpgradesById[target.id]);
                 if (prereqList) {
-//					if (prereqList.some(function(b) { return b.type == 'wrinklers';})) { FrozenCookies.banElderPlege=1;}
 					purchase = recList.filter(function(a) {
 						return prereqList.some(function(b) {
 							return b.id == a.id && b.type == a.type
@@ -1072,7 +1069,7 @@ function buildingStats(recalculate) {
 			});
             buildingToggle(current);
             var baseCpsNew = Game.unbuffedCps;
-			//            var cpsNew = effectiveCps(Math.min(Game.cookies, currentBank)); 
+			//            var cpsNew = effectiveCps(currentBank); 
             var cpsNew = effectiveCps(Game.cookies); 
             buildingToggle(current, existingAchievements);
             var deltaCps = cpsNew - cpsOrig;
@@ -1227,14 +1224,17 @@ function upgradeStats(recalculate) {
 			var baseCpsNew =Game.unbuffedCps;
 			//                var cpsNew = effectiveCps(currentBank);
 			var cpsNew = effectiveCps(Game.cookies);
-			var priceReduction = (discounts == (totalDiscount() + totalDiscount(true))) ? 0 : checkPrices(current);
+//			var priceReduction = (discounts == (totalDiscount() + totalDiscount(true))) ? 0 : checkPrices(current);
 			upgradeToggle(current, existingAchievements, reverseFunctions);
 			Game.elderWrath = existingWrath;
 			var deltaCps = cpsNew - cpsOrig;
 			var baseDeltaCps = baseCpsNew - baseCpsOrig;
-			var efficiency = ((typeof current.season != 'undefined') && (current.season == seasons[FrozenCookies.defaultSeason])) ? cost / baseCpsOrig : (priceReduction > cost) ? 1 : purchaseEfficiency(cost, deltaCps, baseDeltaCps, cpsOrig);
+			var efficiency = purchaseEfficiency(cost, deltaCps, baseDeltaCps, cpsOrig);
+//			if ((typeof current.season != 'undefined') && (current.season == seasons[FrozenCookies.defaultSeason])) efficiency=cost / baseCpsOrig ;
+//			if (priceReduction > cost) efficiency = 1;
+			
 			// fake some effis to force buy because they don't give cookies in first place
-			switch (current.id)
+/*			switch (current.id)
 			{ 	case 229: // "egg" because 9 cps are 9cps :)
 				case 226: // omeltte
 				case 224: // Wrinklerspawn
@@ -1247,7 +1247,7 @@ function upgradeStats(recalculate) {
 				case 324: //A crumbly egg
 				efficiency=0.1;
 			}
-			return {
+*/			return {
 				'id': current.id,
 				'efficiency': efficiency,
 				'base_delta_cps': baseDeltaCps,
@@ -1323,7 +1323,6 @@ function unfinishedUpgradePrereqs(upgrade) { //looks ok
 				}
 			}
 		});
-//        if (prereqs.wrinklers && Game.elderWrath == 0) { needed.push({type: 'wrinklers',id: 0});}
 	}
     return needed.length ? needed : null;
 }
@@ -2017,10 +2016,6 @@ function autoCookie() {
 		updateCaches();
         var recommendation = nextPurchase();
         var delay = delayAmount(); //save cookies for bank
-
-		//       if (FrozenCookies.autoBuy && 
-		//		((Game.cookies >= delay + recommendation.cost) || recommendation.purchase.name == "Elder Pledge") &&
-		//		 (FrozenCookies.pastemode || isFinite(nextChainedPurchase().efficiency))) {
 		if (FrozenCookies.autoBuy && (Game.cookies >= delay + recommendation.cost)) {
 			recommendation.time = Date.now() - Game.startDate;
 			recommendation.purchase.clickFunction = null;
