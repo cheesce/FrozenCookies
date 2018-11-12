@@ -1493,7 +1493,7 @@ function buyDragon() { //ok
 
 function setDragonAura(aura,slot) { //ok - non cheating version
 	var auraid=-1;
-	for (var i in Game.dragonAuras) { if (Game.dragonAuras[i].name==aura) { auraid=parseInt(i); break;}}
+	for (var i in Game.dragonAuras) { if (Game.dragonAuras[parseInt(i)].name==aura) { auraid=parseInt(i); break;}}
 	if (auraid==-1) return false; //unknown aura
 	if (Game.dragonLevel < auraid+4) return false; // level too low for aura
 	if ((Game.dragonAura==auraid) || (Game.dragonAura2==auraid)) return true; // already set
