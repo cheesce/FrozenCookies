@@ -72,7 +72,9 @@ function FCStart() { //ok
     FrozenCookies.caches.buildings = [];
     FrozenCookies.caches.upgrades = [];
 	
-    if (!blacklist[FrozenCookies.blacklist]) {
+	FrozenCookies.recalcCount=0;	
+    
+	if (!blacklist[FrozenCookies.blacklist]) {
         FrozenCookies.blacklist = 0;
 	}
     
@@ -191,7 +193,8 @@ function fcReset() {
     FrozenCookies.prevLastHCTime = Date.now();
     FrozenCookies.lastCps = 0;
     FrozenCookies.trackedStats = [];
-    
+	FrozenCookies.recalcCount=0;    
+	
 	// Set default values for calculations
     FrozenCookies.clicks=0;
 	FrozenCookies.clicksvalue=0;
@@ -790,7 +793,8 @@ function cookieEfficiency(startingPoint, bankAmount) {
             var deltaCps = goldenCps(bankValue - currentValue);
             results = divCps(cost, deltaCps);
 		}
-		} else if (bankAmount <= startingPoint) {
+	}
+	else if (bankAmount <= startingPoint) {
         results = 0;
 	}
     return results;
@@ -2016,6 +2020,7 @@ function autoCookie() { //ok
 		}
 		else { FrozenCookies.recalcCount++; FrozenCookies.recalculateCaches = false;}
 		if (FrozenCookies.recalcCount==10){FrozenCookies.recalculateCaches = true; FrozenCookies.recalcCount=0;	}	
+		
 		// handle autoAscend
         if (FrozenCookies.autoAscend) {
             var currPrestige = Game.prestige;
