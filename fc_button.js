@@ -860,7 +860,7 @@ function FCMenu() {
 		
         banks.forEach(function(bank) {
             var deltaCps = effectiveCps(bank.cost) - effectiveCps(Game.cookies);
-            buildTable.append($('<tr><td colspan="2"><b>' + bank.name + (deltaCps === 0 ? ' (*)' : '') + '</b></td><td>' + Beautify(bank.efficiency) + '</td><td>' + Beautify(Math.max(0, bank.cost - Game.cookies)) + '</td><td>' + Beautify(deltaCps) + '</td></tr>'));
+            buildTable.append($('<tr><td colspan="2"><b>' + bank.name + (deltaCps === 0 ? ' (*)' : '') + '</b></td><td>' + Beautify(bank.efficiency) + '</td><td>' + Beautify(bank.cost) + '</td><td>' + Beautify(deltaCps) + '</td></tr>'));
 		});
 		
 		// Table Dividers		

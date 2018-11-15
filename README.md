@@ -8,14 +8,14 @@ How to use
 
 ## Bookmarklet install
 
-1. Paste the *contents* (not the url) of https://rawgit.com/hnns88/FrozenCookies/master/fc_bookmarklet_loader.js into a bookmark.
+1. Paste the *contents* (not the url) of https://rawgit.com/kisslab69/FrozenCookies/master/fc_bookmarklet_loader.js into a bookmark.
 2. Load up Cookie Clicker.
 3. Load the recently created bookmark.
 
 ## Userscript install
 
 0. If you don't already have it, install the required browser add-on. [Tampermonkey (Chrome)](https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo?hl=en) or [Greasemonkey (Firefox)](https://addons.mozilla.org/en-US/firefox/addon/greasemonkey/)
-1. Go to https://rawgit.com/hnns88/FrozenCookies/master/fc_userscript_loader.user.js
+1. Go to https://rawgit.com/kisslab69/FrozenCookies/master/fc_userscript_loader.user.js
 2. Click the 'install' button in the upper right corner.
 3. Load up Cookie Clicker.
 
@@ -27,8 +27,8 @@ What can Frozen Cookies do?
  - Calculates all sorts of stuff having to do with Golden Cookies.
  - Optionally, will automatically click Golden Cookies when they appear.
  - Calculates all sorts of stuff having to do with Heavenly Chips.
- - Displays a timer for the following items: Next Golden Cookie, Time left in Frenzy, Time until next Heavenly Chip.
- - Displays a second timer for the time to completion of Golden Cookie Bank, Next Purchase, and the end of a Chain of Purchases.
+ - Optionally, Displays a timer for the following items: Next Golden Cookie, Time left in Frenzy, Time until next Heavenly Chip.
+ - Optionally, Displays a second timer for the time to completion of Golden Cookie Bank, Next Purchase, and the end of a Chain of Purchases.
  - Calculates far more building/upgrade efficiency information that any person ever wants to know, and displays it in a not extremely user friendly manner.
  - Automatically updates to the most recent version upon load. Regardless of if that version is better or not.
  - Might not eat all of your cookies.
@@ -37,6 +37,21 @@ What can Frozen Cookies do?
 
 What's new?
 -----------
+2018 Nov 12
+- changed Version number to 1.7.5
+- Update to patch 2.016
+- reorganized and cleaned code, added some comments, fixed numeroes bugs, speed up some functions
+- added basic support for Dragon (autobuy and Auras are set as they are avaible, more work needed here)
+- added auto-earth shatter on ascend
+- added some stats to measure real values for comparison to calculated onces
+  This could be used in further updates to automatically compute the gc probabilities (work needed)
+- Auto Season Switching and ElderPledge are working as expected (aka now collects all season cookies automatically, without
+  revisiting seasons)
+- option to disable the infografics
+- internal banks and buy efficencys may work differently now. still can't figure out why they where programmed as they were in
+  previous versions. So I changed some parts to something that seems logical to me.
+- more little details that I can't remember
+
 2018 Aug 6
 - New "Harvest Bank" option to select a higher Bank than for Frenzy/Clicking Frenzy if you want to get the maximum return from harvesting Bakeberries, Chocoroots, White Chocoroots, Queenbeets or Duketaters
 - Scenario selection for harvesting
