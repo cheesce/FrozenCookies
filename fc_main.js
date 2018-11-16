@@ -589,7 +589,7 @@ function cookieValue(bankAmount, wrathValue, wrinklerCount) { // work needed
 	// chain cookie: 1% chance to break for every step, maxout if next is > Math.min(Game.cookiesPs*60*60*6,Game.cookies*0.5)*mult;
 	// chance: 3% on normal or 30% on wrath
 	// cookies: 
-    value += cookieInfo.chain.odds[wrathValue] * calculateChainValue(bankAmount, cps, wrathValue)));
+    value += cookieInfo.chain.odds[wrathValue] * calculateChainValue(bankAmount, cps, wrathValue);
 
 	// cookie storm
 	// chance: 3% on normal or 30% on wrath
