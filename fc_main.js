@@ -497,7 +497,7 @@ with (Matrix)
   display(sub(A,mult(es.V,mult(es.L,inverse(es.V)))));
 
 }
-
+}
 function cookieValue(bankAmount, wrathValue, wrinklerCount) { // work needed
     wrathValue = wrathValue != null ? wrathValue : Game.elderWrath;
     wrinklerCount = wrinklerCount != null ? wrinklerCount : getactiveWrinklers();
