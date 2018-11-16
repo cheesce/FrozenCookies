@@ -455,7 +455,7 @@ var primProbs=new Array();
 var conProbs=new Array();
 var actProbs=new Array();
 var table=new Array();
-for (var i=3; i<Math.pow(2,pool.length); i+=4;) {
+for (var i=3; i<Math.pow(2,pool.length); i+=4) {
 	table[i]=new Array();
 	for (var j=0; j<pool.length; j++) {
 		if (i&(Math.pow(2,j))) {table[i].push(pool[j].percent);} else {table[i].push(1-pool[j].percent);};
@@ -463,41 +463,38 @@ for (var i=3; i<Math.pow(2,pool.length); i+=4;) {
 }  
 table.forEach(function(d,index){d.count1=0;d.prob1=d.reduce(function(a,b,c,e){{if (index&Math.pow(2,c)) e.count1++;return a*b;}},1);});
 pool.forEach(function(p,i){ primProbs[p.name]=table.reduce(function(a,b,c){ return (c&Math.pow(2,i))?(a+(b.prob1/b.count1)):a;},0 )});
-pool.forEach(function(p,i){ conProbs[p.name]=table.reduce(function(a,b,c){ return (c&Math.pow(2,i))?a:(a+(b.prob1/(b.count1-1)));},0 )});
-pool.forEach(function(a){actProbs[a.name]=0.2*primProbs[a.name]+0.8*conProbs[a.name];});
-var last=0;
-pool.forEach(function(p,i){ conProbs[p.name]=table.reduce(function(a,b,c){ console.log(i,c,(c&Math.pow(2,2))); return (i==last)?a:(c&Math.pow(2,last))?(a+(b.prob1/(b.count1-1))):(a+(b.prob1/(b.count1)));},0 )});
+pool.forEach(function(x,y) { actProbs[x.name]=new Array();
+pool.forEach(function(p,i){ conProbs[p.name]=table.reduce(function(a,b,c){
+	if (x.name=='blab') return (c&Math.pow(2,i))?(a+(b.prob1/b.count1)):a;
+	else if (i==y) return a;
+	else if (c&Math.pow(2,i)) { return (a + (b.prob1 / (b.count1 - ((c&Math.pow(2,y))? 1:0))));}
+	else return a;},0 )});
+pool.forEach(function(a){actProbs[x.name][a.name]=0.2*primProbs[a.name]+0.8*conProbs[a.name];});
+});
 
+with (Matrix)
+{ var A = create(pool.length,pool.length);
+  for (i=0;i<pool.length;i++) { for (j=0;j<pool.length;j++) {A[i][j]=actprobs[i][j];}}
+  println('A');
+  display(A,0);
 
-pool.forEach(function(p,i){ conProbs[p.name]=table.reduce(function(a,b,c){ return (c&Math.pow(2,i))?a:(a+(b.prob1/(b.count1-1)));},0 )});
+  var Ainv = inverse(A);
+  nl(); println('inverse(A)*A');
+  display(mult(Ainv,A));
+  nl(); println('inverse(A)*A - I');
+  display(sub(mult(Ainv,A),identity(A.n,A.m)));
 
+  var es = eigenstructure(A);
 
+  nl(); println('V (eigenvectors for A)');
+  display(es.V);
+  nl(); println('L (block diagonal eigenvalue matrix for A)');
+  display(es.L);
+  nl(); println('A*V - V*L');
+  display(sub(mult(A,es.V),mult(es.V,es.L)));
+  nl(); println('A - V*L*inverse(V)');
+  display(sub(A,mult(es.V,mult(es.L,inverse(es.V)))));
 
-liefert für frenzy, lucky das richtige ergebniss
-pool.forEach(function(p,i){ conProbs[p.name]=table.reduce(function(a,b,c){ return (i==0)?a:(c&Math.pow(2,i))?(a+(b.prob1/(b.count1-1))):(a+(b.prob1/(b.count1)));},0 )});
-pool.forEach(function(p,i){ conProbs[p.name]=table.reduce(function(a,b,c){ return (i==1)?a:(c&Math.pow(2,i))?(a+(b.prob1/(b.count1-1))):(a+(b.prob1/(b.count1)));},0 )});
-
-liefert für chain das richtige ergebniss
-pool.forEach(function(p,i){ conProbs[p.name]=table.reduce(function(a,b,c){ return (i==2)?a:(c&Math.pow(2,i))?(a+(b.prob1/(b.count1-1))):(a+(b.prob1/(b.count1)));},0 )});
-
-liefert für cfrenzy das richtige ergebnis
-pool.forEach(function(p,i){ conProbs[p.name]=table.reduce(function(a,b,c){ return (i==3)?a:(c&Math.pow(2,i))?(a+(b.prob1/(b.count1-1))):(a+(b.prob1/(b.count1)));},0 )});
-
-
-
-
-
-for (var i=0; i<Math.pow(2,pool.length); i++) {
-	table[i]=new Array();
-	for (var j=0; j<pool.length; j++) {
-		if (i&(Math.pow(2,j))) {table[i].push(pool[j].percent);} else {table[i].push(1-pool[j].percent);};
-    }
-}  
-table.forEach(function(d,index){d.count1=0;d.prob1=d.reduce(function(a,b,c,e){{if (index&Math.pow(2,c)) e.count1++;return a*b;}},1);});
-pool.forEach(function(p,i){ primProbs[p.name]=table.reduce(function(a,b,c,d){ return (c&Math.pow(2,i))?(a+(b.prob1/b.count1)):a;},0 )});
-
-
-if (pool[j].percent==1.0){table[i].push(null);} else 
 }
 
 function cookieValue(bankAmount, wrathValue, wrinklerCount) { // work needed
@@ -658,7 +655,7 @@ function gcMult(wrathValue) { //ok
 	return mult;
 }
 
-function calculateChainValue(amount, cps, wrathValue) { //ok, awfull but exact - 1% fail rate is missing
+function calculateChainValue(amount, cps, wrathValue) { //ok, awfull but exact
  	var digit=(wrathValue==0)?7:6;
 	var mult=gcMult(wrathValue);
 	var chainstart=1+Math.max(0,Math.ceil(Math.log(amount)/Math.LN10)-10);
@@ -668,11 +665,11 @@ function calculateChainValue(amount, cps, wrathValue) { //ok, awfull but exact -
 	while (1)
 	{	p=Math.max(digit,Math.min(Math.floor(Math.pow(10,chainstart)*mult),maxpayout)); 
 		pn=Math.max(digit,Math.min(Math.floor(Math.pow(10,chainstart+1)*mult),maxpayout));
-		sum+=p;
+		sum+=p*0.99; //1% fail rate
 		chainstart+=1;
 		if (pn >=maxpayout) break;
 	}
-	return sum;
+	return sum; 
 }
 
 function weightedCookieValue(useCurrent) {
@@ -717,7 +714,7 @@ function earthShatter(valueonly) { //ok
 	var highestBuilding = 0;
 	Game.ObjectsById.forEach(function(b) { if (b.amount > 0) highestBuilding=b;}); 
     if (!Game.hasAura('Earth Shatterer') && (Game.dragonLevel>=8) && (highestBuilding!=0)) value-= highestBuilding.getPrice(1);	
-    value *= 0.05;
+    if (Game.HasUnlocked('Chocolate egg') && !Game.Has('Chocolate egg')) value *= 0.05;
 	
 	if (valueonly==false) //you shoud do this only when ascending ;)
 	{ if (!Game.hasAura('Earth Shatterer') && (Game.dragonLevel>=8)) setDragonAura('Earth Shatterer');
