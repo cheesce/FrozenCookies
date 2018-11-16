@@ -437,7 +437,7 @@ function reindeerCps(wrathValue) { //ok
 
 //Golden Cookie Stuff
 function buildgcProbs() {
-var pool=[ 	{name: 'frenzy', percent: 1.0},
+/*var pool=[ 	{name: 'frenzy', percent: 1.0},
 			{name: 'lucky', percent: 1.0},
 			{name: 'chain', percent: 0.03},
 			{name: 'storm', percent: 0.03},			
@@ -445,6 +445,7 @@ var pool=[ 	{name: 'frenzy', percent: 1.0},
 			{name: 'building', percent: 0.25},			
 			{name: 'sugar', percent: 0.0005},	//assume auto SL-harvest 		
 			{name: 'blab', percent: 0.0001}	];
+*/
 var pool=[ 	{name: 'frenzy', percent: 1.0},
 			{name: 'lucky', percent: 1.0},
 			{name: 'chain', percent: 0.03},
@@ -474,7 +475,7 @@ pool.forEach(function(a){actProbs[x.name][a.name]=0.2*primProbs[a.name]+0.8*conP
 
 with (Matrix)
 { var A = create(pool.length,pool.length);
-  for (i=0;i<pool.length;i++) { for (j=0;j<pool.length;j++) {A[i][j]=actprobs[i][j];}}
+  for (var i=0;i<pool.length;i++) { for (var j=0;j<pool.length;j++) {A[i][j]=actprobs[i][j];}}
   println('A');
   display(A,0);
 
