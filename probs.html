@@ -73,7 +73,8 @@ function main()
 //scorn and foolsday options are ignored as they are not relevant for fc purpose in my opionon, also to keep the cookieinfo table uncomplicated
 
 var cookieinfo=new Array();	
-			
+var cout='var cookieinfo=\n[{';
+
 console.log('Golden basic--------------------------------');
 var pool=pool1;
 var erg=calcprobs(pool,1); 
@@ -99,6 +100,10 @@ var erg=combinetranstable(transtable1,1/3,transtable2,2/3);
 nlist.forEach(function(a,b){ 
 	if (typeof cookieinfo[0][a]=='undefined') cookieinfo[0][a]={odds:[0,0,0,0]};
 	cookieinfo[0][a].odds[2]=erg[0][b];});		
+nlist.forEach(function(a){cout=cout.concat('\''+a+'\': {odds: ['+cookieinfo[0][a].odds[0]+', '+cookieinfo[0][a].odds[1]+', '+cookieinfo[0][a].odds[2]+', '+cookieinfo[0][a].odds[3]+']},\n');});
+cout=cout.slice(0,cout.length-2).concat('},\n\n{');
+
+
 
 console.log('Golden basic + 1 dragon--------------------------------------------');
 pool=pool1;
@@ -128,7 +133,10 @@ var erg=combinetranstable(transtable1,1/3,transtable2,2/3);
 nlist.forEach(function(a,b){ 
 	if (typeof cookieinfo[1][a]=='undefined') cookieinfo[1][a]={odds:[0,0,0,0]};
 	cookieinfo[1][a].odds[2]=erg[0][b];});	
-	
+
+nlist.forEach(function(a){cout=cout.concat('\''+a+'\': {odds: ['+cookieinfo[1][a].odds[0]+', '+cookieinfo[1][a].odds[1]+', '+cookieinfo[1][a].odds[2]+', '+cookieinfo[1][a].odds[3]+']},\n');});
+cout=cout.slice(0,cout.length-2).concat('},\n\n{');
+
 console.log('Golden basic + 2 dragon--------------------------------------------');
 pool=pool1;
 pool.splice(-1,0,{name: 'flight', percent: 0.15});
@@ -160,8 +168,9 @@ nlist.forEach(function(a,b){
 	if (typeof cookieinfo[2][a]=='undefined') cookieinfo[2][a]={odds:[0,0,0,0]};
 	cookieinfo[2][a].odds[2]=erg[0][b];});	
 
-
-console.log(cookieinfo);
+nlist.forEach(function(a){cout=cout.concat('\''+a+'\': {odds: ['+cookieinfo[2][a].odds[0]+', '+cookieinfo[2][a].odds[1]+', '+cookieinfo[2][a].odds[2]+', '+cookieinfo[2][a].odds[3]+']},\n');});
+cout=cout.slice(0,cout.length-2).concat('}\n];');
+writeln(cout);
 }
 
 
@@ -266,7 +275,7 @@ with (Matrix)
   for (var i=0;i<C.m;i++) { 
     R.mat[0][i]=R.mat[0][i]*100/sum;
   }
-  display(R,7);
+ // display(R,7);
   
  }
  return R.mat;
@@ -299,7 +308,7 @@ function run_aux()
 </script>
   </head> 
   <body onload="init('input','output');"> 
-    <h1>Test of Matrix</h1>
+    <h1>CookieClicker Golden and Wrath Cookies Probabilities</h1>
     <p>
       <input type="button" value="Run" onclick="run(); return false;" />
     </p>
