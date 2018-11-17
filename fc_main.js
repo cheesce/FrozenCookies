@@ -1150,11 +1150,12 @@ function upgradeStats(recalculate) { //ok
     if (recalculate) {
         var upgradeBlacklist = blacklist[FrozenCookies.blacklist].upgrades;
 		//       var currentBank = bestBank(0).cost;
-		var n1=Game.UpgradesById.filter(function(a,b){return !a.unlocked && !a.bought && a.pool!='debug' && a.pool!='prestige';}).length;
-		var n2=Game.UpgradesById.filter(function(a,b){return a.unlocked && !a.bought && a.pool!='debug' && a.pool!='prestige';}).length;
-		if ((n2>25)&&(n2<=n1)) var list=Game.UpgradesById.filter(function(a,b){return a.unlocked && !a.bought && a.pool!='debug' && a.pool!='prestige';});
-		else var list=Game.UpgradesById.filter(function(a,b){return !a.bought && a.pool!='debug' && a.pool!='prestige';});
-	    FrozenCookies.caches.upgrades = list
+//		var n1=Game.UpgradesById.filter(function(a,b){return !a.unlocked && !a.bought && a.pool!='debug' && a.pool!='prestige';}).length;
+//		var n2=Game.UpgradesById.filter(function(a,b){return a.unlocked && !a.bought && a.pool!='debug' && a.pool!='prestige';}).length;
+//		if ((n2>25)&&(n2<=n1)) var list=Game.UpgradesById.filter(function(a,b){return a.unlocked && !a.bought && a.pool!='debug' && a.pool!='prestige';});
+//		else var list=Game.UpgradesById.filter(function(a,b){return !a.bought && a.pool!='debug' && a.pool!='prestige';});
+		var list=Game.UpgradesById.filter(function(a,b){return !a.bought && a.pool!='debug' && a.pool!='prestige';}).sort(function(a,b){ return b.basePrice-a.basePrice;}).slice(0,50);
+		FrozenCookies.caches.upgrades = list
 		.map(function(current) {
 			if (isUpgradeUnavailable(current, upgradeBlacklist)) {
 				return null;
