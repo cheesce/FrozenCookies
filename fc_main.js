@@ -365,21 +365,6 @@ function probabilitySpan(listType, start, endProbability) { //ok
     return _.sortedIndex(pl, (startProbability + endProbability - startProbability * endProbability));
 }
 
-function frenzyProbability(wrathValue) { //ok
-    wrathValue = wrathValue != null ? wrathValue : Game.elderWrath;
-    return cookieInfo.frenzy.odds[wrathValue]; 
-}
-
-function clotProbability(wrathValue) { //ok
-    wrathValue = wrathValue != null ? wrathValue : Game.elderWrath;
-    return cookieInfo.clot.odds[wrathValue]; 
-}
-
-function elderfrenzyProbability(wrathValue) { //ok
-    wrathValue = wrathValue != null ? wrathValue : Game.elderWrath;
-    return cookieInfo.elderfrenzy.odds[wrathValue];
-}
-
 // Buff Functions
 function clickBuffBonus() { // ok 
     var ret = 1;
@@ -422,10 +407,11 @@ function hasMultBuff() { //ok
 
 // Reindeer Stuff
 function reindeerValue(wrathValue) { //ok
-    var value = 0;
-    if (Game.season == 'christmas') {
-        var remaining = 1 - (frenzyProbability(wrathValue) + elderfrenzyProbability(wrathValue));
-		value=Math.max(25,Game.cookiesPs * 60 * (0.5 * elderfrenzyProbability(wrathValue) + 0.75 * frenzyProbability(wrathValue) + 1 * remaining)) * (Game.Has('Ho ho ho-flavored frosting') ? 2 : 1) * Game.eff('reindeerGain');
+    var value = 0;	
+	var index= Game.hasAura('Dragonflight')?1:0 + Game.hasAura('Reaper of Fields')?1:0;
+	if (Game.season == 'christmas') {
+        var remaining = 1 - (cookieInfo[index].frenzy.odds[wrathValue] + cookieInfo[index].blood.odds[wrathValue]);
+		value=Math.max(25,Game.cookiesPs * 60 * (0.5 * cookieInfo[index].blood.odds[wrathValue] + 0.75 * cookieInfo[index].frenzy.odds[wrathValue] + 1 * remaining)) * (Game.Has('Ho ho ho-flavored frosting') ? 2 : 1) * Game.eff('reindeerGain');
 	}
     return value;
 }
@@ -436,7 +422,6 @@ function reindeerCps(wrathValue) { //ok
 }
 
 //Golden Cookie Stuff
-
 function cookieValue(bankAmount, wrathValue, wrinklerCount) { // work needed
     wrathValue = wrathValue != null ? wrathValue : Game.elderWrath;
     wrinklerCount = wrinklerCount != null ? wrinklerCount : getactiveWrinklers();

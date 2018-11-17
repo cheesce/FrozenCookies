@@ -432,7 +432,7 @@ var holidayCookies = {
 //this is the output of probs.html. Has to be copied here.
 // First part is without dragon auras (no flight an no harvest), second with one aura(harvest or fligt) , and third with both (harvest and flight)
 // first odds is grandmas appeased, then awoken, displeased and angered
-var cookieinfo=
+var cookieInfo=
 [{'clot': {odds: [0, 7.538313100985361, 15.534284411494875, 23.963294174775225]},
 'lucky': {odds: [43.469488898182576, 32.09409066579634, 25.088077551640723, 23.963294174775225]},
 'ruin': {odds: [0, 7.538313100985361, 15.53428441149577, 23.963294174775225]},
