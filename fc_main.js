@@ -436,68 +436,7 @@ function reindeerCps(wrathValue) { //ok
 }
 
 //Golden Cookie Stuff
-function buildgcProbs() {
-/*var pool=[ 	{name: 'frenzy', percent: 1.0},
-			{name: 'lucky', percent: 1.0},
-			{name: 'chain', percent: 0.03},
-			{name: 'storm', percent: 0.03},			
-			{name: 'cfrenzy', percent: 0.1},			
-			{name: 'building', percent: 0.25},			
-			{name: 'sugar', percent: 0.0005},	//assume auto SL-harvest 		
-			{name: 'blab', percent: 0.0001}	];
-*/
-var pool=[ 	{name: 'frenzy', percent: 1.0},
-			{name: 'lucky', percent: 1.0},
-			{name: 'chain', percent: 0.03},
-			{name: 'cfrenzy', percent: 0.1},
-			{name: 'blab', percent: 0.0001}	];
 
-var primProbs=new Array();
-var conProbs=new Array();
-var actProbs=new Array();
-var table=new Array();
-for (var i=3; i<Math.pow(2,pool.length); i+=4) {
-	table[i]=new Array();
-	for (var j=0; j<pool.length; j++) {
-		if (i&(Math.pow(2,j))) {table[i].push(pool[j].percent);} else {table[i].push(1-pool[j].percent);};
-    }
-}  
-table.forEach(function(d,index){d.count1=0;d.prob1=d.reduce(function(a,b,c,e){{if (index&Math.pow(2,c)) e.count1++;return a*b;}},1);});
-pool.forEach(function(p,i){ primProbs[p.name]=table.reduce(function(a,b,c){ return (c&Math.pow(2,i))?(a+(b.prob1/b.count1)):a;},0 )});
-pool.forEach(function(x,y) { actProbs[x.name]=new Array();
-pool.forEach(function(p,i){ conProbs[p.name]=table.reduce(function(a,b,c){
-	if (x.name=='blab') return (c&Math.pow(2,i))?(a+(b.prob1/b.count1)):a;
-	else if (i==y) return a;
-	else if (c&Math.pow(2,i)) { return (a + (b.prob1 / (b.count1 - ((c&Math.pow(2,y))? 1:0))));}
-	else return a;},0 )});
-pool.forEach(function(a){actProbs[x.name][a.name]=0.2*primProbs[a.name]+0.8*conProbs[a.name];});
-});
-
-with (Matrix)
-{ var A = create(pool.length,pool.length);
-  for (var i=0;i<pool.length;i++) { for (var j=0;j<pool.length;j++) {A[i][j]=actprobs[i][j];}}
-  println('A');
-  display(A,0);
-
-  var Ainv = inverse(A);
-  nl(); println('inverse(A)*A');
-  display(mult(Ainv,A));
-  nl(); println('inverse(A)*A - I');
-  display(sub(mult(Ainv,A),identity(A.n,A.m)));
-
-  var es = eigenstructure(A);
-
-  nl(); println('V (eigenvectors for A)');
-  display(es.V);
-  nl(); println('L (block diagonal eigenvalue matrix for A)');
-  display(es.L);
-  nl(); println('A*V - V*L');
-  display(sub(mult(A,es.V),mult(es.V,es.L)));
-  nl(); println('A - V*L*inverse(V)');
-  display(sub(A,mult(es.V,mult(es.L,inverse(es.V)))));
-
-}
-}
 function cookieValue(bankAmount, wrathValue, wrinklerCount) { // work needed
     wrathValue = wrathValue != null ? wrathValue : Game.elderWrath;
     wrinklerCount = wrinklerCount != null ? wrinklerCount : getactiveWrinklers();

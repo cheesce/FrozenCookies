@@ -1,0 +1,308 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"> 
+<html lang="en" xml:lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"> 
+  <head> 
+    <meta http-equiv="Content-Type"
+          content="text/html; charset=UTF-8" />
+    <meta http-equiv="cache-control" content="no-cache" />
+    <title>CookieClicker Golden and Wrath Cookies Probabilities</title>
+    <link rel="stylesheet" type="text/css" href="http://www.cs.bham.ac.uk/~pxc/common/css/pagex.css"/>
+    <script type="text/javascript" src="http://www.cs.bham.ac.uk/~pxc/js/IOUtils.js"></script>
+    <script type="text/javascript" src="http://www.cs.bham.ac.uk/~pxc/js/Matrix.js"></script>
+    <script type="text/javascript" src="http://www.cs.bham.ac.uk/~pxc/js/EVDecomposition.js"></script>
+    <script type="text/javascript" src="http://www.cs.bham.ac.uk/~pxc/js/LUDecomposition.js"></script>
+<script type="text/javascript">
+// ==================================== MAIN =====================================
+var transtable1, transtable2, nlist;
+var pool1=[ {name: 'frenzy', percent: 1.0},
+			{name: 'lucky', percent: 1.0},
+			{name: 'chain', percent: 0.03},
+			{name: 'storm', percent: 0.03},
+			{name: 'cfrenzy', percent: 0.1+0.005},
+			{name: 'building', percent: 0.25},
+			{name: 'sugar', percent: 0.0005},
+			{name: 'blab', percent: 0.0001}	];			
+
+//pool2: Wrath Cookie basics (anger)
+var pool2=[ {name: 'clot', percent: 1.0},
+			{name: 'lucky', percent: 1.0},
+			{name: 'ruin', percent: 1.0},
+			{name: 'blood', percent: 0.3},
+			{name: 'chain', percent: 0.3+0.021},
+			{name: 'storm', percent: 0.3+0.021},
+			{name: 'cfrenzy', percent: 0.1+0.005},
+			{name: 'finger', percent: 0.1},
+			{name: 'building', percent: 0.25},
+			{name: 'sugar', percent: 0.0005},
+			{name: 'blab', percent: 0.0001}];		
+
+var outputBox;
+function init(inputID, outputID)
+{ outputBox = document.getElementById(outputID);
+}
+
+function main()
+{ 
+/*  code snippet from cookie clicker 2.016 for reference
+	//select an effect
+	var list=[];
+	if (me.wrath>0) list.push('clot','multiply cookies','ruin cookies');
+	else list.push('frenzy','multiply cookies');
+	if (me.wrath>0 && Game.hasGod && Game.hasGod('scorn')) list.push('clot','ruin cookies','clot','ruin cookies');
+	if (me.wrath>0 && Math.random()<0.3) list.push('blood frenzy','chain cookie','cookie storm');
+	else if (Math.random()<0.03 && Game.cookiesEarned>=100000) list.push('chain cookie','cookie storm');
+	if (Math.random()<0.05 && Game.season=='fools') list.push('everything must go');
+	if (Math.random()<0.1 && (Math.random()<0.05 || !Game.hasBuff('Dragonflight'))) list.push('click frenzy');
+	if (me.wrath && Math.random()<0.1) list.push('cursed finger');
+				
+	if (Game.BuildingsOwned>=10 && Math.random()<0.25) list.push('building special');
+					
+	if (Game.canLumps() && Math.random()<0.0005) list.push('free sugar lump');
+					
+	if ((me.wrath==0 && Math.random()<0.15) || Math.random()<0.05)
+	{
+		if (Game.hasAura('Reaper of Fields')) list.push('dragon harvest');
+		if (Game.hasAura('Dragonflight')) list.push('dragonflight');
+	}
+					
+	if (this.last!='' && Math.random()<0.8 && list.indexOf(this.last)!=-1) list.splice(list.indexOf(this.last),1);//80% chance to force a different one
+	if (Math.random()<0.0001) list.push('blab');
+*/
+
+//scorn and foolsday options are ignored as they are not relevant for fc purpose in my opionon, also to keep the cookieinfo table uncomplicated
+
+var cookieinfo=new Array();	
+			
+console.log('Golden basic--------------------------------');
+var pool=pool1;
+var erg=calcprobs(pool,1); 
+cookieinfo[0]=new Array();
+pool.forEach(function(a,b){ cookieinfo[0][a.name]={odds:[erg[0][b],0,0,0]};});
+
+			
+console.log('Wrath basic--------------------------------');
+pool=pool2;
+var erg=calcprobs(pool,2); 
+pool.forEach(function(a,b){ 
+	if (typeof cookieinfo[0][a.name]=='undefined') cookieinfo[0][a.name]={odds:[0,0,0,0]};
+	cookieinfo[0][a.name].odds[3]=erg[0][b];});
+
+console.log('Wrath anger--------------------------------');
+var erg=combinetranstable(transtable1,2/3,transtable2,1/3);
+nlist.forEach(function(a,b){ 
+	if (typeof cookieinfo[0][a]=='undefined') cookieinfo[0][a]={odds:[0,0,0,0]};
+	cookieinfo[0][a].odds[1]=erg[0][b];});
+
+console.log('Wrath displeased--------------------------------');
+var erg=combinetranstable(transtable1,1/3,transtable2,2/3);
+nlist.forEach(function(a,b){ 
+	if (typeof cookieinfo[0][a]=='undefined') cookieinfo[0][a]={odds:[0,0,0,0]};
+	cookieinfo[0][a].odds[2]=erg[0][b];});		
+
+console.log('Golden basic + 1 dragon--------------------------------------------');
+pool=pool1;
+pool.splice(-1,0,{name: 'harvest', percent: 0.15});
+var erg=calcprobs(pool,1); 
+cookieinfo[1]=new Array();
+pool.forEach(function(a,b){
+	if (typeof cookieinfo[1][a.name]=='undefined') cookieinfo[1][a.name]={odds:[0,0,0,0]};
+	cookieinfo[1][a.name].odds[0]=erg[0][b];});
+
+console.log('Wrath basic + 1 dragon--------------------------------------------');
+var pool=pool2;
+pool.splice(-1,0,{name: 'harvest', percent: 0.05});
+var erg=calcprobs(pool,2); 
+pool.forEach(function(a,b){ 
+	if (typeof cookieinfo[1][a.name]=='undefined') cookieinfo[1][a.name]={odds:[0,0,0,0]};
+	cookieinfo[1][a.name].odds[3]=erg[0][b];});
+
+console.log('Wrath anger + 1 dragon--------------------------------');
+var erg=combinetranstable(transtable1,2/3,transtable2,1/3);
+nlist.forEach(function(a,b){ 
+	if (typeof cookieinfo[1][a]=='undefined') cookieinfo[1][a]={odds:[0,0,0,0]};
+	cookieinfo[1][a].odds[1]=erg[0][b];});
+
+console.log('Wrath displeased + 1 dragon--------------------------------');
+var erg=combinetranstable(transtable1,1/3,transtable2,2/3);
+nlist.forEach(function(a,b){ 
+	if (typeof cookieinfo[1][a]=='undefined') cookieinfo[1][a]={odds:[0,0,0,0]};
+	cookieinfo[1][a].odds[2]=erg[0][b];});	
+	
+console.log('Golden basic + 2 dragon--------------------------------------------');
+pool=pool1;
+pool.splice(-1,0,{name: 'flight', percent: 0.15});
+var erg=calcprobs(pool,1); 
+cookieinfo[2]=new Array();
+pool.forEach(function(a,b){ 
+	if (typeof cookieinfo[2][a.name]=='undefined') cookieinfo[2][a.name]={odds:[0,0,0,0]};	
+	cookieinfo[2][a.name].odds[0]=erg[0][b];});
+//pool.splice(-3,2); //harvest und flight wieder raus
+
+console.log('Wrath basic + 2 dragon--------------------------------------------');
+pool=pool2;
+pool.splice(-1,0,{name: 'flight', percent: 0.05});
+var erg=calcprobs(pool,2); 
+pool.forEach(function(a,b){ 
+	if (typeof cookieinfo[2][a.name]=='undefined') cookieinfo[2][a.name]={odds:[0,0,0,0]};
+	cookieinfo[2][a.name].odds[3]=erg[0][b];});
+//pool.splice(-3,2); //harvest und flight wieder raus
+
+console.log('Wrath anger + 2 dragon--------------------------------');
+var erg=combinetranstable(transtable1,2/3,transtable2,1/3);
+nlist.forEach(function(a,b){ 
+	if (typeof cookieinfo[2][a]=='undefined') cookieinfo[2][a]={odds:[0,0,0,0]};
+	cookieinfo[2][a].odds[1]=erg[0][b];});
+
+console.log('Wrath displeased + 2 dragon--------------------------------');
+var erg=combinetranstable(transtable1,1/3,transtable2,2/3);
+nlist.forEach(function(a,b){ 
+	if (typeof cookieinfo[2][a]=='undefined') cookieinfo[2][a]={odds:[0,0,0,0]};
+	cookieinfo[2][a].odds[2]=erg[0][b];});	
+
+
+console.log(cookieinfo);
+}
+
+
+function calcprobs(pool,savetrans)
+{var primProbs=new Array();
+var conProbs=new Array();
+var actProbs=new Array();
+var table=new Array();
+for (var i=3; i<Math.pow(2,pool.length); i+=4) {
+	table[i]=new Array();
+	for (var j=0; j<pool.length; j++) {
+	if (i&(Math.pow(2,j))) {table[i].push(pool[j].percent);} else {table[i].push(1-pool[j].percent);};
+    }
+}  
+table.forEach(function(d,index){d.count1=0;d.prob1=d.reduce(function(a,b,c,e){{if (index&Math.pow(2,c)) e.count1++;return a*b;}},1);});
+pool.forEach(function(p,i){ primProbs[p.name]=table.reduce(function(a,b,c){ return (c&Math.pow(2,i))?(a+(b.prob1/b.count1)):a;},0 )});
+pool.forEach(function(x,y) { actProbs[x.name]=new Array();
+pool.forEach(function(p,i){ conProbs[p.name]=table.reduce(function(a,b,c){
+	if (x.name=='blab') return (c&Math.pow(2,i))?(a+(b.prob1/b.count1)):a;
+	else if (i==y) return a;
+	else if (c&Math.pow(2,i)) { return (a + (b.prob1 / (b.count1 - ((c&Math.pow(2,y))? 1:0))));}
+	else return a;},0 )});
+pool.forEach(function(a){actProbs[x.name][a.name]=0.2*primProbs[a.name]+0.8*conProbs[a.name];});
+});
+
+with (Matrix)
+{ var A = create(pool.length,pool.length);
+  var i=-1,j=-1;
+  pool.forEach(function(a) { i++;j=-1; pool.forEach(function(b){j++; A.mat[i][j]=actProbs[a.name][b.name];})});
+
+//  writeln('A');
+//	display(A,7);
+  if (savetrans==1) transtable1=A;
+  if (savetrans==2) transtable2=A;
+
+  var es = eigenstructure(A);
+
+//  nl(); writeln('V (eigenvectors for A)');
+//  display(es.V,7);
+//  nl(); writeln('L (block diagonal eigenvalue matrix for A)');
+//  display(es.L,7);
+  var sum=0;
+  var P=create(1,pool.length);
+  for (var i=0;i<pool.length;i++) { 
+  sum+=es.V.mat[i][0];
+    P.mat[0][i]=es.V.mat[i][0];
+  }
+  var R=mult(P,A);
+//  display(R,7);
+  
+  for (var i=0;i<pool.length;i++) { 
+    R.mat[0][i]=R.mat[0][i]*100/sum;
+  }
+//  display(R,7);
+  
+ }
+ return R.mat;
+}
+
+
+function combinetranstable(A,moda,B,modb) {
+// A belongs to pool1 (golden cookie)
+// B belongs to pool2 (wrath cookie)
+with (Matrix)
+{  var Aa,Bb,C,N;
+	
+	// both transition matrixes had to be of the same size and order of rows and cols. 
+    var hasname=-1;
+	nlist=new Array();
+    pool2.forEach(function(a,b){ if (nlist.indexOf(a.name)==-1) nlist.push(a.name);});
+	pool1.forEach(function(a,b){ if (nlist.indexOf(a.name)==-1) nlist.push(a.name);});
+	
+	//create a 0-Vector for easy filling a matrix with all 0;
+	N=create(nlist.length,1);
+	for (var i=0; i< N.m; i++) { N.mat[i][0]=0; }
+	Aa=diag(N); Bb=diag(N); //two zerofilled matrixes with the right size
+	
+	nlist.forEach(function(a,b) {
+		if ((hasname=pool1.findIndex(function(c){return c.name==a;}))!=-1) {
+			for (var p=0; p< A.m;p++) Aa.mat[b][nlist.indexOf(pool1[p].name)]=A.mat[hasname][p]; //copy row	
+			for (var p=0; p< A.n;p++) Aa.mat[nlist.indexOf(pool1[p].name)][b]=A.mat[p][hasname]; //copy col
+		}
+		if ((hasname=pool2.findIndex(function(c){return c.name==a;}))!=-1) {
+		   for (var p=0; p< B.m;p++) Bb.mat[b][nlist.indexOf(pool2[p].name)]=B.mat[hasname][p]; //copy row	
+           for (var p=0; p< B.n;p++) Bb.mat[nlist.indexOf(pool2[p].name)][b]=B.mat[p][hasname]; //copy col
+		}	
+		});
+		  	
+  C=add(scale(Aa,moda),scale(Bb,modb));
+//  display(A,7);display(Aa,7);display(B,7);display(Bb,7);display(C,7);
+
+  var es = eigenstructure(C);
+
+  var sum=0;
+  var P=create(1,C.m);
+  for (var i=0;i<C.m;i++) { 
+    sum+=es.V.mat[i][0];
+    P.mat[0][i]=es.V.mat[i][0];
+  }
+  var R=mult(P,C);
+  
+  for (var i=0;i<C.m;i++) { 
+    R.mat[0][i]=R.mat[0][i]*100/sum;
+  }
+  display(R,7);
+  
+ }
+ return R.mat;
+}	
+
+// ===================================== RUN =====================================
+// Standard function to run a Javascript program which outputs to web page.
+// The use of two different threads ensures that the output is cleared first.
+
+var startTime;
+function run()
+{ startTime = new Date();
+  startOutput(outputBox,'Running...');
+  setTimeout(run_aux,100);
+}
+function run_aux()
+{ //try
+  { main();
+  }
+ // catch (e)
+ // { if (e != null) writeln('***ERROR: '+e);
+ //   writeln('***Run terminated abnormally.');
+ // }
+  nl();
+  println('Run time = '+((new Date().getTime()-startTime.getTime())/1000).toFixed(2)+' sec');
+  endOutput();
+}
+
+// ===============================================================================
+</script>
+  </head> 
+  <body onload="init('input','output');"> 
+    <h1>Test of Matrix</h1>
+    <p>
+      <input type="button" value="Run" onclick="run(); return false;" />
+    </p>
+    <div id="output"></div>
+  </body> 
+</html> 

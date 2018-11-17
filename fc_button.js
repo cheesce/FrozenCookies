@@ -695,15 +695,15 @@ function FCMenu() {
         // Golden Cookies
         subsection = $('<div>').addClass('subsection');
         subsection.append($('<div>').addClass('title').html('Golden Cookie Information'));
-        currentCookies = Math.min(Game.cookies, FrozenCookies.targetBank.cost);
+        currentCookies = Game.cookies;
         maxCookies = bestBank(Number.POSITIVE_INFINITY).cost;
-        isTarget = FrozenCookies.targetBank.cost == FrozenCookies.currentBank.cost;
+        isTarget = 1;
         isMax = currentCookies == maxCookies;
         targetTxt = isTarget ? '' : ' (Building Bank)';
         maxTxt = isMax ? ' (Max)' : '';
         subsection.append($('<div>').addClass('listing').html('<b>Current Average Cookie Value' + targetTxt + maxTxt + ':</b> ' + Beautify(cookieValue(currentCookies))));
         if (!isTarget) {
-            subsection.append($('<div>').addClass('listing').html('<b>Target Average Cookie Value:</b> ' + Beautify(cookieValue(FrozenCookies.targetBank.cost))));
+            subsection.append($('<div>').addClass('listing').html('<b>Target Average Cookie Value:</b> ' + Beautify(cookieValue(currentCookies))));
 		}
         if (!isMax) {
             subsection.append($('<div>').addClass('listing').html('<b>Max Average Cookie Value:</b> ' + Beautify(cookieValue(maxCookies))));

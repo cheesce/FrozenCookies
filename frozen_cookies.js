@@ -23,10 +23,6 @@ var script_list = [
     '//cdnjs.cloudflare.com/ajax/libs/jqPlot/1.0.9/plugins/jqplot.highlighter.min.js',
     '//cdnjs.cloudflare.com/ajax/libs/jqPlot/1.0.9/plugins/jqplot.logAxisRenderer.min.js',
     '//cdnjs.cloudflare.com/ajax/libs/jqPlot/1.0.9/plugins/jqplot.cursor.min.js',
-    FrozenCookies.baseUrl + '/IOUtils.js',
-    FrozenCookies.baseUrl + '/EVDecomposition.js',
-    FrozenCookies.baseUrl + '/LUDecomposition.js',
-    FrozenCookies.baseUrl + '/Matrix.js',
     FrozenCookies.baseUrl + '/cc_upgrade_prerequisites.js',
     FrozenCookies.baseUrl + '/fc_button.js',
 	FrozenCookies.baseUrl + '/fc_main.js'  
