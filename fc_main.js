@@ -165,7 +165,7 @@ function fcAscend(bypass) { //ok
   Game.oldAscend(bypass);	
 }
 
-function fcReset() {
+function fcReset() { //ok
     StopTimer();
     Game.oldReset();
     FrozenCookies.frenzyTimes = {};
@@ -433,6 +433,8 @@ function cookieValue(bankAmount, wrathValue, wrinklerCount) { // work needed
     var durationMod = gcEffectDuration(wrathValue);
     var valueMod = gcMult(wrathValue);
 	
+	// needed: as clicks and wrinkler gain more/less cookies the difference should be included, but no idea how to do it yet
+	
 	//calculate mean of all buildings 
 	var buildingcount=0;
 	gcBuildingPower= Game.ObjectsById.reduce(function(a,b) { if(b.amount>=10) {buildingcount++;} return a+((b.amount>=10)?b.amount/10:0);},0);
@@ -445,7 +447,7 @@ function cookieValue(bankAmount, wrathValue, wrinklerCount) { // work needed
 	// chance: 25%
 	// time: 30*effectDurMod
 	// power: amount/10 + 1
-    value += cookieInfo[index].building.odds[wrathValue] * cps * gcBuildingPower * Math.ceil(durationMod * 30); // +value that clicks an wrinkler gain more
+    value += cookieInfo[index].building.odds[wrathValue] * cps * gcBuildingPower * Math.ceil(durationMod * 30); 
 	
 	// free sugar lump (if possible)
 	// chance: 0.05%	
@@ -455,14 +457,14 @@ function cookieValue(bankAmount, wrathValue, wrinklerCount) { // work needed
 	// chance: 100% on normal
 	// time: 77*effectDurMod
 	// power: 7
-    value += cookieInfo[index].frenzy.odds[wrathValue] * cps * 6 * Math.ceil(durationMod * 77); // +value that clicks an wrinkler gain more
+    value += cookieInfo[index].frenzy.odds[wrathValue] * cps * 6 * Math.ceil(durationMod * 77); 
 	
 	// dragon harvest (needs aura Reaper of Fields)
 	// chance: 15% or 5% on wrath
 	// time: 60*effectDurMod
 	// power: 15
     if (Game.hasAura('Reaper of Fields'))
-		value += cookieInfo[index].harvest.odds[wrathValue] * cps * 14 * Math.ceil(durationMod * 60); // +value that clicks an wrinkler gain more
+		value += cookieInfo[index].harvest.odds[wrathValue] * cps * 14 * Math.ceil(durationMod * 60);
 	
 	// everything must go (only fools season)
 	// chance: 5%
@@ -484,19 +486,19 @@ function cookieValue(bankAmount, wrathValue, wrinklerCount) { // work needed
 	// chance: 30% on wrath
 	// time: 6*effectDurMod
 	// power: 666
-    value += cookieInfo[index].blood.odds[wrathValue] * cps * 665 * Math.ceil(durationMod * 6); // +value that clicks an wrinkler gain more
+    value += cookieInfo[index].blood.odds[wrathValue] * cps * 665 * Math.ceil(durationMod * 6); 
 
 	// clot:
 	// chance: 100% on wrath + 200% if hasGod(scorn)
 	// time: 66*effectDurMod
 	// power: 0.5
-    value += cookieInfo[index].clot.odds[wrathValue] * cps * -0.5 * Math.ceil(durationMod * 66); // -value that clicks an wrinkler gain more
+    value += cookieInfo[index].clot.odds[wrathValue] * cps * -0.5 * Math.ceil(durationMod * 66); 
 	
 	// cursed finger (wrath only)
 	// chance: 10% 
 	// time: 10*effectDurMod
 	// power: Game.cookiesPs*Math.ceil(10*effectDurMod)
-    value += cookieInfo[index].finger.odds[wrathValue] * ((cps * -1)+(frencyCps*Math.ceil(10*durationMod))-clickCps) * Math.ceil(durationMod * 10); // -value that clicks an wrinkler gain more
+    value += cookieInfo[index].finger.odds[wrathValue] * ((cps * -1)+(frencyCps*Math.ceil(10*durationMod))-clickCps) * Math.ceil(durationMod * 10); 
 	
 	// click frenzy
 	// chance: (Math.random()<0.1 && (Math.random()<0.05 || !Game.hasBuff('Dragonflight')))
@@ -526,9 +528,7 @@ function cookieValue(bankAmount, wrathValue, wrinklerCount) { // work needed
 	// cookie strom drop
 	// cookies: Math.max(mult*(Game.cookiesPs*60*Math.floor(Math.random()*7+1)),Math.floor(Math.random()*7+1));
     value += cookieInfo[index].storm.odds[wrathValue] * 7*0.5*Games.fps *(Math.max(valueMod*(cps*60*3.5), 3.5));
-	
-	//all above have 80% to be removed if equal to last effect
-	
+		
 	// blab 
 	// chance: 0.1%
 	value +=0;
@@ -536,18 +536,26 @@ function cookieValue(bankAmount, wrathValue, wrinklerCount) { // work needed
     return value;
 }
 
+function calculateChainValue(amount, cps, wrathValue) { //ok, awfull but exact
+ 	var digit=(wrathValue==0)?7:6;
+	var mult=gcMult(wrathValue);
+	var chainstart=1+Math.max(0,Math.ceil(Math.log(amount)/Math.LN10)-10);
+    var maxpayout=Math.min(cps*60*60*6,amount*0.5)*mult;
+	var sum=0,p=0,pn=0;
+	mult*=digit*(1/9);
+	while (1)
+	{	p=Math.max(digit,Math.min(Math.floor(Math.pow(10,chainstart)*mult),maxpayout)); 
+		pn=Math.max(digit,Math.min(Math.floor(Math.pow(10,chainstart+1)*mult),maxpayout));
+		sum+=p*0.99; //1% fail rate
+		chainstart+=1;
+		if (pn >=maxpayout) break;
+	}
+	return sum; 
+	}
+
 function goldenCps(gcValue) { //ok
     var averageTime = probabilitySpan('golden', 0, 0.5) / Game.fps;
     return gcValue / averageTime;
-}
-
-function gcEfficiency() {
-    if (goldenCps(weightedCookieValue()) <= 0) {
-        return Number.MAX_VALUE;
-	}
-    var cost = Math.max(0, (maxLuckyValue() * 10 - Game.cookies));
-    var deltaCps = goldenCps(weightedCookieValue() - weightedCookieValue(true));
-    return divCps(cost, deltaCps);
 }
 
 function gcEffectDuration(wrathValue) { //ok
@@ -581,54 +589,6 @@ function gcMult(wrathValue) { //ok
 	if (!wrathValue) mult*=Game.eff('goldenCookieGain');
 	else mult*=Game.eff('wrathCookieGain');
 	return mult;
-}
-
-function calculateChainValue(amount, cps, wrathValue) { //ok, awfull but exact
- 	var digit=(wrathValue==0)?7:6;
-	var mult=gcMult(wrathValue);
-	var chainstart=1+Math.max(0,Math.ceil(Math.log(amount)/Math.LN10)-10);
-    var maxpayout=Math.min(cps*60*60*6,amount*0.5)*mult;
-	var sum=0,p=0,pn=0;
-	mult*=digit*(1/9);
-	while (1)
-	{	p=Math.max(digit,Math.min(Math.floor(Math.pow(10,chainstart)*mult),maxpayout)); 
-		pn=Math.max(digit,Math.min(Math.floor(Math.pow(10,chainstart+1)*mult),maxpayout));
-		sum+=p*0.99; //1% fail rate
-		chainstart+=1;
-		if (pn >=maxpayout) break;
-	}
-	return sum; 
-}
-
-function weightedCookieValue(useCurrent) {
-    var cps = Game.unbuffedCps;
-    var lucky_mod = Game.Has('Get lucky');
-    var base_wrath = lucky_mod ? 401.835 * cps : 396.51 * cps;
-    //  base_wrath += 192125500000;
-    var base_golden = lucky_mod ? 2804.76 * cps : 814.38 * cps;
-    if (Game.cookiesEarned >= 100000) {
-        var remainingProbability = 1;
-        var startingValue = '6666';
-        var rollingEstimate = 0;
-        for (var i = 5; i < Math.min(Math.floor(Game.cookies).toString().length, 12); i++) {
-            startingValue += '6';
-            rollingEstimate += 0.1 * remainingProbability * startingValue;
-            remainingProbability -= remainingProbability * 0.1;
-		}
-        rollingEstimate += remainingProbability * startingValue;
-        //    base_golden += 10655700000;
-        base_golden += rollingEstimate * 0.0033;
-        base_wrath += rollingEstimate * 0.0595;
-	}
-    if (useCurrent && Game.cookies < maxLuckyBank()) {
-        if (lucky_mod) {
-            base_golden -= ((900 * cps) - Math.min(900 * cps, Game.cookies * 0.15)) * 0.49 * 0.5 + (maxLuckyValue() - (Game.cookies * 0.15)) * 0.49 * 0.5;
-			} else {
-            base_golden -= (maxLuckyValue() - (Game.cookies * 0.15)) * 0.49;
-            base_wrath -= (maxLuckyValue() - (Game.cookies * 0.15)) * 0.29;
-		}
-	}
-    return Game.elderWrath / 3.0 * base_wrath + (3 - Game.elderWrath) / 3.0 * base_golden;
 }
 
 // Earth Shatter
@@ -888,19 +848,6 @@ function cookieEfficiency(startingPoint, bankAmount) {
 
 function delayAmount() {
     return bestBank(nextChainedPurchase().efficiency).cost;
-}
-
-function maxLuckyValue() {
-    var gcMod = Game.Has('Get lucky') ? 6300 : 900;
-    return Game.unbuffedCps * gcMod;
-}
-
-function maxLuckyBank() {
-    return Game.Has('Get lucky') ? luckyFrenzyBank() : luckyBank();
-}
-
-function maxCookieTime() {
-    return Game.shimmerTypes.golden.maxTime
 }
 
 // General buying stuff
