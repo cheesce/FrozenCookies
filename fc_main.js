@@ -451,7 +451,7 @@ function cookieValue(bankAmount, wrathValue, wrinklerCount) { // work needed
 	//calculate mean of all buildings 
 	var buildingcount=0;
 	gcBuildingPower= Game.ObjectsById.reduce(function(a,b) { if(b.amount>=10) {buildingcount++;} return a+((b.amount>=10)?b.amount/10:0);},0);
-    if (buidingcount==0) gcBuildingPower=0; else gcBuildingPower/=buildingcount;
+    if (buildingcount==0) gcBuildingPower=0; else gcBuildingPower/=buildingcount;
 	
 	var index= Game.hasAura('Dragonflight')?1:0 + Game.hasAura('Reaper of Fields')?1:0;
 	var value = 0;
