@@ -429,6 +429,15 @@ function nextHC(tg) {
     return tg ? toGo : timeDisplay(divCps(toGo, Game.cookiesPs));
 }
 
+function maxLuckyBank() {
+    return Game.Has('Get lucky') ? luckyFrenzyBank() : luckyBank();
+}
+
+function maxLuckyValue() {
+    var gcMod = Game.Has('Get lucky') ? 6300 : 900;
+    return Game.unbuffedCps * gcMod;
+}
+
 function timeDisplay(seconds) {
     if (seconds === '---' || seconds === 0) {
         return 'Done!';
