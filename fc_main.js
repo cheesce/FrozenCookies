@@ -498,7 +498,7 @@ function cookieValue(bankAmount, wrathValue, wrinklerCount) { // work needed
 	// chance: 10% 
 	// time: 10*effectDurMod
 	// power: Game.cookiesPs*Math.ceil(10*effectDurMod)
-    value += cookieInfo[index].finger.odds[wrathValue] * ((cps * -1)+(frencyCps*Math.ceil(10*durationMod))-clickCps) * Math.ceil(durationMod * 10); 
+    value += cookieInfo[index].finger.odds[wrathValue] * ((cps * -1)+(frenzyCps*Math.ceil(10*durationMod))-clickCps) * Math.ceil(durationMod * 10); 
 	
 	// click frenzy
 	// chance: (Math.random()<0.1 && (Math.random()<0.05 || !Game.hasBuff('Dragonflight')))
