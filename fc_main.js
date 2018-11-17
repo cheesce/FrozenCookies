@@ -527,7 +527,7 @@ function cookieValue(bankAmount, wrathValue, wrinklerCount) { // work needed
 	// power: 7  	
 	// cookie strom drop
 	// cookies: Math.max(mult*(Game.cookiesPs*60*Math.floor(Math.random()*7+1)),Math.floor(Math.random()*7+1));
-    value += cookieInfo[index].storm.odds[wrathValue] * 7*0.5*Games.fps *(Math.max(valueMod*(cps*60*3.5), 3.5));
+    value += cookieInfo[index].storm.odds[wrathValue] * 7*0.5*Game.fps *(Math.max(valueMod*(cps*60*3.5), 3.5));
 		
 	// blab 
 	// chance: 0.1%
