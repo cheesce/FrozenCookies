@@ -80,7 +80,7 @@ function FCStart() { //ok
 	Game.oldAscend = Game.Ascend;
 	Game.Ascend = fcAscend;
 
-	Game.Win = fcWin; //Block showing fast-click achievments every few seconds
+//	Game.Win = fcWin; //Block showing fast-click achievments every few seconds
     
 	Game.oldBackground = Game.DrawBackground;   
     Game.DrawBackground = function() {
