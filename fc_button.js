@@ -689,16 +689,16 @@ function FCMenu() {
         subsection.append($('<div>').addClass('title').html('Golden Cookie Information'));
         
         if (FrozenCookies.gcclicks>0)
-		{   subsection.append($('<div>').addClass('listing').html('<b>GoldenCookie calc CPS :</b> ' + Beautify(goldenCps(cookieValue()))));
+		{   subsection.append($('<div>').addClass('listing').html('<b>GoldenCookie calc CPS :</b> ' + Beautify(goldenCps())));
 			subsection.append($('<div>').addClass('listing').html('<b>GoldenCookie calc Value:</b> ' + Beautify(cookieValue())));
 			subsection.append($('<div>').addClass('listing').html('<b>GoldenCookie calc Time</b> ' + Beautify(probabilitySpan('golden', 0, 0.5) / Game.fps)+' seconds'));
 			subsection.append($('<div>').addClass('listing').html('<b>GoldenCookie avg CPS:</b> ' + Beautify((FrozenCookies.gcclicksvalue/FrozenCookies.gcclicks)/((FrozenCookies.gcclickstimer/1000)/FrozenCookies.gcclicks))));
 			subsection.append($('<div>').addClass('listing').html('<b>GoldenCookie avg Value:</b> ' + Beautify((FrozenCookies.gcclicksvalue/FrozenCookies.gcclicks))));
 			subsection.append($('<div>').addClass('listing').html('<b>GoldenCookie avg Time</b> ' + Beautify(((FrozenCookies.gcclickstimer/1000)/FrozenCookies.gcclicks))+' seconds'));
 		}
-        subsection.append($('<div>').addClass('listing').html('<b>Lucky Cookie Value:</b> ' + Beautify(gcMult(Game.elderWrath)*Math.min(Game.cookies*0.15,Game.cookiesPs*60*15)+13)));
+        subsection.append($('<div>').addClass('listing').html('<b>Lucky Cookie Value:</b> ' + Beautify(gcMult()*Math.min(Game.cookies*0.15,Game.cookiesPs*60*15)+13)));
         subsection.append($('<div>').addClass('listing').html('<b>Cookie Bank Required for Max Lucky:</b> ' + Beautify(luckyBank())));
-        subsection.append($('<div>').addClass('listing').html('<b>Chain Cookie Value:</b> ' + Beautify(calculateChainValue(Game.cookies, Game.cookiesPs, Game.elderWrath))));
+        subsection.append($('<div>').addClass('listing').html('<b>Chain Cookie Value:</b> ' + Beautify(calculateChainValue())));
         subsection.append($('<div>').addClass('listing').html('<b>Cookie Bank Required for Max Chain:</b> ' + Beautify(chainBank())));
         subsection.append($('<div>').addClass('listing').html('<b>Golden Cookie Clicks:</b> ' + Beautify(Game.goldenClicks)));
         subsection.append($('<div>').addClass('listing').html('<b>Missed Golden Cookie Clicks:</b> ' + Beautify(Game.missedGoldenClicks)));
@@ -831,11 +831,10 @@ function FCMenu() {
         buildTable.append($('<tr><td colspan="5">&nbsp;</td></tr>').css('border-top', '2px dashed #999'));
 		
 		// Bank infos
-		banks = [{name: 'Lucky Bank', cost: luckyBank(), efficiency: cookieEfficiency(Game.cookies, luckyBank())},
-			{name: 'Lucky Frenzy Bank', cost: luckyFrenzyBank(), efficiency: cookieEfficiency(Game.cookies, luckyFrenzyBank())},
-			{name: 'Chain Bank', cost: chainBank(), efficiency: cookieEfficiency(Game.cookies, chainBank())},
-			{name: 'Harvest Bank', cost: harvestBank(), efficiency: cookieEfficiency(Game.cookies, harvestBank())},
-			{name: 'Edifice Bank', cost: edificeBank(), efficiency: cookieEfficiency(Game.cookies, edificeBank())}];
+		banks = [{name: 'Lucky Bank', cost: luckyBank(), efficiency: bankEfficiency(Game.cookies, luckyBank())},
+			{name: 'Chain Bank', cost: chainBank(), efficiency: bankEfficiency(Game.cookies, chainBank())},
+			{name: 'Harvest Bank', cost: harvestBank(), efficiency: bankEfficiency(Game.cookies, harvestBank())},
+			{name: 'Edifice Bank', cost: edificeBank(), efficiency: bankEfficiency(Game.cookies, edificeBank())}];
 		
         banks.forEach(function(bank) {
             var deltaCps = effectiveCps(bank.cost) - effectiveCps(Game.cookies);

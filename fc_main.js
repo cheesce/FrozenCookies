@@ -415,10 +415,10 @@ function reindeerCps(cps,wrathValue,aura) { //ok
 }
 
 //Golden Cookie Stuff
-function cookieValue(bankAmount, wrathValue, wrinklerCount) { // work needed
+function cookieValue(amount, wrathValue, wrinklerCount) { // work needed
     wrathValue = wrathValue != null ? wrathValue : Game.elderWrath;
     wrinklerCount = wrinklerCount != null ? wrinklerCount : getactiveWrinklers();
-    var amount = bankAmount != null ? bankAmount : Game.cookies;
+    amount = amount != null ? amount : Game.cookies;
 	var wrinkler = wrinklerMod(wrinklerCount);
     var cps = Game.cookiesPs;//Game.unbuffedCps;
     var clickCps = baseClickingCps(FrozenCookies.autoClick * FrozenCookies.cookieClickSpeed);
@@ -530,6 +530,9 @@ function cookieValue(bankAmount, wrathValue, wrinklerCount) { // work needed
 }
 
 function calculateChainValue(amount, cps, wrathValue) { //ok, awfull but exact
+    wrathValue = wrathValue != null ? wrathValue : Game.elderWrath;
+    amount = amount != null ? amount : Game.cookies;
+	cps= cps != null ? cps : Game.cookiesPs;
  	var digit=(wrathValue==0)?7:6;
 	var mult=gcMult(wrathValue);
 	var chainstart=1+Math.max(0,Math.ceil(Math.log(amount)/Math.LN10)-10);
@@ -540,15 +543,17 @@ function calculateChainValue(amount, cps, wrathValue) { //ok, awfull but exact
 	{	p=Math.max(digit,Math.min(Math.floor(Math.pow(10,chainstart)*mult),maxpayout)); 
 		pn=Math.max(digit,Math.min(Math.floor(Math.pow(10,chainstart+1)*mult),maxpayout));
 		sum+=p*0.99; //1% fail rate
+		console.log(p);
 		chainstart+=1;
 		if (pn >=maxpayout) break;
 	}
 	return sum; 
-	}
+}
 
-function goldenCps(gcValue) { //ok
+function goldenCps(amount) { //ok
+    amount = amount != null ? amount : cookieValue();
     var averageTime = probabilitySpan('golden', 0, 0.5) / Game.fps;
-    return gcValue / averageTime;
+    return amount / averageTime;
 }
 
 function gcEffectDuration(wrathValue) { //ok
@@ -694,20 +699,16 @@ function edificeBank() { //as edifice is random, choose the highest price of all
 	return buildings.reduce(function(a,b){ return Math.max(a,b);},0)/2;	
 }
 
-function luckyBank() { //ok
-    return Game.unbuffedCps * 60 * 100;
+function luckyBank(cps) { //ok, exact
+    cps = cps != null ? cps : Game.unbuffedCps;
+    return cps * 60 * 100;
 }
 
-function luckyFrenzyBank() { //ok
-    return Game.unbuffedCps * 60 * 100 * 7;
-}
-
-function chainBank() { // ??? 
-    //  More exact
-    var digit = Game.elderWrath ? 6:7;
- //   return 4 * Math.floor(digit / 9 * Math.pow(10, Math.floor(Math.log(54*60*60 * Game.cookiesPs / digit) / Math.LN10)));
-    return Game.cookiesPs * 60 * 60 * 6 * 4;
-	// 54/digit = 7.714 or 9
+function chainBank(cps, wrathValue) { //ok, exact
+    wrathValue = wrathValue != null ? wrathValue : Game.elderWrath;
+    cps = cps != null ? cps : Game.unbuffedCps;
+    var digit = wrathValue ? 6:7;
+	return 1 + 2*(Math.floor(7/9*Math.pow(10,Math.floor(Math.log10(60*60*6*cps*gcMult())))));
 }
 
 function harvestBank() {
@@ -799,16 +800,16 @@ function harvestBank() {
     return Game.unbuffedCps * 60 * FrozenCookies.harvestMinutes * FrozenCookies.harvestFrenzy * FrozenCookies.harvestBuilding / Math.pow(10, FrozenCookies.maxSpecials) / FrozenCookies.harvestMaxPercent;
 }
 
-function bestBank(minEfficiency) {
+function bestBank(minEfficiency) { //ok
  var results = {};
-    var bankLevels = [0, luckyBank(), luckyFrenzyBank(), chainBank()];
+    var bankLevels = [0, luckyBank(), chainBank()];
 	if ((FrozenCookies.autoSpell == 3) || FrozenCookies.holdSEBank) bankLevels.push(edificeBank());
 	if (FrozenCookies.setHarvestBankPlant) bankLevels.push(harvestBank());
 	var bestBank=bankLevels.sort(function(a, b) { return b - a;})
 	.map(function(bank) {
 		return {
             'cost': bank,
-            'efficiency': cookieEfficiency(Game.cookies, bank)
+            'efficiency': bankEfficiency(Game.cookies, bank)
 		};
 	}
 	)
@@ -816,25 +817,18 @@ function bestBank(minEfficiency) {
 	return (bank.efficiency >= 0 && bank.efficiency <= minEfficiency) ? bank : null;}
 	);
    if (bestBank[0] != 'undefined') return bestBank[0];
-   else return { 'cost': 0, 'efficiency': 1};
+   else return { 'cost': 0, 'efficiency': Number.POSITIVE_INFINITY};
  }
 
-function cookieEfficiency(startingPoint, bankAmount) {
-    var results = Number.MAX_VALUE;
-    var currentValue = cookieValue(startingPoint);
-    var bankValue = cookieValue(bankAmount);
-    var bankCps = goldenCps(bankValue);
-    if (bankCps > 0) {
-        if (bankAmount <= startingPoint) {
-            results = 0;
-			} else {
-            var cost = Math.max(0, (bankAmount - startingPoint));
-            var deltaCps = goldenCps(bankValue - currentValue);
-            results = divCps(cost, deltaCps);
-		}
+function bankEfficiency(startingPoint, bankAmount) { //ok
+    var results;
+	if (bankAmount <= startingPoint) {
+        results = Number.POSITIVE_INFINITY;
 	}
-	else if (bankAmount <= startingPoint) {
-        results = 0;
+    else
+	{	var cost = bankAmount - startingPoint;
+        var deltaCps = effectiveCps(bankValue) - effectiveCps(startingPoint);
+        results = divCps(cost, deltaCps);
 	}
     return results;
 }
