@@ -1492,7 +1492,7 @@ function divCps(value, cps) { //ok
 }
 
 function baseClickingCps(clickSpeed) { //ok
-    clickSpeed= (clickSpeed=!null) ? clickSpeed : FrozenCookies.cookieClickSpeed * FrozenCookies.autoClick;
+    clickSpeed= ((clickSpeed=!null) ? clickSpeed : FrozenCookies.cookieClickSpeed * FrozenCookies.autoClick);
 	var cpc = Game.computedMouseCps / clickBuffBonus();
     return clickSpeed * cpc;
 }
