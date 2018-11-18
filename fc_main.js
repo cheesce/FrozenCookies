@@ -822,7 +822,7 @@ function bestBank(minEfficiency) { //ok
 function bankEfficiency(startAmount, bankAmount) { //ok
     var results;
 	if (bankAmount <= startAmount) {
-        results = Number.POSITIVE_INFINITY;
+        results = 0;
 	}
     else
 	{	var cost = bankAmount - startAmount;

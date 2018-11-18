@@ -837,7 +837,7 @@ function FCMenu() {
 			{name: 'Edifice Bank', cost: edificeBank(), efficiency: bankEfficiency(Game.cookies, edificeBank())}];
 		
         banks.forEach(function(bank) {
-            var deltaCps = effectiveCps(bank.cost) - effectiveCps(Game.cookies);
+            var deltaCps = Math.min(0,effectiveCps(bank.cost) - effectiveCps(Game.cookies));
             buildTable.append($('<tr><td colspan="2"><b>' + bank.name + (deltaCps === 0 ? ' (*)' : '') + '</b></td><td>' + Beautify(bank.efficiency) + '</td><td>' + Beautify(bank.cost) + '</td><td>' + Beautify(deltaCps) + '</td></tr>'));
 		});
 		
