@@ -884,8 +884,8 @@ function checkPrices(currentUpgrade) {
 
 function purchaseEfficiency(price, deltaCps, baseDeltaCps, currentCps) { //ok
     var efficiency = divCps(price, currentCps); //Number.POSITIVE_INFINITY;
-    if (deltaCps > 0) efficiency += 0.5*divCps(price, deltaCps);
-	else if(baseDeltaCps > 0) efficiency += 0.5*divCps(price, baseDeltaCps);
+    if (deltaCps > 0) efficiency += divCps(price, deltaCps);
+	else if(baseDeltaCps > 0) efficiency += divCps(price, baseDeltaCps);
     return efficiency;
 }
 
@@ -1077,7 +1077,7 @@ function upgradeStats(recalculate) { //ok
 			upgradeToggle(current, 1, reverseFunctions);
 			var deltaCps = cpsNew - cpsOrig;
 			var baseDeltaCps = baseCpsNew - baseCpsOrig;
-			var efficiency = purchaseEfficiency(cost, deltaCps, baseDeltaCps, cpsOrig);
+			var efficiency = purchaseEfficiency(cost, deltaCps, baseDeltaCps, baseCpsOrig);
 //			var priceReduction=(discountOrig==discountNew)? 0 : checkPrices(current);
 //			if (priceReduction > cost) efficiency = 1;			
 			return {
