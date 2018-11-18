@@ -705,8 +705,8 @@ function luckyFrenzyBank() { //ok
 function chainBank() { // ??? 
     //  More exact
     var digit = Game.elderWrath ? 6:7;
-    return 4 * Math.floor(digit / 9 * Math.pow(10, Math.floor(Math.log(54*60*60 * Game.unbuffedCps / digit) / Math.LN10)));
-    //  return Game.unbuffedCps * 60 * 60 * 6 * 4;
+ //   return 4 * Math.floor(digit / 9 * Math.pow(10, Math.floor(Math.log(54*60*60 * Game.cookiePs / digit) / Math.LN10)));
+    return Game.cookiePs * 60 * 60 * 6 * 4;
 	// 54/digit = 7.714 or 9
 }
 
@@ -1001,7 +1001,7 @@ function buildingStats(recalculate) { //ok
 				return null;
 			}
             buildingToggle(current,0);
-            var baseCpsNew = FrozenCookies.calculatedunbuffedCps;
+            var baseCpsNew = FrozenCookies.calculatedCps;+baseClickingCpsNew();//FrozenCookies.calculatedunbuffedCps;
             var cpsNew = effectiveCpsNew(Game.cookies); 
             buildingToggle(current,1);
             var deltaCps = cpsNew - cpsOrig;
@@ -1071,7 +1071,7 @@ function upgradeStats(recalculate) { //ok
 			var cost = upgradePrereqCost(current);
 //			var discountsOrig = totalDiscount() + totalDiscount(true);
 			var reverseFunctions = upgradeToggle(current,0);
-			var baseCpsNew =FrozenCookies.calculatedunbuffedCps;
+            var baseCpsNew = FrozenCookies.calculatedCps;+baseClickingCpsNew();//FrozenCookies.calculatedunbuffedCps;
 			var cpsNew = effectiveCpsNew(Game.cookies);
 //			var discounsNew = (discounts == (totalDiscount() + totalDiscount(true))) 
 			upgradeToggle(current, 1, reverseFunctions);
