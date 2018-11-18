@@ -549,7 +549,6 @@ function calculateChainValue(amount, cps, wrathValue) { //ok, awfull but exact
 	{	p=Math.max(digit,Math.min(Math.floor(Math.pow(10,chainstart)*mult),maxpayout)); 
 		pn=Math.max(digit,Math.min(Math.floor(Math.pow(10,chainstart+1)*mult),maxpayout));
 		sum+=p*0.99; //1% fail rate
-		console.log(p);
 		chainstart+=1;
 		if (pn >=maxpayout) break;
 	}
@@ -820,14 +819,14 @@ function bestBank(minEfficiency) { //ok
    else return { 'cost': 0, 'efficiency': Number.POSITIVE_INFINITY};
  }
 
-function bankEfficiency(startingPoint, bankAmount) { //ok
+function bankEfficiency(startAmount, bankAmount) { //ok
     var results;
-	if (bankAmount <= startingPoint) {
+	if (bankAmount <= startAmount) {
         results = Number.POSITIVE_INFINITY;
 	}
     else
-	{	var cost = bankAmount - startingPoint;
-        var deltaCps = effectiveCps(bankValue) - effectiveCps(startingPoint);
+	{	var cost = bankAmount - startAmount;
+        var deltaCps = effectiveCps(bankAmount) - effectiveCps(startAmount);
         results = divCps(cost, deltaCps);
 	}
     return results;
