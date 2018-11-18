@@ -80,7 +80,7 @@ function FCStart() { //ok
 	.replace(/Game\.computedMouseCps/g, 'FrozenCookies.calculatedcomputedMouseCps')
 	.replace(/Game\.globalCpsMult/g, 'mult')
 	.replace(/Game\.computeLumpTimes\(\)\;/g, '')
-	.replace(/\(rawCookiesPs/g,'0')); //prevent getting cps achievements
+	.replace(/\(rawCookiesPs/g,'(0')); //prevent getting cps achievements
 
 	Game.sayTime = function(time, detail) {
         return timeDisplay(time / Game.fps);
