@@ -73,7 +73,7 @@ function FCStart() { //ok
 	FrozenCookies.calculatedCps=0;
 	FrozenCookies.calculatedunbuffedCps=0;
 	FrozenCookies.calculatedcomputedMouseCps
-	FrozenCookies.calculatedCpsbyType=[];
+	FrozenCookies.calculatedCpsByType=[];
 	eval('FrozenCookies.safeGainsCalc = ' + Game.CalculateGains.toString()
 	.replace(/Game\.cookiesPs/g, 'FrozenCookies.calculatedCps')
 	.replace(/Game\.unbuffedCps/g, 'FrozenCookies.calculatedunbuffedCps')
