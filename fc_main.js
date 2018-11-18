@@ -994,7 +994,8 @@ function nextChainedPurchase(recalculate) { //ok
 function buildingStats(recalculate) { //ok
     if (recalculate) {
         var buildingBlacklist = blacklist[FrozenCookies.blacklist].buildings;
-		var baseCpsOrig = Game.cookiesPs + baseClickingCps();//Game.unbuffedCps;        var cpsOrig = effectiveCps(Game.cookies);
+		var baseCpsOrig = Game.cookiesPs + baseClickingCps();//Game.unbuffedCps;
+        var cpsOrig = effectiveCps(Game.cookies);
 		FrozenCookies.caches.buildings = Game.ObjectsById.map(function(current, index) {
             if (isBuildingUnavailable(current, buildingBlacklist)) {
 				return null;
