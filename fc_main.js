@@ -2014,7 +2014,8 @@ function autoCookie() { //ok
 			}
 		}
 	}
-    if (FrozenCookies.frequency) {
+    if (Game.T%(Game.fps*5)==0 && !Game.mouseDown && (Game.onMenu=='fc_menu') Game.UpdateMenu();
+	if (FrozenCookies.frequency) {
         FrozenCookies.cookieBot = setTimeout(autoCookie, FrozenCookies.frequency);
 	}
 }

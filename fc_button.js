@@ -882,10 +882,10 @@ function FCMenu() {
 		});
         subsection.append($('<div>').addClass('listing').append(buildTable));
         menu.append(subsection);
-        FrozenCookies.menutimer=setTimeout(FCMenu,5000);
+//        FrozenCookies.menutimer=setTimeout(FCMenu,5000);
 	}
-	else {
-		clearInterval(FrozenCookies.menutimer);
-        FrozenCookies.menutimer = 0;
-	}
+//	else {
+//		clearInterval(FrozenCookies.menutimer);
+//        FrozenCookies.menutimer = 0;
+//	}
 }
