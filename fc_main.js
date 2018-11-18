@@ -706,7 +706,7 @@ function chainBank() { // ???
     //  More exact
     var digit = Game.elderWrath ? 6:7;
  //   return 4 * Math.floor(digit / 9 * Math.pow(10, Math.floor(Math.log(54*60*60 * Game.cookiePs / digit) / Math.LN10)));
-    return Game.cookiePs * 60 * 60 * 6 * 4;
+    return Game.cookiesPs * 60 * 60 * 6 * 4;
 	// 54/digit = 7.714 or 9
 }
 
