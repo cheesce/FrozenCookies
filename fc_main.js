@@ -1032,7 +1032,7 @@ function buildingStats(recalculate) { //ok
             return a;
 		});
 		Game.AchievementsOwned = saveAchievementsOwned;
-		saveAchievements.forEach(function(won, index) {Game.AchievementsById[index]= won;});
+		saveAchievements.forEach(function(won, index) {Game.AchievementsById[index].won= won;});
 	}
     return FrozenCookies.caches.buildings;
 }
@@ -1184,7 +1184,7 @@ function upgradeStats(recalculate) { //ok
 		)
 		.filter(function(a) { return a;}); //remove empty elements
 		Game.AchievementsOwned = saveAchievementsOwned;
-		saveAchievements.forEach(function(won, index) {Game.AchievementsById[index]= won;});
+		saveAchievements.forEach(function(won, index) {Game.AchievementsById[index].won= won;});
 		Game.elderWrath = existingWrath;
 	}
     return FrozenCookies.caches.upgrades;
