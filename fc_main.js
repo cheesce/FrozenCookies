@@ -415,7 +415,7 @@ function reindeerCps(cps,wrathValue,aura) { //ok
 }
 
 //Golden Cookie Stuff
-function cookieValue(amount, wrathValue, wrinklerCount) { // work needed
+function goldenValue(amount, wrathValue, wrinklerCount) { // work needed
     wrathValue = wrathValue != null ? wrathValue : Game.elderWrath;
     wrinklerCount = wrinklerCount != null ? wrinklerCount : getactiveWrinklers();
     amount = amount != null ? amount : Game.cookies;
@@ -529,6 +529,12 @@ function cookieValue(amount, wrathValue, wrinklerCount) { // work needed
     return value;
 }
 
+function goldenCps(amount) { //ok
+    amount = amount != null ? amount : goldenValue();
+    var averageTime = probabilitySpan('golden', 0, 0.5) / Game.fps;
+    return amount / averageTime;
+}
+
 function calculateChainValue(amount, cps, wrathValue) { //ok, awfull but exact
     wrathValue = wrathValue != null ? wrathValue : Game.elderWrath;
     amount = amount != null ? amount : Game.cookies;
@@ -548,12 +554,6 @@ function calculateChainValue(amount, cps, wrathValue) { //ok, awfull but exact
 		if (pn >=maxpayout) break;
 	}
 	return sum; 
-}
-
-function goldenCps(amount) { //ok
-    amount = amount != null ? amount : cookieValue();
-    var averageTime = probabilitySpan('golden', 0, 0.5) / Game.fps;
-    return amount / averageTime;
 }
 
 function gcEffectDuration(wrathValue) { //ok
@@ -1503,7 +1503,7 @@ function effectiveCpsNew(bankAmount, wrathValue, wrinklerCount) { //ok
     wrinklerCount = wrinklerCount != null ? wrinklerCount : getactiveWrinklers();
 	
     return FrozenCookies.calculatedunbuffedCps * wrinklerMod(wrinklerCount) + 
-	goldenCps(cookieValue(bankAmount, wrathValue, wrinklerCount)) +
+	goldenCps(goldenValue(bankAmount, wrathValue, wrinklerCount)) +
 	baseClickingCpsNew() +
 	reindeerCps(FrozenCookies.calculatedCps,wrathValue);
 }
@@ -1514,7 +1514,7 @@ function effectiveCps(bankAmount, wrathValue, wrinklerCount) { //ok
     wrinklerCount = wrinklerCount != null ? wrinklerCount : getactiveWrinklers();
 	
     return Game.unbuffedCps * wrinklerMod(wrinklerCount) + 
-	goldenCps(cookieValue(bankAmount, wrathValue, wrinklerCount)) +
+	goldenCps(goldenValue(bankAmount, wrathValue, wrinklerCount)) +
 	baseClickingCps() +
 	reindeerCps(Game.cookiesPs,wrathValue);
 }

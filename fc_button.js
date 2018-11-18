@@ -690,7 +690,7 @@ function FCMenu() {
         
         if (FrozenCookies.gcclicks>0)
 		{   subsection.append($('<div>').addClass('listing').html('<b>GoldenCookie calc CPS :</b> ' + Beautify(goldenCps())));
-			subsection.append($('<div>').addClass('listing').html('<b>GoldenCookie calc Value:</b> ' + Beautify(cookieValue())));
+			subsection.append($('<div>').addClass('listing').html('<b>GoldenCookie calc Value:</b> ' + Beautify(goldenValue())));
 			subsection.append($('<div>').addClass('listing').html('<b>GoldenCookie calc Time</b> ' + Beautify(probabilitySpan('golden', 0, 0.5) / Game.fps)+' seconds'));
 			subsection.append($('<div>').addClass('listing').html('<b>GoldenCookie avg CPS:</b> ' + Beautify((FrozenCookies.gcclicksvalue/FrozenCookies.gcclicks)/((FrozenCookies.gcclickstimer/1000)/FrozenCookies.gcclicks))));
 			subsection.append($('<div>').addClass('listing').html('<b>GoldenCookie avg Value:</b> ' + Beautify((FrozenCookies.gcclicksvalue/FrozenCookies.gcclicks))));
