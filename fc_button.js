@@ -653,10 +653,8 @@ function updateTimers() {
 
 function FCMenu() {
 	if (Game.onMenu == 'fc_menu') {
-        var currentCookies, maxCookies, isTarget, isMax, targetTxt, maxTxt,
-		currPrestige, resetPrestige, prestigeDifference,
+        var currPrestige, resetPrestige, prestigeDifference,
 		currHC, resetHC, cps, baseChosen, frenzyChosen, clickStr, buildTable,
-		bankLucky, bankLuckyFrenzy, bankChain,
 		menu = $('#menu').html('')
 		.append($('<div>').addClass('section').html('Frozen Cookies v ' + FrozenCookies.version)),
 		subsection = $('<div>').addClass('subsection')
@@ -689,12 +687,7 @@ function FCMenu() {
         // Golden Cookies
         subsection = $('<div>').addClass('subsection');
         subsection.append($('<div>').addClass('title').html('Golden Cookie Information'));
-        currentCookies = Game.cookies;
-        maxCookies = bestBank(Number.POSITIVE_INFINITY).cost;
-        isTarget = 1;
-        isMax = currentCookies == maxCookies;
-        targetTxt = isTarget ? '' : ' (Building Bank)';
-        maxTxt = isMax ? ' (Max)' : '';
+        
         if (FrozenCookies.gcclicks>0)
 		{   subsection.append($('<div>').addClass('listing').html('<b>GoldenCookie calc CPS :</b> ' + Beautify(goldenCps(cookieValue()))));
 			subsection.append($('<div>').addClass('listing').html('<b>GoldenCookie calc Value:</b> ' + Beautify(cookieValue())));
@@ -762,8 +755,8 @@ function FCMenu() {
         baseChosen = (Game.hasBuff('Frenzy')) ? '' : ' (*)';
         frenzyChosen = (Game.hasBuff('Frenzy')) ? ' (*)' : '';
         clickStr = (FrozenCookies.autoClick) ? ' + Autoclick' : '';
-        subsection.append($('<div>').addClass('listing').html('<b>Base CPS' + clickStr + baseChosen + ':</b> ' + Beautify(cps)));
-        subsection.append($('<div>').addClass('listing').html('<b>Frenzy CPS' + clickStr + frenzyChosen + ':</b> ' + Beautify(cps * 7)));
+        subsection.append($('<div>').addClass('listing').html('<b>Base CPS' + clickStr + baseChosen + ':</b> ' + Beautify(Game.unbuffedCps + baseClickingCps(FrozenCookies.cookieClickSpeed * FrozenCookies.autoClick))));
+        subsection.append($('<div>').addClass('listing').html('<b>Frenzy CPS' + clickStr + frenzyChosen + ':</b> ' + Beautify(7*Game.unbuffedCps + baseClickingCps(FrozenCookies.frenzyClickSpeed * FrozenCookies.autoClick))));
         subsection.append($('<div>').addClass('listing').html('<b>Estimated Effective CPS:</b> ' + Beautify(effectiveCps())));
         if (Game.HasUnlocked('Chocolate egg') && !Game.Has('Chocolate egg')) {
             subsection.append($('<div>').addClass('listing').html('<b>Chocolate Egg Value:</b> ' + Beautify(chocolateEggValue())));
@@ -784,8 +777,8 @@ function FCMenu() {
 		}
         if (FrozenCookies.clicks>0)
 		{   subsection.append($('<div>').addClass('listing').html('<b>BigCookie calc CPS :</b> ' + Beautify(baseClickingCps(FrozenCookies.cookieClickSpeed * FrozenCookies.autoClick))));
-			subsection.append($('<div>').addClass('listing').html('<b>BigCookie calc Value:</b> ' + Beautify(Game.mouseCps() / clickBuffBonus())));
-			subsection.append($('<div>').addClass('listing').html('<b>BigCookie calc Time</b> ' + Beautify(FrozenCookies.cookieClickSpeed)+' clicks/second'));
+			subsection.append($('<div>').addClass('listing').html('<b>BigCookie calc Value:</b> ' + Beautify(Game.computedMouseCps/clickBuffBonus())));
+			subsection.append($('<div>').addClass('listing').html('<b>BigCookie calc Time</b> ' + Beautify(FrozenCookies.cookieClickSpeed * FrozenCookies.autoClick)+' clicks/second'));
 			subsection.append($('<div>').addClass('listing').html('<b>BigCookie avg CPS:</b> ' + Beautify((FrozenCookies.clicksvalue/FrozenCookies.clicks)/((FrozenCookies.clickstimer/1000)/FrozenCookies.clicks))));
 			subsection.append($('<div>').addClass('listing').html('<b>BigCookie avg Value:</b> ' + Beautify((FrozenCookies.clicksvalue/FrozenCookies.clicks))));
 			subsection.append($('<div>').addClass('listing').html('<b>BigCookie avg Time</b> ' + Beautify(1000/((FrozenCookies.clickstimer)/FrozenCookies.clicks))+' clicks/second'));
