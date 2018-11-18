@@ -884,8 +884,8 @@ function checkPrices(currentUpgrade) {
 
 function purchaseEfficiency(price, deltaCps, baseDeltaCps, currentCps) { //ok
     var efficiency = divCps(price, currentCps); //Number.POSITIVE_INFINITY;
-    if (deltaCps > 0) efficiency += divCps(price, deltaCps);
-	else if(baseDeltaCps > 0) efficiency += divCps(price, baseDeltaCps);
+    if (deltaCps > 0) efficiency += 0.5*divCps(price, deltaCps);
+	else if(baseDeltaCps > 0) efficiency += 0.5*divCps(price, baseDeltaCps);
     return efficiency;
 }
 
