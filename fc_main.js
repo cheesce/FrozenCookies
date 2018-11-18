@@ -420,7 +420,7 @@ function cookieValue(bankAmount, wrathValue, wrinklerCount) { // work needed
     wrinklerCount = wrinklerCount != null ? wrinklerCount : getactiveWrinklers();
     var amount = bankAmount != null ? bankAmount : Game.cookies;
 	var wrinkler = wrinklerMod(wrinklerCount);
-    var cps = Game.unbuffedCps;
+    var cps = Game.cookiesPs;//Game.unbuffedCps;
     var clickCps = baseClickingCps(FrozenCookies.autoClick * FrozenCookies.cookieClickSpeed);
     var frenzyCps = baseClickingCps(FrozenCookies.autoClick * FrozenCookies.frenzyClickSpeed);
     var durationMod = gcEffectDuration(wrathValue);
@@ -705,7 +705,7 @@ function luckyFrenzyBank() { //ok
 function chainBank() { // ??? 
     //  More exact
     var digit = Game.elderWrath ? 6:7;
- //   return 4 * Math.floor(digit / 9 * Math.pow(10, Math.floor(Math.log(54*60*60 * Game.cookiePs / digit) / Math.LN10)));
+ //   return 4 * Math.floor(digit / 9 * Math.pow(10, Math.floor(Math.log(54*60*60 * Game.cookiesPs / digit) / Math.LN10)));
     return Game.cookiesPs * 60 * 60 * 6 * 4;
 	// 54/digit = 7.714 or 9
 }
