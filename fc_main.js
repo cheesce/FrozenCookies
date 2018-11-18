@@ -816,7 +816,7 @@ function bestBank(minEfficiency) { //ok
 	.filter(function(bank) {
 	return (bank.efficiency >= 0 && bank.efficiency <= minEfficiency) ? bank : null;}
 	);
-   if (bestBank[0] != 'undefined') return bestBank[0];
+   if (typeof bestBank[0] != 'undefined') return bestBank[0];
    else return { 'cost': 0, 'efficiency': Number.POSITIVE_INFINITY};
  }
 
