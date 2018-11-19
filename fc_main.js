@@ -61,6 +61,12 @@ function FCStart() { //ok
     FrozenCookies.caches.buildings = [];
     FrozenCookies.caches.upgrades = [];
 	
+	//Banks
+	FrozenCookies.banks = [nullBank(), luckyBank(), chainBank()];
+	
+	//ExtraSettings, like other banks, Fps and Autobulk
+	updateExtraSettings();	
+
 	FrozenCookies.recalcCount=0;	
     
 	if (!blacklist[FrozenCookies.blacklist]) {
@@ -400,7 +406,7 @@ function hasMultBuff() { //ok
 function reindeerValue(cps,wrathValue,aura) { //ok
     cps = cps != null ? cps : Game.cookiesPs;
     wrathValue = wrathValue != null ? wrathValue : Game.elderWrath;
-	var index= (aura != null)? aura: (Game.hasAura('Dragonflight')?1:0 + Game.hasAura('Reaper of Fields')?1:0);
+	var index= (aura != null)? aura: getCookieIndex();
 	var value = 0;	
 	if (Game.season == 'christmas') {
         var remaining = 1 - (cookieInfo[index].frenzy.odds[wrathValue] + cookieInfo[index].blood.odds[wrathValue]);
@@ -433,7 +439,7 @@ function goldenValue(amount, wrathValue, wrinklerCount) { // work needed
 	gcBuildingPower= Game.ObjectsById.reduce(function(a,b) { if(b.amount>=10) {buildingcount++;} return a+((b.amount>=10)?b.amount/10:0);},0);
     if (buildingcount==0) gcBuildingPower=0; else gcBuildingPower/=buildingcount;
 	
-	var index= Game.hasAura('Dragonflight')?1:0 + Game.hasAura('Reaper of Fields')?1:0;
+	var index= getCookieIndex();
 	var value = 0;
 
 	// building special (min 10 buildings, else frenzy), on wrath: 30% chance for debuff
@@ -529,6 +535,10 @@ function goldenValue(amount, wrathValue, wrinklerCount) { // work needed
     return value;
 }
 
+function getCookieIndex() {
+	return Game.hasAura('Dragonflight')?1:0 + Game.hasAura('Reaper of Fields')?1:0;
+}
+
 function goldenCps(amount) { //ok
     amount = amount != null ? amount : goldenValue();
     var averageTime = probabilitySpan('golden', 0, 0.5) / Game.fps;
@@ -543,16 +553,16 @@ function calculateChainValue(amount, cps, wrathValue) { //ok, awfull but exact
 	var mult=gcMult(wrathValue);
 	var chainstart=1+Math.max(0,Math.ceil(Math.log(amount)/Math.LN10)-10);
     var maxpayout=Math.min(cps*60*60*6,amount*0.5)*mult;
-	var sum=0,p=0,pn=0;
+	var sum=0,p=0,pn=0,step=0;
 	mult*=digit*(1/9);
 	while (1)
 	{	p=Math.max(digit,Math.min(Math.floor(Math.pow(10,chainstart)*mult),maxpayout)); 
 		pn=Math.max(digit,Math.min(Math.floor(Math.pow(10,chainstart+1)*mult),maxpayout));
-		sum+=p*0.99; //1% fail rate
-		chainstart+=1;
+		sum+=p; 
+		chainstart+=1; step+=1;
 		if (pn >=maxpayout) break;
 	}
-	return sum; 
+	return sum*Math.pow(0.99,step-1); //1% fail rate per step;
 }
 
 function gcEffectDuration(wrathValue) { //ok
@@ -663,15 +673,15 @@ function shouldPopWrinklers() { //ok?
 			});
 		}
 		else
-		{ var delay = delayAmount();
+		{ var bankAmount = bestBankAmount();
 			var wrinklerList = (FrozenCookies.shinyPop == 0) ? Game.wrinklers.filter(v => v.type == 0) : Game.wrinklers;
-			var nextRecNeeded = nextPurchase().cost + delay - Game.cookies;
+			var nextRecNeeded = nextPurchase().cost + bankAmount - Game.cookies;
 			var nextRecCps = nextPurchase().delta_cps;
 			var wrinklersNeeded = wrinklerList
 			.sort(function(w1, w2) { return w2.sucked - w1.sucked })
 			.reduce(function(current, w)
 			{ var futureWrinklers = living.length - (current.ids.length + 1);
-				if (current.total < nextRecNeeded && effectiveCps(delay, Game.elderWrath, futureWrinklers) + nextRecCps > effectiveCps())
+				if (current.total < nextRecNeeded && effectiveCps(bankAmount, Game.elderWrath, futureWrinklers) + nextRecCps > effectiveCps())
 				{ current.ids.push(w.id);
 					current.total += popValue(w);
 				}	
@@ -685,6 +695,10 @@ function shouldPopWrinklers() { //ok?
 }
 
 //Bank stuff
+function nullBank(){ //ok
+return 	{'name': 'null', 'calc': nullBank(), 'cost': 0, 'efficiency': Number.POSITIVE_INFINITY};
+}
+	
 function edificeBank() { //as edifice is random, choose the highest price of all possibilitys
     var buildings=[];
 	var max=0;
@@ -695,24 +709,25 @@ function edificeBank() { //as edifice is random, choose the highest price of all
 	}
 	for (var i in Game.Objects)
 	{	if ((Game.Objects[i].amount<max || n==1) && Game.Objects[i].getPrice()<=Game.cookies*2 && Game.Objects[i].amount<400) buildings.push(Game.Objects[i].getPrice());}
-	return buildings.reduce(function(a,b){ return Math.max(a,b);},0)/2;	
+	var value = buildings.reduce(function(a,b){ return Math.max(a,b);},0)/2;	
+    return { 'name': 'edifice', 'calc': 'edificeBank()', 'cost': value, 'efficiency': bankEfficiency(Game.cookies, value)};
 }
 
 function luckyBank(cps) { //ok, exact
     cps = cps != null ? cps : Game.unbuffedCps;
-    return cps * 60 * 100;
+	var value = cps*60*100;
+    return { 'name': 'lucky', 'calc': 'luckyBank()', 'cost': value, 'efficiency': bankEfficiency(Game.cookies, value)};
 }
 
 function chainBank(cps, wrathValue) { //ok, exact
     wrathValue = wrathValue != null ? wrathValue : Game.elderWrath;
     cps = cps != null ? cps : Game.unbuffedCps;
     var digit = wrathValue ? 6:7;
-	return 1 + 2*(Math.floor(7/9*Math.pow(10,Math.floor(Math.log10(60*60*6*cps*gcMult())))));
+	var value= 1 + 2*(Math.floor(7/9*Math.pow(10,Math.floor(Math.log10(60*60*6*cps*gcMult())))));
+    return { 'name': 'chain', 'calc': 'chainBank()', 'cost': value, 'efficiency': bankEfficiency(Game.cookies, value)};
 }
 
 function harvestBank() {
-    if(!FrozenCookies.setHarvestBankPlant) return 0;
-    
     FrozenCookies.harvestMinutes = 0;
     FrozenCookies.harvestMaxPercent = 0;
     FrozenCookies.harvestFrenzy = 1;
@@ -796,27 +811,20 @@ function harvestBank() {
 		FrozenCookies.maxSpecials = 1;
 	}
 	
-    return Game.unbuffedCps * 60 * FrozenCookies.harvestMinutes * FrozenCookies.harvestFrenzy * FrozenCookies.harvestBuilding / Math.pow(10, FrozenCookies.maxSpecials) / FrozenCookies.harvestMaxPercent;
+    var value= Game.unbuffedCps * 60 * FrozenCookies.harvestMinutes * FrozenCookies.harvestFrenzy * FrozenCookies.harvestBuilding / Math.pow(10, FrozenCookies.maxSpecials) / FrozenCookies.harvestMaxPercent;
+    return { 'name': 'harvest', 'calc': 'harvestBank()', 'cost': value, 'efficiency': bankEfficiency(Game.cookies, value)};
 }
 
+function updateBanks() { //ok
+	banks=banks.map(function(a){return eval(a.calc);});
+}
+	
 function bestBank(minEfficiency) { //ok
- var results = {};
-    var bankLevels = [0, luckyBank(), chainBank()];
-	if ((FrozenCookies.autoSpell == 3) || FrozenCookies.holdSEBank) bankLevels.push(edificeBank());
-	if (FrozenCookies.setHarvestBankPlant) bankLevels.push(harvestBank());
-	var bestBank=bankLevels.sort(function(a, b) { return b - a;})
-	.map(function(bank) {
-		return {
-            'cost': bank,
-            'efficiency': bankEfficiency(Game.cookies, bank)
-		};
-	}
-	)
-	.filter(function(bank) {
-	return (bank.efficiency >= 0 && bank.efficiency <= minEfficiency) ? bank : null;}
-	);
+	var bestBank=banks
+		.sort(function(a, b) { return b.cost - a.cost;})
+		.filter(function(bank) { return (bank.efficiency >= 0 && bank.efficiency <= minEfficiency) ? bank : null;});
    if (bestBank.length > 0 ) return bestBank[0];
-   else return { 'cost': 0, 'efficiency': Number.POSITIVE_INFINITY};
+   else return banks[0];
  }
 
 function bankEfficiency(startAmount, bankAmount) { //ok
@@ -832,7 +840,7 @@ function bankEfficiency(startAmount, bankAmount) { //ok
     return results;
 }
 
-function delayAmount() {
+function bestBankAmount() {
     return bestBank(nextChainedPurchase().efficiency).cost;
 }
 
@@ -1742,6 +1750,9 @@ function fcClickCookie() { //ok
 //main function
 function autoCookie() { //ok
     if (!Game.OnAscend && !Game.AscendTimer) {		
+		//Update Banks
+		updateBanks();
+		
 		// Get HC stats
 		var currentHCAmount = Game.HowMuchPrestige(Game.cookiesEarned + Game.cookiesReset + wrinklerValue());
         if (Math.floor(FrozenCookies.lastHCAmount) < Math.floor(currentHCAmount)) {
@@ -1929,27 +1940,10 @@ function autoCookie() { //ok
 			}
 		}
         
-		//shoud move to fc_button somehow
-		//Automatically buy in bulk if setting turned on
-        if (FrozenCookies.autoBulk != 0){
-            if (FrozenCookies.autoBulk == 1){ //Buy x10
-                document.getElementById('storeBulk10').click();
-			}
-            if (FrozenCookies.autoBulk == 2){ //Buy x100
-                document.getElementById('storeBulk100').click();
-			}
-		}         
-		
-		//        shoud move to fc_button somehow
-		//        var fps_amounts = ['24', '25', '30', '48', '50', '60', '72', '90', '100', '120', '144', '200', '240', '300'];
-		//        if (parseInt(fps_amounts[FrozenCookies["fpsModifier"]]) != Game.fps) {
-		//            Game.fps = parseInt(fps_amounts[FrozenCookies["fpsModifier"]]);
-		//        }
-        
+  
 		// Yeah, buy some stuff
         var recommendation = nextPurchase(FrozenCookies.recalculateCaches);
-        var delay = delayAmount(); //save cookies for bank
-		if (FrozenCookies.autoBuy && (Game.cookies >= delay + recommendation.cost)) {
+		if (FrozenCookies.autoBuy && (Game.cookies >= bestBankAmount() + recommendation.cost)) {
 			recommendation.time = Date.now() - Game.startDate;
 			recommendation.purchase.clickFunction = null;
 			recommendation.purchase.buy();
