@@ -696,7 +696,7 @@ function shouldPopWrinklers() { //ok?
 
 //Bank stuff
 function nullBank(){ //ok
-return 	{'name': 'null', 'calc': nullBank(), 'cost': 0, 'efficiency': Number.POSITIVE_INFINITY};
+return 	{'name': 'null', 'calc': 'nullBank()', 'cost': 0, 'efficiency': Number.POSITIVE_INFINITY};
 }
 	
 function edificeBank() { //as edifice is random, choose the highest price of all possibilitys
@@ -840,7 +840,7 @@ function bankEfficiency(startAmount, bankAmount) { //ok
     return results;
 }
 
-function bestBankAmount() {
+function bestBankAmount() { //ok
     return bestBank(nextChainedPurchase().efficiency).cost;
 }
 
