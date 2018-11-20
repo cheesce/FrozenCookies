@@ -437,7 +437,7 @@ function goldenValue(amount, wrathValue, wrinklerCount) { // work needed
 	//calculate mean of all buildings 
 	var buildingcount=0;
 	gcBuildingPower= Game.ObjectsById.reduce(function(a,b) { if(b.amount>=10) {buildingcount++;} return a+((b.amount>=10)?b.amount/10:0);},0);
-    if (buildingcount==0) gcBuildingPower=0; else gcBuildingPower/=buildingcount;
+    gcBuildingPower= (buildingcount==0)? 0 : gcBuildingPower/=buildingcount;
 	
 	var index= getCookieIndex();
 	var value = 0;
@@ -999,9 +999,7 @@ function buildingStats(recalculate) { //ok
 		var baseCpsOrig = Game.cookiesPs + baseClickingCps();//Game.unbuffedCps;
         var cpsOrig = effectiveCps(Game.cookies);
 		FrozenCookies.caches.buildings = Game.ObjectsById.map(function(current, index) {
-            if (isBuildingUnavailable(current, buildingBlacklist)) {
-				return null;
-			}
+            if (isBuildingUnavailable(current, buildingBlacklist)) {return null;}
             buildingToggle(current,0);
             var baseCpsNew = FrozenCookies.calculatedCps+baseClickingCpsNew();//FrozenCookies.calculatedunbuffedCps;
             var cpsNew = effectiveCpsNew(Game.cookies); 
@@ -1505,24 +1503,24 @@ function baseClickingCpsNew(clickSpeed) { //ok
     return clickSpeed * cpc;
 }
 
-function effectiveCpsNew(bankAmount, wrathValue, wrinklerCount) { //ok
-    bankAmount = bankAmount != null ? bankAmount : Game.unbuffedCps;
+function effectiveCpsNew(amount, wrathValue, wrinklerCount) { //ok
+    amount = amount != null ? amount : Game.unbuffedCps;
 	wrathValue = wrathValue != null ? wrathValue : Game.elderWrath;
     wrinklerCount = wrinklerCount != null ? wrinklerCount : getactiveWrinklers();
 	
     return FrozenCookies.calculatedunbuffedCps * wrinklerMod(wrinklerCount) + 
-	goldenCps(goldenValue(bankAmount, wrathValue, wrinklerCount)) +
+	goldenCps(goldenValue(amount, wrathValue, wrinklerCount)) +
 	baseClickingCpsNew() +
 	reindeerCps(FrozenCookies.calculatedCps,wrathValue);
 }
 
-function effectiveCps(bankAmount, wrathValue, wrinklerCount) { //ok
-    bankAmount = bankAmount != null ? bankAmount : Game.unbuffedCps;
+function effectiveCps(amount, wrathValue, wrinklerCount) { //ok
+    amount = amount != null ? amount : Game.unbuffedCps;
 	wrathValue = wrathValue != null ? wrathValue : Game.elderWrath;
     wrinklerCount = wrinklerCount != null ? wrinklerCount : getactiveWrinklers();
 	
     return Game.unbuffedCps * wrinklerMod(wrinklerCount) + 
-	goldenCps(goldenValue(bankAmount, wrathValue, wrinklerCount)) +
+	goldenCps(goldenValue(amount, wrathValue, wrinklerCount)) +
 	baseClickingCps() +
 	reindeerCps(Game.cookiesPs,wrathValue);
 }

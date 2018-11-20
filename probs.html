@@ -100,7 +100,7 @@ var erg=combinetranstable(transtable1,1/3,transtable2,2/3);
 nlist.forEach(function(a,b){ 
 	if (typeof cookieinfo[0][a]=='undefined') cookieinfo[0][a]={odds:[0,0,0,0]};
 	cookieinfo[0][a].odds[2]=erg[0][b];});		
-nlist.forEach(function(a){cout=cout.concat('\''+a+'\': {odds: ['+cookieinfo[0][a].odds[0]+', '+cookieinfo[0][a].odds[1]+', '+cookieinfo[0][a].odds[2]+', '+cookieinfo[0][a].odds[3]+']},\n');});
+nlist.forEach(function(a){cout=cout.concat('\''+a+'\': {odds: ['+cookieinfo[0][a].odds[0]/100+', '+cookieinfo[0][a].odds[1]/100+', '+cookieinfo[0][a].odds[2]/100+', '+cookieinfo[0][a].odds[3]/100+']},\n');});
 cout=cout.slice(0,cout.length-2).concat('},\n\n{');
 
 
@@ -134,7 +134,7 @@ nlist.forEach(function(a,b){
 	if (typeof cookieinfo[1][a]=='undefined') cookieinfo[1][a]={odds:[0,0,0,0]};
 	cookieinfo[1][a].odds[2]=erg[0][b];});	
 
-nlist.forEach(function(a){cout=cout.concat('\''+a+'\': {odds: ['+cookieinfo[1][a].odds[0]+', '+cookieinfo[1][a].odds[1]+', '+cookieinfo[1][a].odds[2]+', '+cookieinfo[1][a].odds[3]+']},\n');});
+nlist.forEach(function(a){cout=cout.concat('\''+a+'\': {odds: ['+cookieinfo[1][a].odds[0]/100+', '+cookieinfo[1][a].odds[1]/100+', '+cookieinfo[1][a].odds[2]/100+', '+cookieinfo[1][a].odds[3]/100+']},\n');});
 cout=cout.slice(0,cout.length-2).concat('},\n\n{');
 
 console.log('Golden basic + 2 dragon--------------------------------------------');
@@ -168,7 +168,7 @@ nlist.forEach(function(a,b){
 	if (typeof cookieinfo[2][a]=='undefined') cookieinfo[2][a]={odds:[0,0,0,0]};
 	cookieinfo[2][a].odds[2]=erg[0][b];});	
 
-nlist.forEach(function(a){cout=cout.concat('\''+a+'\': {odds: ['+cookieinfo[2][a].odds[0]+', '+cookieinfo[2][a].odds[1]+', '+cookieinfo[2][a].odds[2]+', '+cookieinfo[2][a].odds[3]+']},\n');});
+nlist.forEach(function(a){cout=cout.concat('\''+a+'\': {odds: ['+cookieinfo[2][a].odds[0]/100+', '+cookieinfo[2][a].odds[1]/100+', '+cookieinfo[2][a].odds[2]/100+', '+cookieinfo[2][a].odds[3]/100+']},\n');});
 cout=cout.slice(0,cout.length-2).concat('}\n];');
 writeln(cout);
 }
