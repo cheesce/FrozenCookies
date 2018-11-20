@@ -1309,7 +1309,7 @@ function upgradeToggle(upgrade, reverse, reverseFunctions) { //ok
 		}
         upgrade.bought = 1;
         Game.UpgradesOwned += 1;
-//      reverseFunctions.current = buyFunctionToggle(upgrade);
+      reverseFunctions.current = buyFunctionToggle(upgrade);
 	} 
 	else {
 		if (reverseFunctions.prereqBuildings) {
@@ -1328,7 +1328,7 @@ function upgradeToggle(upgrade, reverse, reverseFunctions) { //ok
 		}
 		upgrade.bought = 0;
 		Game.UpgradesOwned -= 1;
-//		buyFunctionToggle(reverseFunctions.current);	
+		buyFunctionToggle(reverseFunctions.current);	
 	}
     FrozenCookies.safeGainsCalc();
     return reverseFunctions;
@@ -1362,63 +1362,25 @@ function isUpgradeUnavailable(upgrade, upgradeBlacklist) { //ok
     return false;
 }
 
-function buyFunctionToggle(upgrade) { //not needed in this build at the moment
- // if (upgrade && upgrade.id==452) return null; //sugar frency
+function buyFunctionToggle(upgrade) { //ok, simplified as only these id matter here
     if (upgrade && !upgrade.length) {
         if (!upgrade.buyFunction) { return null;}
-		
-        var ignoreFunctions = [
-            /Game\.Earn\('.*\)/,
-            /Game\.Lock\('.*'\)/,
-            /Game\.Unlock\(.*\)/,
-            /Game\.Objects\['.*'\]\.drawFunction\(\)/,
-            /Game\.Objects\['.*'\]\.redraw\(\)/,
-            /Game\.SetResearch\('.*'\)/,
-            /Game\.Upgrades\['.*'\]\.basePrice=.*/,
-            /Game\.CollectWrinklers\(\)/,
-            /Game\.RefreshBuildings\(\)/,
-            /Game\.storeToRefresh=1/,
-            /Game\.upgradesToRebuild=1/,
-            /Game\.Popup\(.*\)/,
-            /Game\.Notify\(.*\)/,
-            /var\s+.+\s*=.+/,
-            /Game\.computeSeasonPrices\(\)/,
-            /Game\.seasonPopup\.reset\(\)/,
-            /\S/
-		];
-        var buyFunctions = upgrade.buyFunction.toString()
-		.replace(/[\n\r\s]+/g, ' ')
-		.replace(/function\s*\(\)\s*{(.+)\s*}/, "$1")
-		.replace(/for\s*\(.+\)\s*\{.+\}/, '')
-		.replace(/if\s*\(this\.season\)\s*Game\.season=this\.season\;/, ('Game.season="' + upgrade.season + '";'))
-		.replace(/if\s*\(.+\)\s*[^{}]*?\;/, '')
-		.replace(/if\s*\(.+\)\s*\{.+\}/, '')
-		.replace(/else\s+\(.+\)\s*\;/, '')
-		.replace('++', '+=1')
-		.replace('--', '-=1')
-		.split(';')
-		.map(function(a) {
-			return a.trim();
-		})
-		.filter(function(a) {
-			ignoreFunctions.forEach(function(b) {
-				a = a.replace(b, '')
-			});
-			return a != '';
-		});
+
+		if (upgrade.id==69) buyFunctions=['Game.elderWrath=1'];
+		if (upgrade.id==71) buyFunctions=['Game.elderWrath=2'];
+		if (upgrade.id==73) buyFunctions=['Game.elderWrath=3'];
+		if (upgrade.id==74) buyFunctions=['Game.elderWrath=0'];
+		if ((upgrade.id==182) ||
+			(upgrade.id==183) ||
+			(upgrade.id==184) ||
+			(upgrade.id==185) ||
+			(upgrade.id==209)) buyFunctions=['Game.season='+upgrade.season];
 		
         if (buyFunctions.length == 0) { return null;}
 		
         var reversedFunctions = buyFunctions.map(function(a) {
             var reversed = '';
-            var achievementMatch = /Game\.Win\('(.*)'\)/.exec(a);
-            if (a.indexOf('+=') > -1) {
-                reversed = a.replace('+=', '-=');
-			} else if (a.indexOf('-=') > -1) {
-                reversed = a.replace('-=', '+=');
-			} else if (achievementMatch && Game.Achievements[achievementMatch[1]].won == 0) {
-                reversed = 'Game.Achievements[\'' + achievementMatch[1] + '\'].won=0';
-			} else if (a.indexOf('=') > -1) {
+			if (a.indexOf('=') > -1) {
                 var expression = a.split('=');
                 var expressionResult = eval(expression[0]);
                 var isString = _.isString(expressionResult);
