@@ -864,7 +864,7 @@ function defaultPurchase() { //ok
 	}
 }
 
-function checkPrices(currentUpgrade) {
+/*function checkPrices(currentUpgrade) {
     var value = 0;
     if (FrozenCookies.caches.recommendationList.length > 0) {
         var nextRec = FrozenCookies.caches.recommendationList.filter(function(i) {
@@ -882,6 +882,7 @@ function checkPrices(currentUpgrade) {
 	}
     return value;
 }
+*/
 
 function purchaseEfficiency(price, deltaCps, baseDeltaCps, currentCps) { //ok
     var efficiency = divCps(price, currentCps); //Number.POSITIVE_INFINITY;
@@ -1002,7 +1003,7 @@ function buildingStats(recalculate) { //ok
 				return null;
 			}
             buildingToggle(current,0);
-            var baseCpsNew = FrozenCookies.calculatedCps;+baseClickingCpsNew();//FrozenCookies.calculatedunbuffedCps;
+            var baseCpsNew = FrozenCookies.calculatedCps+baseClickingCpsNew();//FrozenCookies.calculatedunbuffedCps;
             var cpsNew = effectiveCpsNew(Game.cookies); 
             buildingToggle(current,1);
             var deltaCps = cpsNew - cpsOrig;
@@ -1072,7 +1073,7 @@ function upgradeStats(recalculate) { //ok
 			var cost = upgradePrereqCost(current);
 //			var discountsOrig = totalDiscount() + totalDiscount(true);
 			var reverseFunctions = upgradeToggle(current,0);
-            var baseCpsNew = FrozenCookies.calculatedCps;+baseClickingCpsNew();//FrozenCookies.calculatedunbuffedCps;
+            var baseCpsNew = FrozenCookies.calculatedCps+baseClickingCpsNew();//FrozenCookies.calculatedunbuffedCps;
 			var cpsNew = effectiveCpsNew(Game.cookies);
 //			var discounsNew = (discounts == (totalDiscount() + totalDiscount(true))) 
 			upgradeToggle(current, 1, reverseFunctions);
@@ -1250,7 +1251,7 @@ function isUpgradeUnavailable(upgrade, upgradeBlacklist) { //ok
     return false;
 }
 
-function buyFunctionToggle(upgrade) { //ok
+function buyFunctionToggle(upgrade) { //not needed in this build at the moment
  // if (upgrade && upgrade.id==452) return null; //sugar frency
     if (upgrade && !upgrade.length) {
         if (!upgrade.buyFunction) { return null;}
@@ -1940,7 +1941,6 @@ function autoCookie() { //ok
 			}
 		}
         
-  
 		// Yeah, buy some stuff
         var recommendation = nextPurchase(FrozenCookies.recalculateCaches);
 		if (FrozenCookies.autoBuy && (Game.cookies >= bestBankAmount() + recommendation.cost)) {
