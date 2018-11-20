@@ -421,7 +421,7 @@ function reindeerCps(cps,wrathValue,aura) { //ok
 }
 
 //Golden Cookie Stuff
-function goldenValue(amount, wrathValue, wrinklerCount) { // work needed
+function goldenValue(amount, wrathValue, wrinklerCount) { //ok
     wrathValue = wrathValue != null ? wrathValue : Game.elderWrath;
     wrinklerCount = wrinklerCount != null ? wrinklerCount : getactiveWrinklers();
     amount = amount != null ? amount : Game.cookies;
@@ -429,6 +429,119 @@ function goldenValue(amount, wrathValue, wrinklerCount) { // work needed
     var cps = Game.cookiesPs;//Game.unbuffedCps;
     var clickCps = baseClickingCps(FrozenCookies.autoClick * FrozenCookies.cookieClickSpeed);
     var frenzyCps = baseClickingCps(FrozenCookies.autoClick * FrozenCookies.frenzyClickSpeed);
+    var durationMod = gcEffectDuration(wrathValue);
+    var valueMod = gcMult(wrathValue);
+	
+	// needed: as clicks and wrinkler gain more/less cookies the difference should be included, but no idea how to do it yet
+	
+	//calculate mean of all buildings 
+	var buildingcount=0;
+	gcBuildingPower= Game.ObjectsById.reduce(function(a,b) { if(b.amount>=10) {buildingcount++;} return a+((b.amount>=10)?b.amount/10:0);},0);
+    gcBuildingPower= (buildingcount==0)? 0 : gcBuildingPower/=buildingcount;
+	
+	var index= getCookieIndex();
+	var value = 0;
+
+	// building special (min 10 buildings, else frenzy), on wrath: 30% chance for debuff
+	// chance: 25%
+	// time: 30*effectDurMod
+	// power: amount/10 + 1
+    value += cookieInfo[index].building.odds[wrathValue] * cps * gcBuildingPower * Math.ceil(durationMod * 30); 
+	
+	// free sugar lump (if possible)
+	// chance: 0.05%	
+    value += 0; //no direct effect on value
+	
+	// frenzy
+	// chance: 100% on normal
+	// time: 77*effectDurMod
+	// power: 7
+    value += cookieInfo[index].frenzy.odds[wrathValue] * cps * 6 * Math.ceil(durationMod * 77); 
+	
+	// dragon harvest (needs aura Reaper of Fields)
+	// chance: 15% or 5% on wrath
+	// time: 60*effectDurMod
+	// power: 15
+    if (Game.hasAura('Reaper of Fields'))
+		value += cookieInfo[index].harvest.odds[wrathValue] * cps * 14 * Math.ceil(durationMod * 60);
+	
+	// everything must go (only fools season)
+	// chance: 5%
+	// time: 8*effectDurMod
+	// power: buildings are 5% cheaper
+	value +=0; //no direct effect on value
+	
+	// multiply cookies
+	// chance: 100% 
+	// cookies: mult*Math.min(Game.cookies*0.15,Game.cookiesPs*60*15)+13
+    value += cookieInfo[index].lucky.odds[wrathValue] * (valueMod*Math.min(amount * 0.15, cps * 60 * 15) + 13);
+	
+	// ruin cookies
+	// chance: 100% on wrath + 200% if hasGod(scorn)
+	// -cookies: Math.min(Game.cookies*0.05,Game.cookiesPs*60*10)+13
+    value -= cookieInfo[index].ruin.odds[wrathValue] * (Math.min(amount * 0.05, cps * 60 * 10) + 13);
+	
+	// blood frenzy (elder frenzy) (wrath only)
+	// chance: 30% on wrath
+	// time: 6*effectDurMod
+	// power: 666
+    value += cookieInfo[index].blood.odds[wrathValue] * cps * 665 * Math.ceil(durationMod * 6); 
+
+	// clot:
+	// chance: 100% on wrath + 200% if hasGod(scorn)
+	// time: 66*effectDurMod
+	// power: 0.5
+    value += cookieInfo[index].clot.odds[wrathValue] * cps * -0.5 * Math.ceil(durationMod * 66); 
+	
+	// cursed finger (wrath only)
+	// chance: 10% 
+	// time: 10*effectDurMod
+	// power: Game.cookiesPs*Math.ceil(10*effectDurMod)
+    value += cookieInfo[index].finger.odds[wrathValue] * ((cps * -1)+(frenzyCps*Math.ceil(10*durationMod))-clickCps) * Math.ceil(durationMod * 10); 
+	
+	// click frenzy
+	// chance: (Math.random()<0.1 && (Math.random()<0.05 || !Game.hasBuff('Dragonflight')))
+	// time: 13*effectDurMod
+	// power: 777
+    value += cookieInfo[index].cfrenzy.odds[wrathValue] * (frenzyCps*777-clickCps) * Math.ceil(durationMod * 13);
+	
+	// dragonflight: (needs aura dragonflight) chance of 80% to kill ClickFrenzy
+	// chance: 15% or 5% when wrath
+	// time: 10*effectDurMod
+	// power: 1111
+	if (Game.hasAura('Dragonflight'))
+		if (index==1)
+			value += cookieInfo[index].harvest.odds[wrathValue] * (frenzyCps*1111-clickCps) * Math.ceil(durationMod * 10);
+		else
+			value += cookieInfo[index].flight.odds[wrathValue] * (frenzyCps*1111-clickCps) * Math.ceil(durationMod * 10);
+		
+	// chain cookie: 1% chance to break for every step, maxout if next is > Math.min(Game.cookiesPs*60*60*6,Game.cookies*0.5)*mult;
+	// chance: 3% on normal or 30% on wrath
+	// cookies: 
+    value += cookieInfo[index].chain.odds[wrathValue] * calculateChainValue(amount, cps, wrathValue);
+
+	// cookie storm
+	// chance: 3% on normal or 30% on wrath
+	// time: 7*effectDurMod
+	// power: 7  	
+	// cookie strom drop
+	// cookies: Math.max(mult*(Game.cookiesPs*60*Math.floor(Math.random()*7+1)),Math.floor(Math.random()*7+1));
+    value += cookieInfo[index].storm.odds[wrathValue] * 7*0.5*Game.fps *(Math.max(valueMod*(cps*60*3.5), 3.5));
+		
+	// blab 
+	// chance: 0.1%
+	value +=0;
+	
+    return value;
+}
+function goldenValueNew(amount, wrathValue, wrinklerCount) { //ok
+    wrathValue = wrathValue != null ? wrathValue : Game.elderWrath;
+    wrinklerCount = wrinklerCount != null ? wrinklerCount : getactiveWrinklers();
+    amount = amount != null ? amount : Game.cookies;
+	var wrinkler = wrinklerMod(wrinklerCount);
+    var cps = FrozenCookies.calculatedCps;//Game.unbuffedCps;
+    var clickCps = baseClickingCpsNew(FrozenCookies.autoClick * FrozenCookies.cookieClickSpeed);
+    var frenzyCps = baseClickingCpsNew(FrozenCookies.autoClick * FrozenCookies.frenzyClickSpeed);
     var durationMod = gcEffectDuration(wrathValue);
     var valueMod = gcMult(wrathValue);
 	
@@ -1509,7 +1622,7 @@ function effectiveCpsNew(amount, wrathValue, wrinklerCount) { //ok
     wrinklerCount = wrinklerCount != null ? wrinklerCount : getactiveWrinklers();
 	
     return FrozenCookies.calculatedunbuffedCps * wrinklerMod(wrinklerCount) + 
-	goldenCps(goldenValue(amount, wrathValue, wrinklerCount)) +
+	goldenCps(goldenValueNew(amount, wrathValue, wrinklerCount)) +
 	baseClickingCpsNew() +
 	reindeerCps(FrozenCookies.calculatedCps,wrathValue);
 }
