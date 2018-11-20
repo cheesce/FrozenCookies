@@ -816,11 +816,11 @@ function harvestBank() {
 }
 
 function updateBanks() { //ok
-	banks=banks.map(function(a){return eval(a.calc);});
+	FrozenCookies.banks=FrozenCookies.banks.map(function(a){return eval(a.calc);});
 }
 	
 function bestBank(minEfficiency) { //ok
-	var bestBank=banks
+	var bestBank=FrozenCookies.banks
 		.sort(function(a, b) { return b.cost - a.cost;})
 		.filter(function(bank) { return (bank.efficiency >= 0 && bank.efficiency <= minEfficiency) ? bank : null;});
    if (bestBank.length > 0 ) return bestBank[0];

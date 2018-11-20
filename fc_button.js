@@ -722,9 +722,9 @@ function FCMenu() {
 			subsection.append($('<div>').addClass('listing').html('<b>GoldenCookie avg Time</b> ' + Beautify(((FrozenCookies.gcclickstimer/1000)/FrozenCookies.gcclicks))+' seconds'));
 		}
         subsection.append($('<div>').addClass('listing').html('<b>Lucky Cookie Value:</b> ' + Beautify(gcMult()*Math.min(Game.cookies*0.15,Game.cookiesPs*60*15)+13)));
-        subsection.append($('<div>').addClass('listing').html('<b>Cookie Bank Required for Max Lucky:</b> ' + Beautify(banks[banks.findIndex(function(a){return a.name=='lucky';})].cost)));
+        subsection.append($('<div>').addClass('listing').html('<b>Cookie Bank Required for Max Lucky:</b> ' + Beautify(FrozenCookies.banks[FrozenCookies.banks.findIndex(function(a){return a.name=='lucky';})].cost)));
         subsection.append($('<div>').addClass('listing').html('<b>Chain Cookie Value:</b> ' + Beautify(calculateChainValue())));
-        subsection.append($('<div>').addClass('listing').html('<b>Cookie Bank Required for Max Chain:</b> ' + Beautify(banks[banks.findIndex(function(a){return a.name=='chain';})].cost)));
+        subsection.append($('<div>').addClass('listing').html('<b>Cookie Bank Required for Max Chain:</b> ' + Beautify(FrozenCookies.banks[FrozenCookies.banks.findIndex(function(a){return a.name=='chain';})].cost)));
         subsection.append($('<div>').addClass('listing').html('<b>Golden Cookie Clicks:</b> ' + Beautify(Game.goldenClicks)));
         subsection.append($('<div>').addClass('listing').html('<b>Missed Golden Cookie Clicks:</b> ' + Beautify(Game.missedGoldenClicks)));
         subsection.append($('<div>').addClass('listing').html('<b>Last Golden Cookie Effect:</b> ' + Game.shimmerTypes.golden.last));
@@ -855,7 +855,7 @@ function FCMenu() {
         buildTable.append($('<tr><td colspan="5">&nbsp;</td></tr>').css('border-top', '2px dashed #999'));
 		
 		// Bank infos
-        banks.forEach(function(bank) {
+        FrozenCookies.banks.forEach(function(bank) {
             var deltaCps = Math.min(0,effectiveCps(bank.cost) - effectiveCps(Game.cookies));
             buildTable.append($('<tr><td colspan="2"><b>' + bank.name + (deltaCps === 0 ? ' (*)' : '') + '</b></td><td>' + Beautify(bank.efficiency) + '</td><td>' + Beautify(bank.cost) + '</td><td>' + Beautify(deltaCps) + '</td></tr>'));
 		});
