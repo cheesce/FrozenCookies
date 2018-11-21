@@ -1110,12 +1110,12 @@ function buildingStats(recalculate) { //ok
     if (recalculate) {
         var buildingBlacklist = blacklist[FrozenCookies.blacklist].buildings;
 		var baseCpsOrig = Game.cookiesPs + baseClickingCps();//Game.unbuffedCps;
-        var cpsOrig = effectiveCps(Game.cookies);
+        var cpsOrig = effectiveCps();
 		FrozenCookies.caches.buildings = Game.ObjectsById.map(function(current, index) {
             if (isBuildingUnavailable(current, buildingBlacklist)) {return null;}
             buildingToggle(current,0);
             var baseCpsNew = FrozenCookies.calculatedCps+baseClickingCpsNew();//FrozenCookies.calculatedunbuffedCps;
-            var cpsNew = effectiveCpsNew(Game.cookies); 
+            var cpsNew = effectiveCpsNew(); 
             buildingToggle(current,1);
             var deltaCps = cpsNew - cpsOrig;
             var baseDeltaCps = baseCpsNew - baseCpsOrig;
@@ -1177,7 +1177,7 @@ function upgradeStats(recalculate) { //ok
 //		else var list=Game.UpgradesById.filter(function(a,b){return !a.bought && a.pool!='debug' && a.pool!='prestige';});
 		var list=Game.UpgradesById.filter(function(a,b){return !a.bought && a.pool!='debug' && a.pool!='prestige';}).sort(function(a,b){ return (a.unlocked!=b.unlocked)?b.unlocked-a.unlocked:a.basePrice-b.basePrice;}).slice(0,25);
 		var baseCpsOrig = Game.cookiesPs + baseClickingCps();//Game.unbuffedCps;
-		var cpsOrig = effectiveCps(Game.cookies);
+		var cpsOrig = effectiveCps();
 		FrozenCookies.caches.upgrades = list
 		.map(function(current) {
 			if (isUpgradeUnavailable(current, upgradeBlacklist)) {return null;}
@@ -1185,7 +1185,7 @@ function upgradeStats(recalculate) { //ok
 //			var discountsOrig = totalDiscount() + totalDiscount(true);
 			var reverseFunctions = upgradeToggle(current,0);
             var baseCpsNew = FrozenCookies.calculatedCps+baseClickingCpsNew();//FrozenCookies.calculatedunbuffedCps;
-			var cpsNew = effectiveCpsNew(Game.cookies);
+			var cpsNew = effectiveCpsNew();
 //			var discounsNew = (discounts == (totalDiscount() + totalDiscount(true))) 
 			upgradeToggle(current, 1, reverseFunctions);
 			var deltaCps = cpsNew - cpsOrig;
