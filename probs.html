@@ -15,6 +15,7 @@
 <script type="text/javascript">
 // ==================================== MAIN =====================================
 var transtable1, transtable2, nlist;
+//pool2: Golden Cookie basics
 var pool1=[ {name: 'frenzy', percent: 1.0},
 			{name: 'lucky', percent: 1.0},
 			{name: 'chain', percent: 0.03},
@@ -145,7 +146,6 @@ cookieinfo[2]=new Array();
 pool.forEach(function(a,b){ 
 	if (typeof cookieinfo[2][a.name]=='undefined') cookieinfo[2][a.name]={odds:[0,0,0,0]};	
 	cookieinfo[2][a.name].odds[0]=erg[0][b];});
-//pool.splice(-3,2); //harvest und flight wieder raus
 
 console.log('Wrath basic + 2 dragon--------------------------------------------');
 pool=pool2;
@@ -154,7 +154,6 @@ var erg=calcprobs(pool,2);
 pool.forEach(function(a,b){ 
 	if (typeof cookieinfo[2][a.name]=='undefined') cookieinfo[2][a.name]={odds:[0,0,0,0]};
 	cookieinfo[2][a.name].odds[3]=erg[0][b];});
-//pool.splice(-3,2); //harvest und flight wieder raus
 
 console.log('Wrath anger + 2 dragon--------------------------------');
 var erg=combinetranstable(transtable1,2/3,transtable2,1/3);

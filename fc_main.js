@@ -410,7 +410,7 @@ function reindeerValue(cps,wrathValue,aura) { //ok
 	var value = 0;	
 	if (Game.season == 'christmas') {
         var remaining = 1 - (cookieInfo[index].frenzy.odds[wrathValue] + cookieInfo[index].blood.odds[wrathValue]);
-		value=Math.max(25,Game.cookiesPs * 60 * (0.5 * cookieInfo[index].blood.odds[wrathValue] + 0.75 * cookieInfo[index].frenzy.odds[wrathValue] + 1 * remaining)) * (Game.Has('Ho ho ho-flavored frosting') ? 2 : 1) * Game.eff('reindeerGain');
+		value=Math.max(25,cps * 60 * (0.5 * cookieInfo[index].blood.odds[wrathValue] + 0.75 * cookieInfo[index].frenzy.odds[wrathValue] + 1 * remaining)) * (Game.Has('Ho ho ho-flavored frosting') ? 2 : 1) * Game.eff('reindeerGain');
 	}
     return value;
 }
@@ -1565,7 +1565,7 @@ function baseClickingCpsNew(clickSpeed) { //ok
 }
 
 function effectiveCpsNew(amount, wrathValue, wrinklerCount) { //ok
-    amount = amount != null ? amount : Game.unbuffedCps;
+    amount = amount != null ? amount : Game.cookies;
 	wrathValue = wrathValue != null ? wrathValue : Game.elderWrath;
     wrinklerCount = wrinklerCount != null ? wrinklerCount : getactiveWrinklers();
 	
@@ -1576,7 +1576,7 @@ function effectiveCpsNew(amount, wrathValue, wrinklerCount) { //ok
 }
 
 function effectiveCps(amount, wrathValue, wrinklerCount) { //ok
-    amount = amount != null ? amount : Game.unbuffedCps;
+    amount = amount != null ? amount : Game.cookies;
 	wrathValue = wrathValue != null ? wrathValue : Game.elderWrath;
     wrinklerCount = wrinklerCount != null ? wrinklerCount : getactiveWrinklers();
 	
