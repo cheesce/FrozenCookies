@@ -1366,30 +1366,16 @@ function buyFunctionToggle(upgrade) { //ok, simplified as only these id matter h
     if (upgrade && !upgrade.length) {
         if (!upgrade.buyFunction) { return null;}
 
-		if (upgrade.id==69) buyFunctions=['Game.elderWrath=1'];
-		if (upgrade.id==71) buyFunctions=['Game.elderWrath=2'];
-		if (upgrade.id==73) buyFunctions=['Game.elderWrath=3'];
-		if (upgrade.id==74) buyFunctions=['Game.elderWrath=0'];
+		if (upgrade.id==69) {Game.elderWrath=1; return ['Game.elderWrath='+Game.elderWrath];}
+		if (upgrade.id==71) {Game.elderWrath=2; return ['Game.elderWrath='+Game.elderWrath];}
+		if (upgrade.id==73) {Game.elderWrath=3; return ['Game.elderWrath='+Game.elderWrath];}
+		if (upgrade.id==74) {Game.elderWrath=0; return ['Game.elderWrath='+Game.elderWrath];}
 		if ((upgrade.id==182) ||
 			(upgrade.id==183) ||
 			(upgrade.id==184) ||
 			(upgrade.id==185) ||
-			(upgrade.id==209)) buyFunctions=['Game.season='+upgrade.season];
+			(upgrade.id==209)) { Game.season=upgrade.season; return ['Game.season='+Game.season];}
 		
-        if (buyFunctions.length == 0) { return null;}
-		
-        var reversedFunctions = buyFunctions.map(function(a) {
-            var reversed = '';
-			if (a.indexOf('=') > -1) {
-                var expression = a.split('=');
-                var expressionResult = eval(expression[0]);
-                var isString = _.isString(expressionResult);
-                reversed = expression[0] + '=' + (isString ? "'" : '') + expressionResult + (isString ? "'" : '');
-			}
-            return reversed;
-		});
-        buyFunctions.forEach(function(f) { eval(f);});
-        return reversedFunctions;
 	} else if (upgrade && upgrade.length) {
         upgrade.forEach(function(f) { eval(f);});
 	}
