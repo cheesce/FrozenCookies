@@ -843,7 +843,7 @@ function FCMenu() {
 		//Recommondationtable
 		subsection = $('<div>').addClass('subsection');
         subsection.append($('<div>').addClass('title').html('Internal Information'));
-        buildTable = $('<table id="fcEfficiencyTable"/>').html('<tr><th>Building</th><th>Eff%</th><th>Efficiency</th><th>Cost</th><th>&#916; CPS</th><th>&#916; baseCPS</th></tr>');
+        buildTable = $('<table id="fcEfficiencyTable"/>').html('<tr><th>Building</th><th>'+/*Eff%*/'</th><th>Efficiency</th><th>Cost</th><th>&#916; CPS</th><th>&#916; baseCPS</th></tr>');
         recommendationList().forEach(function(rec) {
             var item    = rec.purchase,
 			chainStr = (item.unlocked === 0) ? ' (C)' : '';

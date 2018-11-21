@@ -1010,13 +1010,13 @@ function recommendationList(recalculate) { //ok
 		var existingWrath = Game.elderWrath;
 		
 //        FrozenCookies.caches.recommendationList = addScores(
-		FrozenCookies.caches.recommendationList = upgradeStats(recalculate)
+		FrozenCookies.caches.recommendationList = (upgradeStats(recalculate)
 		.concat(buildingStats(recalculate))
 		.concat(santaStats())
-		.concat(dragonStats() //)
+		.concat(dragonStats()))
 		.sort(function(a, b) {
 			return a.efficiency != b.efficiency ? a.efficiency - b.efficiency : (a.delta_cps != b.delta_cps ? b.delta_cps - a.delta_cps : a.cost - b.cost);
-		}));
+		}) /*)*/;
 		
         if (FrozenCookies.pastemode) { FrozenCookies.caches.recommendationList.reverse();}
 
@@ -1053,6 +1053,7 @@ function recommendationList(recalculate) { //ok
     return recommendations;
 }
 */
+
 function nextPurchase(recalculate) { //ok
     if (recalculate) {
         var recList = recommendationList(recalculate);
