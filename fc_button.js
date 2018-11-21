@@ -866,7 +866,7 @@ function FCMenu() {
         
 		// Other information
 		$.each({'Pledging/Appeased' : 0, 'One Mind/Awoken' : 1, 'Displeased' : 2, 'Full Wrath/Angered' : 3}, function(k,v) {
-            buildTable.append($('<tr><td colspan="2"><b>' + k + (Game.elderWrath === v ? ' (*)' : '') + '</b></td><td colspan="2" title="Ratio of Effective CPS vs Base CPS">' + Beautify(effectiveCps(Game.cookies, v) / Game.unbuffedCps) + '</td><td>' + Beautify(effectiveCps(Game.cookies, v) - effectiveCps()) + '</td></tr>'));
+            buildTable.append($('<tr><td colspan="2"><b>' + k + (Game.elderWrath === v ? ' (*)' : '') + '</b></td><td colspan="2" title="Ratio of Effective CPS vs Base CPS">' + Beautify(effectiveCps(Game.cookies, v,10) / Game.unbuffedCps) + '</td><td>' + Beautify(effectiveCps(Game.cookies, v,10) - effectiveCps()) + '</td></tr>'));
 		});
         subsection.append($('<div>').addClass('listing').append(buildTable));
         menu.append(subsection);

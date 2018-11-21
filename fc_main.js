@@ -936,7 +936,7 @@ function bestBank(minEfficiency) { //ok
 		.sort(function(a, b) { return b.cost - a.cost;})
 		.filter(function(bank) { return (bank.efficiency >= 0 && bank.efficiency <= minEfficiency) ? bank : null;});
    if (bestBank.length > 0 ) return bestBank[0];
-   else return banks[0];
+   else return FrozenCookies.banks[0];
  }
 
 function bankEfficiency(startAmount, bankAmount) { //ok
