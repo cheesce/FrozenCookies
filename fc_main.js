@@ -1361,17 +1361,19 @@ function isUpgradeUnavailable(upgrade, upgradeBlacklist) { //ok
 }
 
 function buyFunctionToggle(upgrade) { //ok, simplified as only these id matter here
+var reverse=null;
 	if (upgrade && !upgrade.length) {
         if (!upgrade.buyFunction) { return null;}
-		if (upgrade.id==69) {Game.elderWrath=1; return ['Game.elderWrath='+Game.elderWrath];}
-		if (upgrade.id==71) {Game.elderWrath=2; return ['Game.elderWrath='+Game.elderWrath];}
-		if (upgrade.id==73) {Game.elderWrath=3; return ['Game.elderWrath='+Game.elderWrath];}
-		if (upgrade.id==74) {Game.elderWrath=0; return ['Game.elderWrath='+Game.elderWrath];}
+		if (upgrade.id==69) {reverse=['Game.elderWrath='+Game.elderWrath]; Game.elderWrath=1;}
+		if (upgrade.id==71) {reverse=['Game.elderWrath='+Game.elderWrath]; Game.elderWrath=2;}
+		if (upgrade.id==73) {reverse=['Game.elderWrath='+Game.elderWrath]; Game.elderWrath=3;}
+		if (upgrade.id==74) {reverse=['Game.elderWrath='+Game.elderWrath]; Game.elderWrath=0;}
 		if ((upgrade.id==182) ||
 			(upgrade.id==183) ||
 			(upgrade.id==184) ||
 			(upgrade.id==185) ||
-			(upgrade.id==209)) { Game.season=upgrade.season; return ['Game.season=\''+Game.season+'\''];}	
+			(upgrade.id==209)) { reverse=['Game.season=\''+Game.season+'\'']; Game.season=upgrade.season;}	
+		return reverse;
 	}
 	else if (upgrade && upgrade.length) { upgrade.forEach(function(f) { eval(f);});}
     return null;
