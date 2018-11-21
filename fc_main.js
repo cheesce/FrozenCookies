@@ -1028,6 +1028,7 @@ function recommendationList(recalculate) { //ok
     return FrozenCookies.caches.recommendationList;
 }
 
+
 /*function addScores(recommendations) { //ok - just for optics.. no other use
     var filteredList = recommendations.filter(function(a) {
         return a.efficiency < Number.POSITIVE_INFINITY && a.efficiency > Number.NEGATIVE_INFINITY;
