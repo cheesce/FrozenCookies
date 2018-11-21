@@ -847,7 +847,7 @@ function FCMenu() {
         recommendationList().forEach(function(rec) {
             var item    = rec.purchase,
 			chainStr = (item.unlocked === 0) ? ' (C)' : '';
-            buildTable.append($('<tr><td><b>' + item.name + chainStr + '</b></td><td>' + (Math.floor(rec.efficiencyScore * 10000) / 100).toString() + '%</td><td>' + Beautify(rec.efficiency) + '</td><td>' + Beautify(rec.cost) + '</td><td>' + Beautify(rec.delta_cps) + '</td><td>'+Beautify(rec.base_delta_cps)+'</td></tr>'));
+            buildTable.append($('<tr><td><b>' + item.name + chainStr + '</b></td><td>' + /*(Math.floor(rec.efficiencyScore * 10000) / 100).toString() + '%' + */'</td><td>' + Beautify(rec.efficiency) + '</td><td>' + Beautify(rec.cost) + '</td><td>' + Beautify(rec.delta_cps) + '</td><td>'+Beautify(rec.base_delta_cps)+'</td></tr>'));
 		});
         
 		// Table Dividers

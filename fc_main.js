@@ -1009,11 +1009,11 @@ function recommendationList(recalculate) { //ok
 		var saveAchievementsOwned=Game.AchievementsOwned;
 		var existingWrath = Game.elderWrath;
 		
-        FrozenCookies.caches.recommendationList = addScores(
-		upgradeStats(recalculate)
+//        FrozenCookies.caches.recommendationList = addScores(
+		FrozenCookies.caches.recommendationList = upgradeStats(recalculate)
 		.concat(buildingStats(recalculate))
 		.concat(santaStats())
-		.concat(dragonStats())
+		.concat(dragonStats() //)
 		.sort(function(a, b) {
 			return a.efficiency != b.efficiency ? a.efficiency - b.efficiency : (a.delta_cps != b.delta_cps ? b.delta_cps - a.delta_cps : a.cost - b.cost);
 		}));
@@ -1028,7 +1028,7 @@ function recommendationList(recalculate) { //ok
     return FrozenCookies.caches.recommendationList;
 }
 
-function addScores(recommendations) { //ok
+/*function addScores(recommendations) { //ok - just for optics.. no other use
     var filteredList = recommendations.filter(function(a) {
         return a.efficiency < Number.POSITIVE_INFINITY && a.efficiency > Number.NEGATIVE_INFINITY;
 	})
@@ -1052,7 +1052,7 @@ function addScores(recommendations) { //ok
 	}
     return recommendations;
 }
-
+*/
 function nextPurchase(recalculate) { //ok
     if (recalculate) {
         var recList = recommendationList(recalculate);
