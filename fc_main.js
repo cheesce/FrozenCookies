@@ -426,13 +426,11 @@ function goldenValue(amount, wrathValue, wrinklerCount) { //ok
     wrinklerCount = wrinklerCount != null ? wrinklerCount : getactiveWrinklers();
     amount = amount != null ? amount : Game.cookies;
 	var wrinkler = wrinklerMod(wrinklerCount);
-    var cps = Game.cookiesPs;//Game.unbuffedCps;
+    var cps = Game.cookiesPs;
     var clickCps = baseClickingCps(FrozenCookies.autoClick * FrozenCookies.cookieClickSpeed);
     var frenzyCps = baseClickingCps(FrozenCookies.autoClick * FrozenCookies.frenzyClickSpeed);
     var durationMod = gcEffectDuration(wrathValue);
     var valueMod = gcMult(wrathValue);
-	
-	// needed: as clicks and wrinkler gain more/less cookies the difference should be included, but no idea how to do it yet
 	
 	//calculate mean of all buildings 
 	var buildingcount=0;
@@ -534,12 +532,13 @@ function goldenValue(amount, wrathValue, wrinklerCount) { //ok
 	
     return value;
 }
+
 function goldenValueNew(amount, wrathValue, wrinklerCount) { //ok
     wrathValue = wrathValue != null ? wrathValue : Game.elderWrath;
     wrinklerCount = wrinklerCount != null ? wrinklerCount : getactiveWrinklers();
     amount = amount != null ? amount : Game.cookies;
 	var wrinkler = wrinklerMod(wrinklerCount);
-    var cps = FrozenCookies.calculatedCps;//Game.unbuffedCps;
+    var cps = FrozenCookies.calculatedCps;
     var clickCps = baseClickingCpsNew(FrozenCookies.autoClick * FrozenCookies.cookieClickSpeed);
     var frenzyCps = baseClickingCpsNew(FrozenCookies.autoClick * FrozenCookies.frenzyClickSpeed);
     var durationMod = gcEffectDuration(wrathValue);
@@ -648,7 +647,7 @@ function goldenValueNew(amount, wrathValue, wrinklerCount) { //ok
     return value;
 }
 
-function getCookieIndex() {
+function getCookieIndex() { //ok
 	return Game.hasAura('Dragonflight')?1:0 + Game.hasAura('Reaper of Fields')?1:0;
 }
 
@@ -776,7 +775,7 @@ function wrinklerMod(num) { //ok
     return num*(num*0.05*1.1)*(Game.Has('Wrinklerspawn')?1.05:1)* (Game.Has('Sacrilegious corruption')?1.05:1)+ (1 - 0.05 * num);
 }
 
-function shouldPopWrinklers() { //ok?
+function shouldPopWrinklers() {
     var toPop = [];
     var living = liveWrinklers();
     if (living.length > 0) {
@@ -812,7 +811,7 @@ function nullBank(){ //ok
 return 	{'name': 'null', 'calc': 'nullBank()', 'cost': 0, 'efficiency': Number.POSITIVE_INFINITY};
 }
 	
-function edificeBank() { //as edifice is random, choose the highest price of all possibilitys
+function edificeBank() { //ok as edifice is random, choose the highest price of all possibilitys
     var buildings=[];
 	var max=0;
 	var n=0;
@@ -827,14 +826,14 @@ function edificeBank() { //as edifice is random, choose the highest price of all
 }
 
 function luckyBank(cps) { //ok, exact
-    cps = cps != null ? cps : Game.unbuffedCps;
+    cps = cps != null ? cps : Game.cookiesPs;
 	var value = cps*60*100;
     return { 'name': 'lucky', 'calc': 'luckyBank()', 'cost': value, 'efficiency': bankEfficiency(Game.cookies, value)};
 }
 
 function chainBank(cps, wrathValue) { //ok, exact
     wrathValue = wrathValue != null ? wrathValue : Game.elderWrath;
-    cps = cps != null ? cps : Game.unbuffedCps;
+    cps = cps != null ? cps : Game.cookiesPs;
     var digit = wrathValue ? 6:7;
 	var value= 1 + 2*(Math.floor(7/9*Math.pow(10,Math.floor(Math.log10(60*60*6*cps*gcMult())))));
     return { 'name': 'chain', 'calc': 'chainBank()', 'cost': value, 'efficiency': bankEfficiency(Game.cookies, value)};
@@ -1109,12 +1108,12 @@ function nextChainedPurchase(recalculate) { //ok
 function buildingStats(recalculate) { //ok
     if (recalculate) {
         var buildingBlacklist = blacklist[FrozenCookies.blacklist].buildings;
-		var baseCpsOrig = Game.cookiesPs + baseClickingCps();//Game.unbuffedCps;
+		var baseCpsOrig = Game.cookiesPs + baseClickingCps();
         var cpsOrig = effectiveCps();
 		FrozenCookies.caches.buildings = Game.ObjectsById.map(function(current, index) {
             if (isBuildingUnavailable(current, buildingBlacklist)) {return null;}
             buildingToggle(current,0);
-            var baseCpsNew = FrozenCookies.calculatedCps+baseClickingCpsNew();//FrozenCookies.calculatedunbuffedCps;
+            var baseCpsNew = FrozenCookies.calculatedCps+baseClickingCpsNew();
             var cpsNew = effectiveCpsNew(); 
             buildingToggle(current,1);
             var deltaCps = cpsNew - cpsOrig;
@@ -1170,13 +1169,12 @@ function isBuildingUnavailable(building, buildingBlacklist) { //ok , but needs m
 function upgradeStats(recalculate) { //ok
     if (recalculate) {
         var upgradeBlacklist = blacklist[FrozenCookies.blacklist].upgrades;
-		//       var currentBank = bestBank(0).cost;
 //		var n1=Game.UpgradesById.filter(function(a,b){return !a.unlocked && !a.bought && a.pool!='debug' && a.pool!='prestige';}).length;
 //		var n2=Game.UpgradesById.filter(function(a,b){return a.unlocked && !a.bought && a.pool!='debug' && a.pool!='prestige';}).length;
 //		if ((n2>25)&&(n2<=n1)) var list=Game.UpgradesById.filter(function(a,b){return a.unlocked && !a.bought && a.pool!='debug' && a.pool!='prestige';});
 //		else var list=Game.UpgradesById.filter(function(a,b){return !a.bought && a.pool!='debug' && a.pool!='prestige';});
 		var list=Game.UpgradesById.filter(function(a,b){return !a.bought && a.pool!='debug' && a.pool!='prestige';}).sort(function(a,b){ return (a.unlocked!=b.unlocked)?b.unlocked-a.unlocked:a.basePrice-b.basePrice;}).slice(0,25);
-		var baseCpsOrig = Game.cookiesPs + baseClickingCps();//Game.unbuffedCps;
+		var baseCpsOrig = Game.cookiesPs + baseClickingCps();
 		var cpsOrig = effectiveCps();
 		FrozenCookies.caches.upgrades = list
 		.map(function(current) {
@@ -1184,7 +1182,7 @@ function upgradeStats(recalculate) { //ok
 			var cost = upgradePrereqCost(current);
 //			var discountsOrig = totalDiscount() + totalDiscount(true);
 			var reverseFunctions = upgradeToggle(current,0);
-            var baseCpsNew = FrozenCookies.calculatedCps+baseClickingCpsNew();//FrozenCookies.calculatedunbuffedCps;
+            var baseCpsNew = FrozenCookies.calculatedCps+baseClickingCpsNew();
 			var cpsNew = effectiveCpsNew();
 //			var discounsNew = (discounts == (totalDiscount() + totalDiscount(true))) 
 			upgradeToggle(current, 1, reverseFunctions);
@@ -1363,9 +1361,8 @@ function isUpgradeUnavailable(upgrade, upgradeBlacklist) { //ok
 }
 
 function buyFunctionToggle(upgrade) { //ok, simplified as only these id matter here
-    if (upgrade && !upgrade.length) {
+	if (upgrade && !upgrade.length) {
         if (!upgrade.buyFunction) { return null;}
-
 		if (upgrade.id==69) {Game.elderWrath=1; return ['Game.elderWrath='+Game.elderWrath];}
 		if (upgrade.id==71) {Game.elderWrath=2; return ['Game.elderWrath='+Game.elderWrath];}
 		if (upgrade.id==73) {Game.elderWrath=3; return ['Game.elderWrath='+Game.elderWrath];}
@@ -1374,11 +1371,9 @@ function buyFunctionToggle(upgrade) { //ok, simplified as only these id matter h
 			(upgrade.id==183) ||
 			(upgrade.id==184) ||
 			(upgrade.id==185) ||
-			(upgrade.id==209)) { Game.season=upgrade.season; return ['Game.season='+Game.season];}
-		
-	} else if (upgrade && upgrade.length) {
-        upgrade.forEach(function(f) { eval(f);});
+			(upgrade.id==209)) { Game.season=upgrade.season; return ['Game.season=\''+Game.season+'\''];}	
 	}
+	else if (upgrade && upgrade.length) { upgrade.forEach(function(f) { eval(f);});}
     return null;
 }
 
@@ -1569,7 +1564,7 @@ function effectiveCpsNew(amount, wrathValue, wrinklerCount) { //ok
 	wrathValue = wrathValue != null ? wrathValue : Game.elderWrath;
     wrinklerCount = wrinklerCount != null ? wrinklerCount : getactiveWrinklers();
 	
-    return FrozenCookies.calculatedunbuffedCps * wrinklerMod(wrinklerCount) + 
+    return FrozenCookies.calculatedCps * wrinklerMod(wrinklerCount) + 
 	goldenCps(goldenValueNew(amount, wrathValue, wrinklerCount)) +
 	baseClickingCpsNew() +
 	reindeerCps(FrozenCookies.calculatedCps,wrathValue);
@@ -1580,7 +1575,7 @@ function effectiveCps(amount, wrathValue, wrinklerCount) { //ok
 	wrathValue = wrathValue != null ? wrathValue : Game.elderWrath;
     wrinklerCount = wrinklerCount != null ? wrinklerCount : getactiveWrinklers();
 	
-    return Game.unbuffedCps * wrinklerMod(wrinklerCount) + 
+    return Game.cookiesPs * wrinklerMod(wrinklerCount) + 
 	goldenCps(goldenValue(amount, wrathValue, wrinklerCount)) +
 	baseClickingCps() +
 	reindeerCps(Game.cookiesPs,wrathValue);
