@@ -37,6 +37,25 @@ What can Frozen Cookies do?
 
 What's new?
 -----------
+2018 Nov 22
+- version 1.7.6
+- a lot of changes to increase accuracy of calculations and improvements on the overall performance
+- finally fixed the real problem with recurring achievments notifications
+
+TODO:
+For next update:
+- new menustructure with different pages (like Main Options, Buy Info, Stats, Garden, Spell, Gods, Dragon....)  
+- split program to different files for new features (see below) 
+
+In the future:
+- new features : AutoGarden (including an autobreed function)
+                 AutoSpell (more options, autoselect...)
+                 AutoGods (more options, autoselect...)
+                 AutoDragon (moreoptions, autoselect..)
+                 Help or comments on what is useful is appreciatated
+- whatever comes in mind to be useful
+
+
 2018 Nov 12
 - changed Version number to 1.7.5
 - Update to patch 2.016
