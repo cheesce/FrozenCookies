@@ -41,6 +41,13 @@ What's new?
 - version 1.7.6
 - a lot of changes to increase accuracy of calculations and improvements on the overall performance
 - finally fixed the real problem with recurring achievments notifications
+- for better performance at start of a new run, a maximum of 25 upgrades are added to the recommendation list
+  these are selected in the order unlocked and cheapest first, then cheapest locked
+- added a probs.html which calculates the cookieinfo array to then be copypasted in cc_upgrades_prerequsits.js
+  If the game changes the behaviour on golden cookies effects, this can now easily be recalculated.
+  In this version, the fools day option and a god option is left out as this would increase the size of the table by a factor of    
+  4 and they are not really needed for FC in my option. Also changes of the probs regarding the last selected cookie effect are 
+  ignored like in older versions of FC 
 
 TODO:
 For next update:
@@ -54,7 +61,7 @@ In the future:
                  AutoDragon (moreoptions, autoselect..)
                  Help or comments on what is useful is appreciatated
 - whatever comes in mind to be useful
-
+- update more parts of this readme
 
 2018 Nov 12
 - changed Version number to 1.7.5
