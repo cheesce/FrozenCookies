@@ -1383,22 +1383,23 @@ var reverse=null;
 
 // Buy Santa Stuff
 function santaStats() { //ok
-    return Game.Has('A festive hat') && (Game.santaLevel + 1 < Game.santaLevels.length) ? {
-        id: santaJson[Game.santaLevel],
-        efficiency: 0.1,
-        base_delta_cps: 0,
-        delta_cps: 0,
-        cost: singleSantaCost(Game.santaLevel),
-        type: 'santa',
-        purchase: {
-            id: santaJson[Game.santaLevel],
-            name: 'Santa Upgrade ' + (Game.santaLevel + 1),
-            buy: buySanta,
-            getCost: function() {
-                return singleSantaCost(Game.santaLevel);
+    if (Game.Has('A festive hat') && (Game.santaLevel + 1 < Game.santaLevels.length)) { 
+		var costs=singleSantaCost(Game.santaLevel);
+		return { id: santaJson[Game.santaLevel],
+			efficiency: purchaseEfficiency(costs, 0, 0, Game.cookiesPs + baseClickingCps()),
+			base_delta_cps: 0,
+			delta_cps: 0,
+			cost: costs,
+			type: 'santa',
+			purchase: {
+				id: santaJson[Game.santaLevel],
+				name: 'Santa Upgrade ' + (Game.santaLevel + 1),
+				buy: buySanta,
+				getCost: function() { return singleSantaCost(Game.santaLevel);}
 			}
 		}
-	} : [];
+	}
+	else return [];
 }
 
 function singleSantaCost(level) { //ok costs for given level
@@ -1420,11 +1421,12 @@ function buySanta() { //ok
 // Buy Dragon Stuff
 function dragonStats() { //ok
     if (Game.Has('A crumbly egg') && (Game.dragonLevel + 1 < Game.dragonLevels.length)) {		
+		var costs=singleDragonCost(Game.dragonLevel);
 		return { id: Game.dragonLevel + 1,
-			efficiency: 0.1,
+			efficiency: purchaseEfficiency(costs, 0, 0, Game.cookiesPs + baseClickingCps()),
 			base_delta_cps: 0,
 			delta_cps: 0,
-			cost: singleDragonCost(Game.dragonLevel),
+			cost: costs,
 			type: 'dragon',
 			purchase: {
 				id: Game.dragonLevel + 1,
