@@ -1074,7 +1074,7 @@ function nextPurchase(recalculate) { //ok
 				else purchase = target;
 			} 
 			else if (target.type == 'dragon') {
-				var prereqList = unfinishedDragonPrereqs(target.id);
+				var prereqList = unfinishedDragonPrereqs(target.id-1);
                 if (prereqList) {
 					purchase = recList.filter(function(a) {
 						return prereqList.some(function(b) {
