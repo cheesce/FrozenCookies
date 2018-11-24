@@ -998,9 +998,9 @@ function defaultPurchase() { //ok
 
 function purchaseEfficiency(price, deltaCps, baseDeltaCps, currentCps) { //ok
     var efficiency = divCps(price, currentCps); //base efficiency.. how long does it take to buy it 
-    if (deltaCps > 0) efficiency -= divCps(price, deltaCps); // subtract time we win 
-	else if(baseDeltaCps > 0) efficiency -= divCps(price, baseDeltaCps);
-    return Math.min(0,efficiency);
+    if (deltaCps > 0) efficiency = efficiency - divCps(price, currentCps + deltaCps); // sub time we win 
+	else if(baseDeltaCps > 0) efficiency = efficiency - divCps(price, currentCps + baseDeltaCps);
+    return Math.max(0,efficiency);
 }
 
 function recommendationList(recalculate) { //ok
