@@ -1439,9 +1439,9 @@ function dragonStats() { //ok
 
 function singleDragonCost(level) { //ok, cookie costs or costs to rebuy buildings for given level
     var dcost=[1000000,1000000*2,1000000*4,1000000*8,1000000*16]
-	.concat(Game.ObjectsById.map(function(a) { return cumulativeBuildingCost(a.basePrice, a.amount<=100?1:a.amount-100, a.amount);}))
-	.concat(Game.ObjectsById.map(function(a) { return cumulativeBuildingCost(a.basePrice, a.amount<=50?1:a.amount-50, a.amount);}).reduce(function(a,b) { return a+b;},0))
-	.concat(Game.ObjectsById.map(function(a) { return cumulativeBuildingCost(a.basePrice, a.amount<=200?1:a.amount-200, a.amount);}).reduce(function(a,b) { return a+b;},0));
+	.concat(Game.ObjectsById.map(function(a) { return cumulativeBuildingCost(a.basePrice, a.amount<=100?1:a.amount-100, a.amount<=100?100-a.amount:a.amount);}))
+	.concat(Game.ObjectsById.map(function(a) { return cumulativeBuildingCost(a.basePrice, a.amount<=50?1:a.amount-50, a.amount<=50?50-a.amount:a.amount);}).reduce(function(a,b) { return a+b;},0))
+	.concat(Game.ObjectsById.map(function(a) { return cumulativeBuildingCost(a.basePrice, a.amount<=200?1:a.amount-200, a.amount<=200?200-a.amount:a.amount);}).reduce(function(a,b) { return a+b;},0));
 	
 	return dcost[level];
 }
